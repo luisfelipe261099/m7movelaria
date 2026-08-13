@@ -6,3 +6,8 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+
+# Auto-gerados pelo @lovable.dev/mcp-js (o plugin os reescreve no build)
+src/routes/mcp.ts
+src/routes/[.mcp]/
+src/routes/[.well-known]/
