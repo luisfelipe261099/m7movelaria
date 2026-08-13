@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, Instagram, Facebook, Mail, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { MapPin, Phone, Mail, Clock, Menu, X, MessageCircle } from "lucide-react";
 import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
 const nav = [
@@ -24,27 +25,33 @@ function formatPhone(raw: string) {
 
 export function SiteHeader() {
   const phone = formatPhone(WHATSAPP_NUMBER);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   return (
     <header className="sticky top-0 inset-x-0 z-50 bg-background">
       {/* Top bar */}
       <div className="bg-cream border-b border-border/60 text-xs text-muted-foreground">
         <div className="max-w-7xl mx-auto px-6 h-9 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-bronze" />
-              R. Orestes Fogiato, 710 — São José dos Pinhais - PR
+          <div className="flex items-center gap-6 min-w-0">
+            <span className="flex items-center gap-2 truncate">
+              <MapPin className="w-3.5 h-3.5 text-bronze shrink-0" />
+              <span className="truncate">R. Orestes Fogiato, 710 — São José dos Pinhais - PR</span>
             </span>
-            <span className="hidden md:flex items-center gap-2">
+            <a
+              href={`tel:+${WHATSAPP_NUMBER}`}
+              className="hidden md:flex items-center gap-2 hover:text-bronze"
+            >
               <Phone className="w-3.5 h-3.5 text-bronze" />
               {phone}
-            </span>
-          </div>
-          <div className="hidden sm:flex items-center gap-3">
-            <a href="#" aria-label="Instagram" className="hover:text-bronze">
-              <Instagram className="w-3.5 h-3.5" />
-            </a>
-            <a href="#" aria-label="Facebook" className="hover:text-bronze">
-              <Facebook className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
@@ -72,16 +79,67 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-          <a
-            href={whatsappLink("Olá M7 Movelaria, gostaria de solicitar um orçamento.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center px-6 py-3 bg-bronze text-primary-foreground text-sm font-medium rounded hover:bg-bronze-dark transition-colors"
-          >
-            Solicitar Orçamento
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href={whatsappLink("Olá M7 Movelaria, gostaria de solicitar um orçamento.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center px-6 py-3 bg-bronze text-primary-foreground text-sm font-medium rounded hover:bg-bronze-dark transition-colors"
+            >
+              Solicitar Orçamento
+            </a>
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={menuOpen}
+              aria-controls="menu-mobile"
+              className="lg:hidden w-11 h-11 grid place-items-center rounded border border-border text-ink hover:border-bronze hover:text-bronze transition-colors"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
+      {/* Mobile menu */}
+      {menuOpen && (
+        <nav
+          id="menu-mobile"
+          className="lg:hidden border-b border-border bg-background shadow-lg"
+        >
+          <ul className="max-w-7xl mx-auto px-6 py-4">
+            {nav.map((n) => (
+              <li key={n.label}>
+                <Link
+                  to={n.to}
+                  hash={n.hash}
+                  onClick={() => setMenuOpen(false)}
+                  className="block py-3 text-ink hover:text-bronze border-b border-border/40 last:border-0 transition-colors"
+                  activeProps={{ className: "text-bronze" }}
+                  activeOptions={{ exact: n.to === "/" && !n.hash }}
+                >
+                  {n.label}
+                </Link>
+              </li>
+            ))}
+            <li className="pt-4 pb-2 flex flex-wrap gap-3">
+              <a
+                href={whatsappLink("Olá M7 Movelaria, gostaria de solicitar um orçamento.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-bronze text-primary-foreground text-sm font-medium rounded hover:bg-bronze-dark transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" /> Solicitar Orçamento
+              </a>
+              <a
+                href={`tel:+${WHATSAPP_NUMBER}`}
+                className="inline-flex items-center gap-2 px-5 py-3 border border-bronze text-bronze text-sm font-medium rounded hover:bg-bronze hover:text-primary-foreground transition-colors"
+              >
+                <Phone className="w-4 h-4" /> {phone}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }
