@@ -43,7 +43,7 @@ export const rooms: Room[] = [
     name: "Hall de Entrada",
     tagline: "Muxarabi no teto · Espelho orgânico · Mármore Nero",
     panorama: panoHall,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["Muxarabi em MDF Nogueira", "Mármore Nero Marquina", "Serralheria preta fosca"],
     ferragens: ["Fita LED 3000K", "Dobradiças ocultas Häfele"],
     hotspots: [
@@ -88,7 +88,7 @@ export const rooms: Room[] = [
     name: "Sala de Estar",
     tagline: "Painel Nogueira · LED 3000K · Home rack basculante",
     panorama: panoLiving,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["MDF Nogueira Natural 18mm", "Couro caramelo", "Mármore Travertino"],
     ferragens: ["Articuladores inversos FGV", "Fecho rolete Häfele", "Perfil de LED slim"],
     hotspots: [
@@ -131,7 +131,7 @@ export const rooms: Room[] = [
     name: "Cozinha Gourmet",
     tagline: "Ilha em mármore · Iluminação técnica · Laca fosca",
     panorama: panoKitchen,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["MDF laca fosca", "Mármore Nero", "MDF Nogueira 25mm"],
     ferragens: ["Dobradiças ocultas Häfele", "Corrediças ocultas amortecidas", "Puxadores Zen"],
     hotspots: [
@@ -184,7 +184,7 @@ export const rooms: Room[] = [
     name: "Lavabo",
     tagline: "Mármore Nero · Espelho backlit · Cuba esculpida",
     panorama: panoLavabo,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["Mármore Nero Marquina", "MDF Nogueira 18mm", "Metais em latão escovado"],
     ferragens: ["Fita LED 3000K backlit", "Dobradiças ocultas Häfele"],
     hotspots: [
@@ -227,7 +227,7 @@ export const rooms: Room[] = [
     name: "Dormitório Master",
     tagline: "Cabeceira estofada · Painel ripado · LED 3000K",
     panorama: panoDormitorio,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["Cabeceira estofada linho", "MDF Nogueira ripado", "Piso Nogueira engenheirado"],
     ferragens: ["Corrediças ocultas Häfele", "Perfil de LED slim 3000K", "Dobradiças Salice"],
     hotspots: [
@@ -271,7 +271,7 @@ export const rooms: Room[] = [
     name: "Closet Master",
     tagline: "Cabideiro Vesto iluminado · Vitrines em serralheria",
     panorama: panoCloset,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["MDF Nogueira 18mm", "Vidro fumê", "Serralheria preta fosca"],
     ferragens: ["Cabideiro Vesto Rometal", "Dobradiças Salice clip reto", "LED 3000K"],
     hotspots: [
@@ -314,7 +314,7 @@ export const rooms: Room[] = [
     name: "Escritório",
     tagline: "Estante iluminada · Marcenaria executiva",
     panorama: panoOffice,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["MDF Nogueira 18mm", "Vidro fumê", "Couro capitonê"],
     ferragens: ["Perfil de LED slim", "Dobradiças Salice", "Puxadores Zen"],
     hotspots: [
@@ -357,7 +357,7 @@ export const rooms: Room[] = [
     name: "Adega Climatizada",
     tagline: "Estante Nogueira · Vidro serralheria · LED 3000K bottle wash",
     panorama: panoAdega,
-    cliente: "Residência Aurora — Família Toledo",
+    cliente: "Residência Aurora — Família Almeida",
     materials: ["MDF Nogueira 25mm", "Vidro temperado 8mm", "Serralheria preta fosca"],
     ferragens: ["LED 3000K bottle wash", "Dobradiças Salice pivotantes"],
     hotspots: [

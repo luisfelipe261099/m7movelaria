@@ -114,11 +114,11 @@ const services = [
 ];
 
 const portfolio = [
-  { img: heroLiving, alt: "Cozinha planejada" },
-  { img: projectCloset, alt: "Home theater sob medida" },
-  { img: projectKitchen, alt: "Cozinha compacta" },
-  { img: projectOffice, alt: "Escritório planejado" },
-  { img: heroLiving, alt: "Dormitório planejado" },
+  { img: heroLiving, alt: "Sala de estar com painel de TV e marcenaria em madeira nogueira" },
+  { img: projectCloset, alt: "Closet planejado com araras iluminadas e gaveteiros" },
+  { img: projectKitchen, alt: "Cozinha planejada com bancada em quartzo e iluminação em LED" },
+  { img: projectOffice, alt: "Home office com estante iluminada sob medida" },
+  { img: heroShowroom, alt: "Vista isométrica do showroom M7 em 3D" },
 ];
 
 const differentials = [

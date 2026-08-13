@@ -56,23 +56,31 @@ export function FloorPlanChooser({
           </h2>
         </div>
 
-        {/* Project/model selector — switches between different 3D-toured properties, not rooms */}
+        {/* Project/model selector — switches between different 3D-toured properties, not rooms.
+            Com um único projeto cadastrado o dropdown vira um rótulo estático: um select de
+            uma opção que não altera nada engana o visitante. */}
         <div className="sm:absolute sm:top-8 sm:right-6">
-          <label className="relative block">
-            <span className="sr-only">Selecionar projeto 3D</span>
-            <select
-              value={selectedProjectSlug}
-              onChange={(e) => onSelectProject(e.target.value)}
-              className="appearance-none max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest pl-3 sm:pl-4 pr-8 sm:pr-9 py-1.5 sm:py-2.5 cursor-pointer hover:border-bronze/60 focus:outline-none focus:border-bronze truncate"
-            >
-              {projects.map((p) => (
-                <option key={p.slug} value={p.slug} className="bg-ink text-white">
-                  {p.name} — {p.client}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-3.5 sm:h-3.5 text-bronze" />
-          </label>
+          {projects.length > 1 ? (
+            <label className="relative block">
+              <span className="sr-only">Selecionar projeto 3D</span>
+              <select
+                value={selectedProjectSlug}
+                onChange={(e) => onSelectProject(e.target.value)}
+                className="appearance-none max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest pl-3 sm:pl-4 pr-8 sm:pr-9 py-1.5 sm:py-2.5 cursor-pointer hover:border-bronze/60 focus:outline-none focus:border-bronze truncate"
+              >
+                {projects.map((p) => (
+                  <option key={p.slug} value={p.slug} className="bg-ink text-white">
+                    {p.name} — {p.client}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-3.5 sm:h-3.5 text-bronze" />
+            </label>
+          ) : (
+            <span className="block max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest px-3 sm:px-4 py-1.5 sm:py-2.5 truncate">
+              {projects[0]?.name} — {projects[0]?.client}
+            </span>
+          )}
         </div>
       </div>
 

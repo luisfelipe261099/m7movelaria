@@ -81,15 +81,24 @@ function Showroom3DPage() {
     };
   }, [cssFullscreen]);
 
-  // Warm up the heavy three.js/panorama chunk and images while the person is still
-  // looking at the floor plan, so clicking a room doesn't sit on a cold load.
+  // Warm up the heavy three.js/panorama chunk while the person is still looking at
+  // the floor plan, so clicking a room doesn't sit on a cold load. The panorama
+  // images themselves (~1MB each) are NOT preloaded in bulk — baixar as 8 de uma vez
+  // custava ~7MB de dados antes de qualquer interação; cada uma carrega ao entrar.
   useEffect(() => {
     void import("@/components/PanoramaViewer");
-    rooms.forEach((r) => {
-      const img = new Image();
-      img.src = r.panorama;
-    });
   }, []);
+
+  // Pré-carrega apenas a panorâmica do ambiente selecionado e a do vizinho seguinte,
+  // mantendo a troca de sala fluida sem o custo do preload total.
+  useEffect(() => {
+    if (!selectedRoomId) return;
+    const idx = rooms.findIndex((r) => r.id === selectedRoomId);
+    if (idx === -1) return;
+    const next = rooms[(idx + 1) % rooms.length];
+    const img = new Image();
+    img.src = next.panorama;
+  }, [selectedRoomId]);
 
   const toggleFullscreen = () => {
     if (cssFullscreen) {
