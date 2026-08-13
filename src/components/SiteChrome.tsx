@@ -102,10 +102,7 @@ export function SiteHeader() {
       </div>
       {/* Mobile menu */}
       {menuOpen && (
-        <nav
-          id="menu-mobile"
-          className="lg:hidden border-b border-border bg-background shadow-lg"
-        >
+        <nav id="menu-mobile" className="lg:hidden border-b border-border bg-background shadow-lg">
           <ul className="max-w-7xl mx-auto px-6 py-4">
             {nav.map((n) => (
               <li key={n.label}>
