@@ -2,6 +2,23 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Fontes servidas do próprio site (antes: stylesheet do Google Fonts bloqueava a
+   renderização por ~800ms). São fontes variáveis — um woff2 cobre todos os pesos. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -62,6 +79,7 @@
   --ring: #93603d;
   --bronze: #93603d;
   --bronze-dark: oklch(0.48 0.08 50);
+  --bronze-soft: #b3814f;
   --cream: oklch(0.96 0.015 65);
   --ink: oklch(0.18 0.005 60);
 }
@@ -107,6 +125,17 @@
 }
 @utility bg-ink {
   background-color: var(--ink);
+}
+@utility text-bronze-dark {
+  color: var(--bronze-dark);
+}
+
+/* O bronze #93603d foi calibrado para fundos claros (WCAG AA sobre creme/branco),
+   mas sobre fundos escuros mede só 3.57:1. Nos containers escuros, o mesmo papel
+   visual usa o tom claro #b3814f (5.53:1 sobre ink). */
+.bg-ink .text-bronze,
+.bg-black .text-bronze {
+  color: var(--bronze-soft);
 }
 
 /* Respeita a preferência do sistema por menos movimento: desliga os pulsos

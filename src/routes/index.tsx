@@ -241,7 +241,7 @@ function AvatarInitials({ name }: { name: string }) {
   return (
     <span
       aria-hidden
-      className="w-11 h-11 rounded-full bg-bronze/15 text-bronze grid place-items-center text-sm font-semibold shrink-0"
+      className="w-11 h-11 rounded-full bg-bronze/15 text-bronze-dark grid place-items-center text-sm font-semibold shrink-0"
     >
       {initials}
     </span>
@@ -631,7 +631,7 @@ function Home() {
               <h3 className="text-xl md:text-2xl font-bold">
                 Vamos criar juntos o ambiente dos seus sonhos?
               </h3>
-              <p className="text-white/80 text-sm mt-1">
+              <p className="text-white text-sm mt-1">
                 Fale com nossa equipe e ganhe um orçamento personalizado.
               </p>
             </div>
