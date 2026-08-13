@@ -48,34 +48,28 @@ import avatar5 from "@/assets/avatar-5.jpg";
 import avatar6 from "@/assets/avatar-6.jpg";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
+import { pageSeo, SITE_URL, SITE_NAME, OG_IMAGE, LOGO_URL, PHONE_DISPLAY } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "M7 Movelaria — Móveis Planejados em São José dos Pinhais" },
-      {
-        name: "description",
-        content:
-          "M7 Movelaria: móveis planejados sob medida com qualidade, design e acabamento impecável. Cozinhas, dormitórios, escritórios e ambientes comerciais.",
-      },
-      { property: "og:title", content: "M7 Movelaria — Móveis Planejados Sob Medida" },
-      {
-        property: "og:description",
-        content: "Soluções personalizadas em móveis planejados. Do seu jeito. Para o seu espaço.",
-      },
-      { property: "og:url", content: "https://project-envy-studio.lovable.app/" },
-    ],
-    links: [{ rel: "canonical", href: "https://project-envy-studio.lovable.app/" }],
+    ...pageSeo({
+      title: "M7 Movelaria — Móveis Planejados em São José dos Pinhais",
+      description:
+        "M7 Movelaria: móveis planejados sob medida com qualidade, design e acabamento impecável. Cozinhas, dormitórios, escritórios e ambientes comerciais.",
+      path: "/",
+    }),
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          name: "M7 Movelaria",
-          image: "https://project-envy-studio.lovable.app/favicon.svg",
-          url: "https://project-envy-studio.lovable.app/",
-          telephone: "+55 41 98711-6308",
+          "@type": "FurnitureStore",
+          name: SITE_NAME,
+          image: OG_IMAGE,
+          logo: LOGO_URL,
+          url: SITE_URL,
+          telephone: PHONE_DISPLAY,
+          priceRange: "$$$",
           address: {
             "@type": "PostalAddress",
             streetAddress: "R. Orestes Fogiato, 710",

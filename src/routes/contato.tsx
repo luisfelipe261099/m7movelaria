@@ -1,23 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink } from "@/lib/whatsapp";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
-    meta: [
-      { title: "Solicite seu Orçamento — M7 Movelaria" },
-      {
-        name: "description",
-        content: "Fale com a M7 Movelaria para orçamento de projetos de marcenaria de alto padrão.",
-      },
-      { property: "og:title", content: "Solicite seu Orçamento — M7 Movelaria" },
-      {
-        property: "og:description",
-        content: "Solicite orçamento para seu projeto de marcenaria sob medida.",
-      },
-      { property: "og:url", content: "https://project-envy-studio.lovable.app/contato" },
-    ],
-    links: [{ rel: "canonical", href: "https://project-envy-studio.lovable.app/contato" }],
+    ...pageSeo({
+      title: "Solicite seu Orçamento — M7 Movelaria",
+      description:
+        "Fale com a M7 Movelaria para orçamento de móveis planejados em São José dos Pinhais e região: WhatsApp (41) 98711-6308 ou e-mail.",
+      path: "/contato",
+    }),
   }),
   component: Contact,
 });

@@ -1,24 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { projects } from "@/data/projects";
+import { pageSeo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/projetos/")({
   head: () => ({
-    meta: [
-      { title: "Projetos — M7 Movelaria" },
-      {
-        name: "description",
-        content:
-          "Portfólio interativo de projetos de marcenaria de alto padrão executados pela M7 Movelaria.",
-      },
-      { property: "og:title", content: "Projetos — M7 Movelaria" },
-      {
-        property: "og:description",
-        content: "Explore ambientes com hotspots interativos de materiais e ferragens.",
-      },
-      { property: "og:url", content: "https://project-envy-studio.lovable.app/projetos" },
-    ],
-    links: [{ rel: "canonical", href: "https://project-envy-studio.lovable.app/projetos" }],
+    ...pageSeo({
+      title: "Projetos — M7 Movelaria",
+      description:
+        "Portfólio interativo de projetos de marcenaria de alto padrão executados pela M7 Movelaria.",
+      path: "/projetos",
+    }),
     scripts: [
       {
         type: "application/ld+json",
@@ -26,14 +18,14 @@ export const Route = createFileRoute("/projetos/")({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           name: "Projetos — M7 Movelaria",
-          url: "https://project-envy-studio.lovable.app/projetos",
+          url: `${SITE_URL}/projetos`,
           mainEntity: {
             "@type": "ItemList",
             itemListElement: projects.map((p, i) => ({
               "@type": "ListItem",
               position: i + 1,
               name: p.name,
-              url: `https://project-envy-studio.lovable.app/projetos/${p.slug}`,
+              url: `${SITE_URL}/projetos/${p.slug}`,
             })),
           },
         }),

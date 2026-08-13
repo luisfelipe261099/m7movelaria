@@ -3,6 +3,7 @@ import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { getProject, type Ambiente, type Hotspot } from "@/data/projects";
 import { X } from "lucide-react";
+import { pageSeo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/projetos/$projectId")({
   loader: ({ params }) => {
@@ -21,11 +22,29 @@ export const Route = createFileRoute("/projetos/$projectId")({
     }
     const { project } = loaderData;
     return {
-      meta: [
-        { title: `${project.name} — M7 Movelaria` },
-        { name: "description", content: project.description },
-        { property: "og:title", content: `${project.name} — M7 Movelaria` },
-        { property: "og:description", content: project.description },
+      ...pageSeo({
+        title: `${project.name} — M7 Movelaria`,
+        description: project.description,
+        path: `/projetos/${project.slug}`,
+      }),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Projetos", item: `${SITE_URL}/projetos` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: project.name,
+                item: `${SITE_URL}/projetos/${project.slug}`,
+              },
+            ],
+          }),
+        },
       ],
     };
   },

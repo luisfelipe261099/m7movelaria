@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink } from "@/lib/whatsapp";
+import { pageSeo } from "@/lib/seo";
 import { FloorPlanChooser } from "@/components/FloorPlanChooser";
 import { rooms, type Hotspot, type Room } from "@/data/rooms";
 import { projects } from "@/data/projects";
@@ -34,23 +35,12 @@ function isIOSDevice() {
 
 export const Route = createFileRoute("/showroom-3d")({
   head: () => ({
-    meta: [
-      { title: "Tour 360° Imersivo — M7 Movelaria" },
-      {
-        name: "description",
-        content:
-          "Tour virtual 360° M7 Movelaria: escolha um ambiente na planta e explore cada projeto em imersão total, com fotos reais e detalhes técnicos de cada móvel.",
-      },
-      { property: "og:title", content: "Tour 360° Imersivo — M7 Movelaria" },
-      {
-        property: "og:description",
-        content: "Escolha um ambiente na planta e explore em 360° com fotos reais dos projetos M7.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://m7movelaria.online/showroom-3d" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://m7movelaria.online/showroom-3d" }],
+    ...pageSeo({
+      title: "Tour 360° Imersivo — M7 Movelaria",
+      description:
+        "Tour virtual 360° M7 Movelaria: escolha um ambiente na planta e explore cada projeto em imersão total, com fotos reais e detalhes técnicos de cada móvel.",
+      path: "/showroom-3d",
+    }),
   }),
   component: Showroom3DPage,
 });

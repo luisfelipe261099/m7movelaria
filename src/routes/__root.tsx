@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SITE_URL, SITE_NAME, OG_IMAGE, LOGO_URL, PHONE_DISPLAY } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -90,7 +91,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Explore projetos de marcenaria de luxo com hotspots interativos de materiais e ferragens.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -108,13 +113,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "M7 Movelaria",
-          url: "https://project-envy-studio.lovable.app",
-          logo: "https://project-envy-studio.lovable.app/favicon.svg",
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: LOGO_URL,
           sameAs: [],
           contactPoint: {
             "@type": "ContactPoint",
-            telephone: "+55 41 98711-6308",
+            telephone: PHONE_DISPLAY,
             contactType: "sales",
             areaServed: "BR",
             availableLanguage: ["Portuguese"],
@@ -131,7 +136,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
