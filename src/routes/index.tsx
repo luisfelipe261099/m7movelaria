@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import heroShowroom from "@/assets/hero-showroom-3d.jpg";
-import heroVideo from "@/assets/hero-showroom.mp4.asset.json";
 import projectCloset from "@/assets/project-closet.jpg";
 import projectKitchen from "@/assets/project-kitchen.jpg";
 import projectOffice from "@/assets/project-office.jpg";
@@ -310,12 +309,13 @@ function Home() {
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded shadow-lg bg-ink group">
               <video
-                src={heroVideo.url}
+                src="/media/hero-showroom.mp4"
                 poster={heroShowroom}
                 autoPlay
                 muted
                 loop
                 playsInline
+                aria-label="Vídeo do showroom M7 em 360 graus"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur text-white text-[10px] uppercase tracking-[0.25em] rounded">
