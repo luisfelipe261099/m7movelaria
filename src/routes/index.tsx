@@ -15,7 +15,6 @@ import {
   Palette,
   Users,
   Heart,
-  Star,
   MessageCircle,
   Calendar,
   ChevronLeft,
@@ -40,12 +39,6 @@ import finishLaca from "@/assets/finish-laca.jpg";
 import finishSerralheria from "@/assets/finish-serralheria.jpg";
 import finishLed3000 from "@/assets/finish-led-3000.jpg";
 import finishLed5000 from "@/assets/finish-led-5000.jpg";
-import avatar1 from "@/assets/avatar-1.jpg";
-import avatar2 from "@/assets/avatar-2.jpg";
-import avatar3 from "@/assets/avatar-3.jpg";
-import avatar4 from "@/assets/avatar-4.jpg";
-import avatar5 from "@/assets/avatar-5.jpg";
-import avatar6 from "@/assets/avatar-6.jpg";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 import { pageSeo, SITE_URL, SITE_NAME, OG_IMAGE, LOGO_URL, PHONE_DISPLAY } from "@/lib/seo";
@@ -210,61 +203,49 @@ const testimonials = [
   {
     name: "Juliana Souza",
     city: "São José dos Pinhais - PR",
-    avatar: avatar1,
     text: "Excelente trabalho! A M7 superou nossas expectativas em todos os detalhes. Os acabamentos em laca ficaram impecáveis.",
   },
   {
     name: "Carlos Mendes",
     city: "Curitiba - PR",
-    avatar: avatar2,
     text: "Profissionais atenciosos e comprometidos. Nosso projeto ficou perfeito e no prazo combinado!",
   },
   {
     name: "Fernanda Lima",
     city: "Pinhais - PR",
-    avatar: avatar3,
     text: "Qualidade impecável. As ferragens Blum e Häfele fazem toda a diferença no dia a dia. Recomendo!",
   },
   {
     name: "Rafael Oliveira",
     city: "Curitiba - PR",
-    avatar: avatar4,
     text: "Como arquiteto, valorizo a execução técnica. A M7 entrega exatamente o que projetamos, com precisão milimétrica.",
   },
   {
     name: "Patrícia Almeida",
     city: "São José dos Pinhais - PR",
-    avatar: avatar5,
     text: "Do primeiro atendimento à instalação, foi tudo cuidadoso. A cozinha ficou dos meus sonhos!",
   },
   {
     name: "Bruno Ferreira",
     city: "Araucária - PR",
-    avatar: avatar6,
     text: "Home office montado com perfeição. Iluminação LED 3000K, laca fosca e detalhes de serralheria — sofisticado.",
   },
 ];
 
-function GoogleG() {
+/** Círculo com as iniciais do cliente — evita fotos de banco de imagem nos depoimentos. */
+function AvatarInitials({ name }: { name: string }) {
+  const initials = name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("");
   return (
-    <svg viewBox="0 0 48 48" className="w-4 h-4" aria-hidden>
-      <path
-        fill="#EA4335"
-        d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6C12.3 13.3 17.7 9.5 24 9.5z"
-      />
-      <path
-        fill="#4285F4"
-        d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17.5z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M10.4 28.8c-1-3-1-6.3 0-9.3l-7.8-6C-.9 19.4-.9 28.6 2.6 34.8l7.8-6z"
-      />
-      <path
-        fill="#34A853"
-        d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.7-3.8-13.6-9.7l-7.8 6C6.5 42.6 14.6 48 24 48z"
-      />
-    </svg>
+    <span
+      aria-hidden
+      className="w-11 h-11 rounded-full bg-bronze/15 text-bronze grid place-items-center text-sm font-semibold shrink-0"
+    >
+      {initials}
+    </span>
   );
 }
 
@@ -603,16 +584,6 @@ function Home() {
               <h2 className="text-4xl md:text-5xl font-bold text-ink">
                 O que nossos clientes dizem
               </h2>
-              <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <GoogleG />
-                <span className="font-semibold text-ink">4,9</span>
-                <span className="flex text-bronze">
-                  {Array.from({ length: 5 }).map((_, k) => (
-                    <Star key={k} className="w-3.5 h-3.5 fill-current" />
-                  ))}
-                </span>
-                <span>· Avaliações Google</span>
-              </div>
             </div>
             <div className="mt-12 flex items-center gap-4">
               <button
@@ -629,27 +600,13 @@ function Home() {
                     className="bg-background border border-border rounded p-6 text-left flex flex-col"
                   >
                     <div className="flex items-center gap-3">
-                      <img
-                        src={t.avatar}
-                        alt={t.name}
-                        loading="lazy"
-                        className="w-11 h-11 rounded-full object-cover"
-                      />
+                      <AvatarInitials name={t.name} />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <div className="font-semibold text-ink text-sm truncate">{t.name}</div>
-                          <GoogleG />
-                        </div>
+                        <div className="font-semibold text-ink text-sm truncate">{t.name}</div>
                         <div className="text-[11px] text-muted-foreground truncate">{t.city}</div>
                       </div>
                     </div>
-                    <div className="flex gap-0.5 text-bronze mt-4">
-                      {Array.from({ length: 5 }).map((_, k) => (
-                        <Star key={k} className="w-3.5 h-3.5 fill-current" />
-                      ))}
-                      <span className="ml-2 text-[11px] text-muted-foreground">há 2 meses</span>
-                    </div>
-                    <p className="text-sm text-ink mt-3 leading-relaxed">{t.text}</p>
+                    <p className="text-sm text-ink mt-4 leading-relaxed">{t.text}</p>
                   </div>
                 ))}
               </div>
