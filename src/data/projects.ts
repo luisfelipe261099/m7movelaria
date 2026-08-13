@@ -96,8 +96,7 @@ export const projects: Project[] = [
             name: "Armários Aéreos",
             x: 50,
             y: 30,
-            description:
-              "Aéreos em laca fosca com iluminação técnica integrada sob a estrutura.",
+            description: "Aéreos em laca fosca com iluminação técnica integrada sob a estrutura.",
             materials: ["MDF 18mm com pintura laca fosca", "Interno Branco TX Ultra"],
             ferragens: ["Dobradiças ocultas Häfele", "Articuladores Häfele"],
             iluminacao: ["Perfil de LED slim", "Fita de LED 3000K"],
@@ -130,8 +129,7 @@ export const projects: Project[] = [
             name: "Cabideiro Iluminado",
             x: 45,
             y: 45,
-            description:
-              "Cabideiro Vesto Rometal com iluminação integrada em LED 3000K.",
+            description: "Cabideiro Vesto Rometal com iluminação integrada em LED 3000K.",
             materials: ["MDF Nogueira 18mm", "Interno Preto TX"],
             ferragens: ["Cabideiro Vesto Rometal", "Dobradiças Salice clip reto"],
             iluminacao: ["LED 3000K embutido no cabideiro"],
@@ -178,5 +176,4 @@ export const projects: Project[] = [
   },
 ];
 
-export const getProject = (slug: string) =>
-  projects.find((p) => p.slug === slug);
+export const getProject = (slug: string) => projects.find((p) => p.slug === slug);

@@ -6,9 +6,16 @@ export const Route = createFileRoute("/projetos/")({
   head: () => ({
     meta: [
       { title: "Projetos — M7 Movelaria" },
-      { name: "description", content: "Portfólio interativo de projetos de marcenaria de alto padrão executados pela M7 Movelaria." },
+      {
+        name: "description",
+        content:
+          "Portfólio interativo de projetos de marcenaria de alto padrão executados pela M7 Movelaria.",
+      },
       { property: "og:title", content: "Projetos — M7 Movelaria" },
-      { property: "og:description", content: "Explore ambientes com hotspots interativos de materiais e ferragens." },
+      {
+        property: "og:description",
+        content: "Explore ambientes com hotspots interativos de materiais e ferragens.",
+      },
       { property: "og:url", content: "https://project-envy-studio.lovable.app/projetos" },
     ],
     links: [{ rel: "canonical", href: "https://project-envy-studio.lovable.app/projetos" }],
@@ -61,7 +68,9 @@ function ProjectsList() {
               </div>
               <div className="mt-4">
                 <p className="text-xs uppercase tracking-widest text-bronze">{p.architect}</p>
-                <h2 className="font-display text-3xl mt-1 group-hover:text-bronze transition-colors">{p.name}</h2>
+                <h2 className="font-display text-3xl mt-1 group-hover:text-bronze transition-colors">
+                  {p.name}
+                </h2>
                 <p className="text-sm text-muted-foreground mt-1">{p.client}</p>
                 <p className="text-sm text-muted-foreground mt-3 max-w-md">{p.description}</p>
               </div>

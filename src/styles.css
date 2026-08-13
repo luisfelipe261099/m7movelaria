@@ -67,23 +67,41 @@
   * {
     border-color: var(--color-border);
   }
-  html, body {
+  html,
+  body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-sans);
     font-weight: 700;
     letter-spacing: -0.02em;
   }
 }
 
-@utility text-bronze { color: var(--bronze); }
-@utility bg-bronze { background-color: var(--bronze); }
-@utility border-bronze { border-color: var(--bronze); }
-@utility bg-bronze-dark { background-color: var(--bronze-dark); }
-@utility text-ink { color: var(--ink); }
-@utility bg-cream { background-color: var(--cream); }
-@utility bg-ink { background-color: var(--ink); }
+@utility text-bronze {
+  color: var(--bronze);
+}
+@utility bg-bronze {
+  background-color: var(--bronze);
+}
+@utility border-bronze {
+  border-color: var(--bronze);
+}
+@utility bg-bronze-dark {
+  background-color: var(--bronze-dark);
+}
+@utility text-ink {
+  color: var(--ink);
+}
+@utility bg-cream {
+  background-color: var(--cream);
+}
+@utility bg-ink {
+  background-color: var(--ink);
+}

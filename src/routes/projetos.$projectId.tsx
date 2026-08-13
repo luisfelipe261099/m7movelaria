@@ -12,7 +12,12 @@ export const Route = createFileRoute("/projetos/$projectId")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Projeto não encontrado — M7 Movelaria" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Projeto não encontrado — M7 Movelaria" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const { project } = loaderData;
     return {
@@ -37,7 +42,10 @@ function ProjectPage() {
       <SiteHeader />
       <main className="pt-24">
         <section className="max-w-7xl mx-auto px-6 py-8">
-          <Link to="/projetos" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-bronze">
+          <Link
+            to="/projetos"
+            className="text-xs uppercase tracking-widest text-muted-foreground hover:text-bronze"
+          >
             ← Projetos
           </Link>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
@@ -53,11 +61,16 @@ function ProjectPage() {
         <section className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[280px_1fr] gap-8 pb-16">
           {/* Ambientes list */}
           <aside className="space-y-2 lg:sticky lg:top-24 self-start">
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Ambientes</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">
+              Ambientes
+            </p>
             {project.ambientes.map((amb: Ambiente) => (
               <button
                 key={amb.id}
-                onClick={() => { setSelected(amb); setHotspot(null); }}
+                onClick={() => {
+                  setSelected(amb);
+                  setHotspot(null);
+                }}
                 className={`w-full text-left px-4 py-3 border transition-all ${
                   selected.id === amb.id
                     ? "border-bronze bg-bronze/10 text-bronze"

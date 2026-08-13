@@ -47,9 +47,7 @@
               "description": "Project slug, e.g. 'residencia-aurora'."
             }
           },
-          "required": [
-            "slug"
-          ]
+          "required": ["slug"]
         },
         "outputSchema": null
       },
