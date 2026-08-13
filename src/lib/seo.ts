@@ -5,7 +5,10 @@
  * basta alterar SITE_URL aqui — canonicals, og:url, sitemap e schema seguem juntos.
  * O robots.txt (public/robots.txt) precisa ser atualizado manualmente.
  */
-export const SITE_URL = "https://m7movelaria.online";
+// Domínio provisório (Vercel) até o cliente apontar o domínio definitivo.
+// Ao migrar: trocar aqui + o Sitemap: de public/robots.txt, e definir o novo
+// domínio como primário na Vercel (o .vercel.app passa a redirecionar sozinho).
+export const SITE_URL = "https://m7movelaria.vercel.app";
 
 export const SITE_NAME = "M7 Movelaria";
 export const OG_IMAGE = `${SITE_URL}/og-cover.jpg`;
