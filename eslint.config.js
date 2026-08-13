@@ -14,8 +14,8 @@ export default tseslint.config(
       // Auto-gerados pelo @lovable.dev/mcp-js — o plugin os reescreve a cada build
       // no estilo dele, então o prettier/prettier entraria em loop com o gerador.
       "src/routes/mcp.ts",
-      "src/routes/[.mcp]/**",
-      "src/routes/[.well-known]/**",
+      "src/routes/\\[.mcp\\]/**",
+      "src/routes/\\[.well-known\\]/**",
     ],
   },
   {
