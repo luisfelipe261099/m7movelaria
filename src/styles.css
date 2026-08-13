@@ -56,8 +56,11 @@
   --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.9 0.01 60);
   --input: oklch(0.9 0.01 60);
-  --ring: oklch(0.58 0.09 55);
-  --bronze: oklch(0.58 0.09 55);
+  /* Bronze escurecido de oklch(0.58 0.09 55) (#a36b44) para #93603d: é o tom mais
+     claro que atinge WCAG AA tanto como texto sobre o creme (4.69:1) quanto como
+     fundo de botão sob texto branco (5.14:1). */
+  --ring: #93603d;
+  --bronze: #93603d;
   --bronze-dark: oklch(0.48 0.08 50);
   --cream: oklch(0.96 0.015 65);
   --ink: oklch(0.18 0.005 60);
@@ -104,4 +107,16 @@
 }
 @utility bg-ink {
   background-color: var(--ink);
+}
+
+/* Respeita a preferência do sistema por menos movimento: desliga os pulsos
+   decorativos (hotspots, badges) e encurta transições. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

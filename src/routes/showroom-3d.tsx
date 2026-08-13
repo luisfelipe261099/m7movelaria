@@ -70,6 +70,17 @@ function Showroom3DPage() {
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
+  // Escape fecha o painel de detalhe do hotspot (o fullscreen nativo já é
+  // encerrado pelo próprio navegador com Escape).
+  useEffect(() => {
+    if (!detail) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDetail(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [detail]);
+
   // Lock page scroll while the CSS fallback is active (native fullscreen does this
   // automatically; this fallback doesn't leave the normal document flow).
   useEffect(() => {

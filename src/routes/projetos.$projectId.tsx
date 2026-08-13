@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { getProject, type Ambiente, type Hotspot } from "@/data/projects";
 import { X } from "lucide-react";
@@ -55,6 +55,15 @@ function ProjectPage() {
   const { project } = Route.useLoaderData();
   const [selected, setSelected] = useState<Ambiente>(project.ambientes[0]);
   const [hotspot, setHotspot] = useState<Hotspot | null>(null);
+
+  useEffect(() => {
+    if (!hotspot) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setHotspot(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [hotspot]);
 
   return (
     <div className="min-h-screen">
