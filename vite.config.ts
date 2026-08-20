@@ -15,4 +15,25 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Repetido por ambiente: com a API de environments do Vite, o `build` do
+    // topo nem sempre chega aos ambientes client/ssr depois do mergeConfig.
+    environments: {
+      client: { build: { assetsInlineLimit: 0 } },
+      ssr: { build: { assetsInlineLimit: 0 } },
+    },
+    build: {
+      // Nada de asset embutido como data: URI.
+      //
+      // O padrão do Vite (4 KB) inlinava as variantes de 480px em base64 dentro
+      // do próprio HTML — base64 é ~33% maior que o binário, o mesmo arquivo
+      // aparece repetido em cada `srcset` da página, e nada disso fica em cache
+      // separado: volta inteiro a cada navegação. Na prática o HTML da home
+      // passou de 21 KB para 49 KB comprimidos, tudo no caminho crítico, para
+      // "economizar" requisições de imagens que são lazy e ficam abaixo da
+      // dobra. Como arquivo, cada variante é baixada só quando é usada e fica
+      // no cache imutável de /assets.
+      assetsInlineLimit: 0,
+    },
+  },
 });

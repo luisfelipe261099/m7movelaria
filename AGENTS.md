@@ -54,6 +54,14 @@
   no celular o LCP é o parágrafo, não a imagem.
 - **Showroom 3D**: não pré-carregar todas as panorâmicas em bloco; o padrão atual
   carrega a selecionada + a vizinha. As texturas são WebP em `src/assets/generated/`.
+- **`assetsInlineLimit: 0`** em `vite.config.ts` (e repetido em `environments.client`
+  e `environments.ssr`, porque o `build` do topo não chega sozinho nos ambientes).
+  Com o padrão do Vite (4 KB) as variantes de 480px viravam `data:` URI em base64
+  dentro do HTML: base64 é ~33% maior que o binário, o mesmo arquivo se repete em
+  cada `srcset` da página e nada disso fica em cache separado. O HTML da home ia
+  de 15 KB para 49 KB comprimidos — tudo no caminho crítico — para "economizar"
+  requisições de imagens que são lazy e ficam abaixo da dobra. Não aumentar esse
+  limite sem medir o HTML depois.
 - `@source not "../src/components/ui"` em `src/styles.css`: os 46 componentes
   shadcn não são usados por nenhuma tela e dobravam o CSS. Se algum for usado,
   tirar da exclusão.
