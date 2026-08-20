@@ -1,0 +1,15 @@
+{
+  "name": "M7 Movelaria — Móveis Planejados",
+  "short_name": "M7 Movelaria",
+  "description": "Marcenaria de alto padrão em São José dos Pinhais: móveis planejados sob medida.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf8f5",
+  "theme_color": "#93603d",
+  "icons": [
+    { "src": "/logo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

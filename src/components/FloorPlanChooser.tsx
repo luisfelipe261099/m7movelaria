@@ -66,7 +66,7 @@ export function FloorPlanChooser({
               <select
                 value={selectedProjectSlug}
                 onChange={(e) => onSelectProject(e.target.value)}
-                className="appearance-none max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest pl-3 sm:pl-4 pr-8 sm:pr-9 py-1.5 sm:py-2.5 cursor-pointer hover:border-bronze/60 focus:outline-none focus:border-bronze truncate"
+                className="appearance-none max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest pl-3 sm:pl-4 pr-8 sm:pr-9 py-1.5 sm:py-2.5 cursor-pointer hover:border-bronze/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bronze-soft)] focus-visible:border-bronze truncate"
               >
                 {projects.map((p) => (
                   <option key={p.slug} value={p.slug} className="bg-ink text-white">

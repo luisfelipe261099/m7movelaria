@@ -1,18 +1,76 @@
 # Notas para agentes e desenvolvedores
 
+## SEO
+
 - **URLs de SEO têm fonte única**: `SITE_URL` em `src/lib/seo.ts`. Nunca hardcodar
-  domínio em rota, sitemap ou schema — usar `pageSeo()`/`SITE_URL`. O único lugar
-  fora do módulo é o `Sitemap:` de `public/robots.txt` (atualizar junto).
+  domínio em rota, sitemap ou schema — usar `pageSeo()`/`canonical()`/`SITE_URL`.
+  O único lugar fora do módulo é o `Sitemap:` de `public/robots.txt` (atualizar junto).
+- **Um `@id` por entidade**: o negócio e o site são declarados uma única vez, no
+  root (`globalGraph()` em `src/lib/schema.ts`). As rotas só referenciam por
+  `@id`. Não voltar a declarar `Organization`/`LocalBusiness` dentro de uma rota —
+  dois nós sem `@id` viram duas empresas diferentes para o Google.
+- **Nunca inventar dado de negócio** em texto, alt ou schema: preço, prazo em
+  dias, CNPJ, CEP, coordenadas, anos de mercado, número de obras, nota de
+  avaliação. O que dá para escrever é *como* o preço/prazo se formam.
 - **Depoimentos**: não reintroduzir logo do Google, notas ou datas em avaliações
-  que não vieram do Perfil Google real do cliente (risco jurídico — CDC art. 37).
-- **Mídia pesada**: vídeos/panorâmicas ficam em `public/media/` e `src/assets/`.
-  O vídeo do hero foi comprimido a ~800KB; manter qualquer substituto abaixo de
-  ~2MB (o original de 11MB era 96% do peso da página).
-- **Showroom 3D**: não pré-carregar todas as panorâmicas em bloco (~7MB); o
-  padrão atual carrega a selecionada + a vizinha.
-- **Acessibilidade**: o bronze `#93603d` foi calculado para WCAG AA (4.69:1 como
-  texto sobre creme, 5.14:1 sob texto branco). Não clarear sem revalidar contraste.
-- **Deploy**: Vercel via Build Output API (autodetectada no CI). Build local
-  padrão gera worker Cloudflare (`defaultPreset` do config Lovable) — é normal.
+  que não vieram do Perfil Google real do cliente, e não adicionar
+  `Review`/`AggregateRating` sobre os placeholders atuais (risco jurídico —
+  CDC art. 37 — e violação de diretriz de dados estruturados do Google).
+- **As imagens do portfólio são renders**, não obras entregues. Nenhum texto ou
+  alt pode afirmar execução ("projeto executado em...", "fotos reais"). Se o
+  cliente fornecer fotos de obra, aí sim.
+- **Páginas de cidade não podem virar doorway pages**: cada uma tem conteúdo
+  próprio (contexto urbano, bairros, o que muda no projeto ali). Cidade nova
+  precisa de texto novo — copiar de outra é pior do que não ter a página.
+- `lastmod` do sitemap é constante manual (`LASTMOD` em `src/routes/sitemap[.]xml.ts`).
+  Gerar `new Date()` a cada request faz o Google desprezar o campo no site todo.
+
+## Performance
+
+- **O caminho crítico é sagrado.** `routeTree.gen.ts` importa todas as rotas
+  estaticamente, então tudo que um arquivo de rota importar no topo entra no
+  chunk que *toda* página baixa. Conteúdo longo (`services.ts`, `cities.ts`,
+  `faq.ts`) entra por `import()` dinâmico dentro do `loader`. Os campos curtos
+  ficam em `src/data/catalog.ts`, que é leve e pode ser importado direto.
+- **Imagens**: sempre `<Picture>` (`src/components/Picture.tsx`), nunca `<img>`
+  cru. Ele resolve AVIF/WebP/JPEG, srcset por largura e width/height (CLS).
+  Ao trocar imagem, rodar `npm run images` e commitar `src/assets/generated/`.
+  O `<picture>` usa `display: contents` de propósito — sem isso o `h-full` do
+  `<img>` resolve contra o `<picture>` e a imagem renderiza no tamanho natural.
+- **Vídeo do hero**: só carrega quando o bloco entra na tela E a página terminou
+  de carregar E o usuário não pediu economia de dados. Não voltar a usar
+  `<video autoPlay>` direto — os 800 KB competiam com o LCP.
+- **Preload**: só a Inter (fonte do corpo), via header `Link` em `src/start.ts`.
+  A Cormorant foi tirada do preload de propósito: 36 KB de prioridade alta para
+  trocar meia dúzia de palavras. O preload do pôster do hero tem `media` porque
+  no celular o LCP é o parágrafo, não a imagem.
+- **Showroom 3D**: não pré-carregar todas as panorâmicas em bloco; o padrão atual
+  carrega a selecionada + a vizinha. As texturas são WebP em `src/assets/generated/`.
+- `@source not "../src/components/ui"` em `src/styles.css`: os 46 componentes
+  shadcn não são usados por nenhuma tela e dobravam o CSS. Se algum for usado,
+  tirar da exclusão.
+- `src/start.ts` só põe `cache-control` em HTML com **status 200** — sem esse
+  guard uma 404 ou o HTML de erro fica preso na CDN por uma hora.
+
+## Acessibilidade
+
+- O bronze `#93603d` foi calculado para WCAG AA sobre fundo claro (4,69:1 como
+  texto sobre creme, 5,14:1 sob texto branco). Não clarear sem revalidar.
+  Sobre fundo escuro, usar `text-bronze-soft` (`#b3814f`, 5,53:1).
+- Fontes: nada abaixo de 12px (`text-xs`). Links dentro de texto corrido levam
+  `underline` — cor sozinha não distingue (WCAG 1.4.1).
+- Alvos de toque com pelo menos 24px de altura efetiva (daí o `py-1.5` nos links
+  do rodapé).
+- `@font-face` da Inter cobre 100–900: fora do intervalo o navegador aplica
+  negrito sintético nos títulos.
+
+## Deploy
+
+- Vercel via Build Output API (autodetectada no CI). Build local padrão gera
+  worker Cloudflare (`defaultPreset` do config Lovable) — é normal. Para testar
+  o SSR localmente: `NITRO_PRESET=node_server npm run build && node .output/server/index.mjs`.
+- **`vercel.json` não adianta** para `headers`/`redirects`: com `.vercel/output`
+  presente a Vercel ignora essas chaves. Headers e redirects ficam no
+  middleware de `src/start.ts`.
 - Histórico: projeto originalmente gerado no Lovable; o acoplamento (plugin MCP,
   telemetria, badge) foi removido em agosto/2026 na migração para GitHub+Vercel.

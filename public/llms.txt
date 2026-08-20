@@ -1,10 +1,44 @@
 # M7 Movelaria
 
-> Marcenaria de alto padrão em São José dos Pinhais (PR): móveis planejados sob medida, cozinhas, dormitórios, closets, escritórios e ambientes comerciais, com ferragens premium (Blum, Häfele, Salice) e acabamentos em laca, lâmina 45° e serralheria.
+> Marcenaria de alto padrão em São José dos Pinhais (PR): móveis planejados sob
+> medida — cozinhas, dormitórios, closets, home office, ambientes comerciais e
+> painel de TV — com ferragens Blum, Häfele e Salice e acabamentos em laca fosca,
+> lâmina natural em 45° e serralheria. Projeto executivo, produção no próprio
+> ateliê e instalação com equipe própria. Atende São José dos Pinhais, Curitiba e
+> região metropolitana.
 
-## Pages
+## Contato
 
-- [Início](/): Apresentação da M7 Movelaria, serviços, materiais premium, portfólio e depoimentos.
-- [Showroom 3D Interativo](/showroom-3d): Planta viva com ambientes em 360° (sala, cozinha, closet, escritório).
-- [Projetos](/projetos): Portfólio de projetos executados com hotspots interativos de materiais e ferragens.
-- [Contato](/contato): Canais para solicitar orçamento — WhatsApp e e-mail.
+- WhatsApp e telefone: (41) 98711-6308
+- E-mail: m7movelaria@outlook.com.br
+- Ateliê: R. Orestes Fogiato, 710 — São José dos Pinhais - PR
+- Atendimento: seg a sex 8h–18h; sáb 8h–12h
+
+## Páginas
+
+- [Início](/): apresentação, serviços, área atendida, materiais, acabamentos e portfólio.
+- [Móveis planejados](/moveis-planejados): índice dos serviços de marcenaria sob medida.
+- [Cozinhas planejadas](/moveis-planejados/cozinhas-planejadas): torre quente, ilha, ferragens Blum, laca e lâmina.
+- [Dormitórios planejados](/moveis-planejados/dormitorios-planejados): guarda-roupa, cabeceira, criados-mudos.
+- [Closets planejados](/moveis-planejados/closets-planejados): closet aberto ou fechado, araras iluminadas.
+- [Home office planejado](/moveis-planejados/home-office-planejado): bancada, estante e passagem de cabos.
+- [Móveis comerciais](/moveis-planejados/moveis-comerciais): recepção, loja, consultório e escritório.
+- [Home theater e painel de TV](/moveis-planejados/home-theater-e-painel-de-tv): painel ripado, rack e LED.
+
+## Cidades atendidas
+
+- [São José dos Pinhais](/moveis-planejados-em/sao-jose-dos-pinhais)
+- [Curitiba](/moveis-planejados-em/curitiba)
+- [Pinhais](/moveis-planejados-em/pinhais)
+- [Araucária](/moveis-planejados-em/araucaria)
+- [Colombo](/moveis-planejados-em/colombo)
+- [Fazenda Rio Grande](/moveis-planejados-em/fazenda-rio-grande)
+
+## Outras
+
+- [Sobre a M7](/sobre): como funciona um projeto, da conversa à instalação.
+- [Perguntas frequentes](/perguntas-frequentes): preço, prazo, materiais, ferragens e instalação.
+- [Projetos](/projetos): portfólio com hotspots interativos de materiais e ferragens.
+- [Showroom 3D](/showroom-3d): tour 360° por ambientes executados.
+- [Contato](/contato): canais e o que enviar para acelerar o orçamento.
+- [Política de privacidade](/politica-de-privacidade)

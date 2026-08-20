@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink } from "@/lib/whatsapp";
-import { pageSeo } from "@/lib/seo";
+import { pageSeo, canonical } from "@/lib/seo";
+import { jsonLd, webPage } from "@/lib/schema";
 import { FloorPlanChooser } from "@/components/FloorPlanChooser";
 import { rooms, type Hotspot, type Room } from "@/data/rooms";
 import { projects } from "@/data/projects";
@@ -36,11 +37,25 @@ function isIOSDevice() {
 export const Route = createFileRoute("/showroom-3d")({
   head: () => ({
     ...pageSeo({
-      title: "Tour 360° Imersivo — M7 Movelaria",
+      title: "Showroom 3D e Tour 360° | M7 Movelaria",
       description:
-        "Tour virtual 360° M7 Movelaria: escolha um ambiente na planta e explore cada projeto em imersão total, com fotos reais e detalhes técnicos de cada móvel.",
+        "Tour virtual 360° da M7 Movelaria: escolha um ambiente na planta e explore cozinhas, closets e home office planejados com os detalhes técnicos de cada móvel.",
       path: "/showroom-3d",
     }),
+    scripts: [
+      jsonLd([
+        ...webPage({
+          path: "/showroom-3d",
+          name: "Showroom 3D — tour 360° da M7 Movelaria",
+          description:
+            "Tour virtual 360° pelos ambientes do showroom da M7 Movelaria, com móveis planejados sob medida.",
+          breadcrumb: [
+            { name: "Início", path: "/" },
+            { name: "Showroom 3D", path: "/showroom-3d" },
+          ],
+        }),
+      ]),
+    ],
   }),
   component: Showroom3DPage,
 });
@@ -130,16 +145,16 @@ function Showroom3DPage() {
   return (
     <div className="min-h-screen bg-ink text-white">
       <SiteHeader />
-      <main>
+      <main id="conteudo">
         <section className="pt-28 pb-6 max-w-7xl mx-auto px-6 text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">
             Tour Virtual · Imersão 360°
           </p>
           <h1 className="font-display text-4xl md:text-6xl leading-tight">Tour 360° Imersivo</h1>
           <p className="text-white/60 mt-4 max-w-2xl mx-auto text-sm md:text-base">
-            Escolha um ambiente na planta e entre em uma imersão 360° com fotos reais dos projetos
-            M7 — hall, sala, cozinha, dormitório, closet, lavabo, escritório e adega. Clique nos
-            pontos dourados para se aproximar de cada móvel e ver marca, material e execução.
+            Escolha um ambiente na planta e entre em uma imersão 360° pelos ambientes M7 — hall,
+            sala, cozinha, dormitório, closet, lavabo, escritório e adega. Clique nos pontos
+            dourados para se aproximar de cada móvel e ver marca, material e execução.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-6 text-[11px] uppercase tracking-widest text-white/50">
@@ -239,9 +254,9 @@ function Showroom3DPage() {
                 <p className="text-[10px] uppercase tracking-[0.35em] text-bronze pr-10">
                   {detail.h.categoria}
                 </p>
-                <h4 className="font-display text-2xl sm:text-3xl mt-2 leading-tight pr-2">
+                <h2 className="font-display text-2xl sm:text-3xl mt-2 leading-tight pr-2">
                   {detail.h.label}
-                </h4>
+                </h2>
 
                 <p className="text-[11px] text-white/50 mt-2 uppercase tracking-[0.25em]">
                   {detail.room.name}
@@ -287,7 +302,7 @@ function Showroom3DPage() {
                 >
                   <MessageCircle className="w-4 h-4" /> Solicitar orçamento
                 </a>
-                <p className="text-[10px] text-white/40 text-center mt-3 uppercase tracking-widest">
+                <p className="text-[10px] text-white/70 text-center mt-3 uppercase tracking-widest">
                   (41) 98711-6308 · m7movelaria@outlook.com.br
                 </p>
               </div>

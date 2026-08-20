@@ -1,7 +1,4 @@
-import heroLiving from "@/assets/hero-living.jpg";
-import projectCloset from "@/assets/project-closet.jpg";
-import projectKitchen from "@/assets/project-kitchen.jpg";
-import projectOffice from "@/assets/project-office.jpg";
+import type { ImageName } from "@/assets/generated/images";
 
 export type Hotspot = {
   id: string;
@@ -22,7 +19,8 @@ export type Ambiente = {
   // percent coordinates on the floor plan (0-100)
   planX: number;
   planY: number;
-  image: string;
+  /** Chave no manifesto de imagens — o <Picture> resolve AVIF/WebP/JPEG a partir dela. */
+  image: ImageName;
   intro: string;
   hotspots: Hotspot[];
 };
@@ -32,7 +30,7 @@ export type Project = {
   name: string;
   client: string;
   architect: string;
-  cover: string;
+  coverName: ImageName;
   description: string;
   ambientes: Ambiente[];
 };
@@ -43,7 +41,7 @@ export const projects: Project[] = [
     name: "Residência Aurora",
     client: "Família Almeida",
     architect: "Studio Larissa Tortato",
-    cover: heroLiving,
+    coverName: "hero-living",
     description:
       "Projeto residencial de alto padrão com marcenaria integrada em madeira nogueira e detalhes em dourado fosco.",
     ambientes: [
@@ -52,7 +50,7 @@ export const projects: Project[] = [
         name: "Sala de Estar",
         planX: 28,
         planY: 42,
-        image: heroLiving,
+        image: "hero-living",
         intro:
           "Ambiente principal com painel de TV em MDF Nogueira, home rack basculante e prateleiras iluminadas.",
         hotspots: [
@@ -87,7 +85,7 @@ export const projects: Project[] = [
         name: "Cozinha Gourmet",
         planX: 62,
         planY: 40,
-        image: projectKitchen,
+        image: "project-kitchen",
         intro:
           "Cozinha com armários em laca fosca, ilha em quartzo e iluminação técnica sob os aéreos.",
         hotspots: [
@@ -120,7 +118,7 @@ export const projects: Project[] = [
         name: "Closet Master",
         planX: 30,
         planY: 74,
-        image: projectCloset,
+        image: "project-closet",
         intro:
           "Closet com cabideiros iluminados, gavetas internas e vitrines em vidro fumê com serralheria.",
         hotspots: [
@@ -154,7 +152,7 @@ export const projects: Project[] = [
         name: "Escritório",
         planX: 70,
         planY: 72,
-        image: projectOffice,
+        image: "project-office",
         intro:
           "Escritório com estante iluminada, mesa em MDF Nogueira e vitrines em serralheria preta.",
         hotspots: [

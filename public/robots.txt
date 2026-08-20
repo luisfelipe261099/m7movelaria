@@ -1,4 +1,9 @@
+# M7 Movelaria — https://m7movelaria.com.br
+# O site inteiro é público e deve ser rastreado. Nada aqui é bloqueado de
+# propósito: bloquear CSS/JS impede o Google de renderizar a página e derruba a
+# avaliação de mobile-friendly.
+
 User-agent: *
 Allow: /
 
-Sitemap: https://m7movelaria.vercel.app/sitemap.xml
+Sitemap: https://m7movelaria.com.br/sitemap.xml

@@ -1,9 +1,12 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { getProject, type Ambiente, type Hotspot } from "@/data/projects";
 import { X } from "lucide-react";
-import { pageSeo, SITE_URL } from "@/lib/seo";
+import { pageSeo, canonical } from "@/lib/seo";
+import { jsonLd, webPage } from "@/lib/schema";
+import { Breadcrumbs, CtaBand } from "@/components/PageParts";
+import { Picture } from "@/components/Picture";
 
 export const Route = createFileRoute("/projetos/$projectId")({
   loader: ({ params }) => {
@@ -14,37 +17,46 @@ export const Route = createFileRoute("/projetos/$projectId")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Projeto não encontrado — M7 Movelaria" },
-          { name: "robots", content: "noindex" },
-        ],
+        ...pageSeo({
+          title: "Projeto não encontrado — M7 Movelaria",
+          description: "Este projeto não existe ou foi movido.",
+          path: "/projetos",
+          noindex: true,
+        }),
       };
     }
     const { project } = loaderData;
+    const path = `/projetos/${project.slug}`;
+    const trail = [
+      { name: "Início", path: "/" },
+      { name: "Projetos", path: "/projetos" },
+      { name: project.name, path },
+    ];
     return {
       ...pageSeo({
         title: `${project.name} — M7 Movelaria`,
         description: project.description,
-        path: `/projetos/${project.slug}`,
+        path,
+        type: "article",
       }),
       scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Início", item: SITE_URL },
-              { "@type": "ListItem", position: 2, name: "Projetos", item: `${SITE_URL}/projetos` },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: project.name,
-                item: `${SITE_URL}/projetos/${project.slug}`,
-              },
-            ],
+        jsonLd([
+          ...webPage({
+            path,
+            name: project.name,
+            description: project.description,
+            breadcrumb: trail,
           }),
-        },
+          {
+            "@type": "CreativeWork",
+            "@id": `${canonical(path)}#projeto`,
+            name: project.name,
+            description: project.description,
+            url: canonical(path),
+            creator: { "@id": `${canonical("/")}#business` },
+            about: project.ambientes.map((a) => a.name).join(", "),
+          },
+        ]),
       ],
     };
   },
@@ -53,6 +65,11 @@ export const Route = createFileRoute("/projetos/$projectId")({
 
 function ProjectPage() {
   const { project } = Route.useLoaderData();
+  const trail = [
+    { name: "Início", path: "/" },
+    { name: "Projetos", path: "/projetos" },
+    { name: project.name, path: `/projetos/${project.slug}` },
+  ];
   const [selected, setSelected] = useState<Ambiente>(project.ambientes[0]);
   const [hotspot, setHotspot] = useState<Hotspot | null>(null);
 
@@ -68,18 +85,15 @@ function ProjectPage() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="pt-24">
+      <main id="conteudo" className="pt-8">
         <section className="max-w-7xl mx-auto px-6 py-8">
-          <Link
-            to="/projetos"
-            className="text-xs uppercase tracking-widest text-muted-foreground hover:text-bronze"
-          >
-            ← Projetos
-          </Link>
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+          <Breadcrumbs trail={trail} />
+          <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-bronze">{project.architect}</p>
-              <h1 className="font-display text-4xl md:text-6xl mt-2">{project.name}</h1>
+              <h1 className="text-3xl md:text-5xl font-bold text-ink mt-2 text-balance">
+                {project.name}
+              </h1>
               <p className="text-sm text-muted-foreground mt-2">Cliente: {project.client}</p>
             </div>
             <p className="text-sm text-muted-foreground max-w-md">{project.description}</p>
@@ -116,10 +130,12 @@ function ProjectPage() {
           {/* Interactive room */}
           <div>
             <div className="relative w-full aspect-[16/10] overflow-hidden border border-border/50">
-              <img
-                src={selected.image}
-                alt={selected.name}
+              <Picture
+                name={selected.image}
+                alt={`${selected.name} — ${selected.intro}`}
+                priority
                 className="absolute inset-0 w-full h-full object-cover"
+                sizes="(min-width: 1024px) 68vw, 100vw"
               />
               <div className="absolute inset-0 bg-black/10" />
               {selected.hotspots.map((h) => (
@@ -141,15 +157,16 @@ function ProjectPage() {
               ))}
             </div>
             <div className="mt-6">
-              <h2 className="font-display text-3xl">{selected.name}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-ink">{selected.name}</h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">{selected.intro}</p>
-              <p className="text-xs uppercase tracking-widest text-bronze mt-4">
+              <p className="text-sm uppercase tracking-widest text-bronze mt-4">
                 Toque nos pontos dourados para explorar os detalhes
               </p>
             </div>
           </div>
         </section>
       </main>
+      <CtaBand context="um projeto como este" />
       <SiteFooter />
 
       {/* Hotspot drawer */}

@@ -1,20 +1,38 @@
 @import "tailwindcss" source(none);
 @source "../src";
+@source not "../src/components/ui";
 @import "tw-animate-css";
 
 /* Fontes servidas do próprio site (antes: stylesheet do Google Fonts bloqueava a
    renderização por ~800ms). São fontes variáveis — um woff2 cobre todos os pesos. */
+/* O intervalo de `font-weight` precisa cobrir o eixo real do arquivo variável
+   (Inter: 100–900, Cormorant: 300–700). Antes estava declarado 300–600 e
+   400–600: como os títulos usam 700, o navegador ficava fora do intervalo e
+   aplicava *negrito sintético* — engorda o glifo por software, com resultado
+   pior do que o peso desenhado pelo tipógrafo. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
-  font-weight: 300 600;
+  font-weight: 100 900;
   font-display: swap;
   src: url("/fonts/inter-latin.woff2") format("woff2");
+}
+/* Fallback com métricas casadas: enquanto a Inter não chega, o texto é
+   desenhado em Arial *ajustada* para ocupar a mesma caixa. Sem isso a troca de
+   fonte reflui o <h1> e o parágrafo do hero — que é justamente o elemento LCP
+   no celular. Os valores são os publicados para Inter sobre Arial. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  size-adjust: 107.12%;
+  ascent-override: 90%;
+  descent-override: 22.43%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: "Cormorant Garamond";
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 300 700;
   font-display: swap;
   src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
 }
@@ -50,7 +68,7 @@
   --color-cream: var(--cream);
   --color-ink: var(--ink);
   --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -128,6 +146,24 @@
 }
 @utility text-bronze-dark {
   color: var(--bronze-dark);
+}
+
+/* Bronze para usar sobre fundo escuro. O #93603d foi calibrado para fundo claro
+   e mede só 3,57:1 sobre preto; este tom mede 5,53:1. A regra `.bg-ink
+   .text-bronze` abaixo cobre os containers de cor sólida, mas não alcança
+   overlays em gradiente — nesses casos aplique esta classe explicitamente. */
+@utility text-bronze-soft {
+  color: var(--bronze-soft);
+}
+
+/* Seções abaixo da dobra: o navegador pula estilo, layout e pintura delas até
+   chegarem perto da viewport. O conteúdo continua no DOM (indexável e
+   pesquisável com Ctrl+F) — só o trabalho de renderização é adiado.
+   `contain-intrinsic-size: auto` faz o navegador memorizar a altura real depois
+   da primeira renderização, o que evita salto de layout ao rolar. */
+@utility defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* O bronze #93603d foi calibrado para fundos claros (WCAG AA sobre creme/branco),

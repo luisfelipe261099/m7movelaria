@@ -11,8 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as Showroom3dRouteImport } from './routes/showroom-3d'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as MoveisPlanejadosEmCidadeRouteImport } from './routes/moveis-planejados-em.$cidade'
+import { Route as MoveisPlanejadosIndexRouteImport } from './routes/moveis-planejados.index'
+import { Route as MoveisPlanejadosServicoRouteImport } from './routes/moveis-planejados.$servico'
 import { Route as ProjetosIndexRouteImport } from './routes/projetos.index'
 import { Route as ProjetosProjectIdRouteImport } from './routes/projetos.$projectId'
 
@@ -26,6 +32,16 @@ const ContatoRoute = ContatoRouteImport.update({
   path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
+  id: '/perguntas-frequentes',
+  path: '/perguntas-frequentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Showroom3dRoute = Showroom3dRouteImport.update({
   id: '/showroom-3d',
   path: '/showroom-3d',
@@ -34,6 +50,27 @@ const Showroom3dRoute = Showroom3dRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoveisPlanejadosEmCidadeRoute =
+  MoveisPlanejadosEmCidadeRouteImport.update({
+    id: '/moveis-planejados-em/$cidade',
+    path: '/moveis-planejados-em/$cidade',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MoveisPlanejadosIndexRoute = MoveisPlanejadosIndexRouteImport.update({
+  id: '/moveis-planejados/',
+  path: '/moveis-planejados/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoveisPlanejadosServicoRoute = MoveisPlanejadosServicoRouteImport.update({
+  id: '/moveis-planejados/$servico',
+  path: '/moveis-planejados/$servico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjetosIndexRoute = ProjetosIndexRouteImport.update({
@@ -50,26 +87,44 @@ const ProjetosProjectIdRoute = ProjetosProjectIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
+  '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
+  '/moveis-planejados/': typeof MoveisPlanejadosIndexRoute
   '/projetos/': typeof ProjetosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
+  '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
+  '/moveis-planejados': typeof MoveisPlanejadosIndexRoute
   '/projetos': typeof ProjetosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
+  '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
+  '/moveis-planejados/': typeof MoveisPlanejadosIndexRoute
   '/projetos/': typeof ProjetosIndexRoute
 }
 export interface FileRouteTypes {
@@ -77,34 +132,58 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/contato'
+    | '/perguntas-frequentes'
+    | '/politica-de-privacidade'
     | '/showroom-3d'
     | '/sitemap.xml'
+    | '/sobre'
+    | '/moveis-planejados-em/$cidade'
+    | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
+    | '/moveis-planejados/'
     | '/projetos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/contato'
+    | '/perguntas-frequentes'
+    | '/politica-de-privacidade'
     | '/showroom-3d'
     | '/sitemap.xml'
+    | '/sobre'
+    | '/moveis-planejados-em/$cidade'
+    | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
+    | '/moveis-planejados'
     | '/projetos'
   id:
     | '__root__'
     | '/'
     | '/contato'
+    | '/perguntas-frequentes'
+    | '/politica-de-privacidade'
     | '/showroom-3d'
     | '/sitemap.xml'
+    | '/sobre'
+    | '/moveis-planejados-em/$cidade'
+    | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
+    | '/moveis-planejados/'
     | '/projetos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContatoRoute: typeof ContatoRoute
+  PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
+  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   Showroom3dRoute: typeof Showroom3dRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SobreRoute: typeof SobreRoute
+  MoveisPlanejadosEmCidadeRoute: typeof MoveisPlanejadosEmCidadeRoute
+  MoveisPlanejadosServicoRoute: typeof MoveisPlanejadosServicoRoute
   ProjetosProjectIdRoute: typeof ProjetosProjectIdRoute
+  MoveisPlanejadosIndexRoute: typeof MoveisPlanejadosIndexRoute
   ProjetosIndexRoute: typeof ProjetosIndexRoute
 }
 
@@ -124,6 +203,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perguntas-frequentes': {
+      id: '/perguntas-frequentes'
+      path: '/perguntas-frequentes'
+      fullPath: '/perguntas-frequentes'
+      preLoaderRoute: typeof PerguntasFrequentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/showroom-3d': {
       id: '/showroom-3d'
       path: '/showroom-3d'
@@ -136,6 +229,34 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moveis-planejados-em/$cidade': {
+      id: '/moveis-planejados-em/$cidade'
+      path: '/moveis-planejados-em/$cidade'
+      fullPath: '/moveis-planejados-em/$cidade'
+      preLoaderRoute: typeof MoveisPlanejadosEmCidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moveis-planejados/': {
+      id: '/moveis-planejados/'
+      path: '/moveis-planejados'
+      fullPath: '/moveis-planejados/'
+      preLoaderRoute: typeof MoveisPlanejadosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moveis-planejados/$servico': {
+      id: '/moveis-planejados/$servico'
+      path: '/moveis-planejados/$servico'
+      fullPath: '/moveis-planejados/$servico'
+      preLoaderRoute: typeof MoveisPlanejadosServicoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projetos/': {
@@ -158,9 +279,15 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContatoRoute: ContatoRoute,
+  PerguntasFrequentesRoute: PerguntasFrequentesRoute,
+  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   Showroom3dRoute: Showroom3dRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SobreRoute: SobreRoute,
+  MoveisPlanejadosEmCidadeRoute: MoveisPlanejadosEmCidadeRoute,
+  MoveisPlanejadosServicoRoute: MoveisPlanejadosServicoRoute,
   ProjetosProjectIdRoute: ProjetosProjectIdRoute,
+  MoveisPlanejadosIndexRoute: MoveisPlanejadosIndexRoute,
   ProjetosIndexRoute: ProjetosIndexRoute,
 }
 export const routeTree = rootRouteImport

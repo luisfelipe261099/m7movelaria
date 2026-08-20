@@ -1,11 +1,11 @@
-import panoLiving from "@/assets/pano-living.jpg";
-import panoKitchen from "@/assets/pano-kitchen.jpg";
-import panoCloset from "@/assets/pano-closet.jpg";
-import panoOffice from "@/assets/pano-office.jpg";
-import panoDormitorio from "@/assets/pano-dormitorio.jpg";
-import panoLavabo from "@/assets/pano-lavabo.jpg";
-import panoAdega from "@/assets/pano-adega.jpg";
-import panoHall from "@/assets/pano-hall.jpg";
+import panoLiving from "@/assets/generated/pano-living.webp";
+import panoKitchen from "@/assets/generated/pano-kitchen.webp";
+import panoCloset from "@/assets/generated/pano-closet.webp";
+import panoOffice from "@/assets/generated/pano-office.webp";
+import panoDormitorio from "@/assets/generated/pano-dormitorio.webp";
+import panoLavabo from "@/assets/generated/pano-lavabo.webp";
+import panoAdega from "@/assets/generated/pano-adega.webp";
+import panoHall from "@/assets/generated/pano-hall.webp";
 
 /**
  * Hotspot posicionado por coordenadas esféricas.
