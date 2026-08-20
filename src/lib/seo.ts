@@ -1,11 +1,15 @@
 /**
  * Fonte única de verdade para URLs, dados do negócio (NAP) e meta tags de SEO.
  *
- * IMPORTANTE: se o domínio mudar, basta alterar SITE_URL aqui — canonicals,
- * og:url, sitemap, schema e links internos seguem juntos. O `Sitemap:` de
- * `public/robots.txt` é o único lugar fora deste módulo (atualizar junto).
+ * Canonicals, og:url, sitemap, robots.txt, schema e links internos saem todos
+ * daqui — mudar esta linha (ou a variável de ambiente) move o site inteiro.
+ *
+ * ATENÇÃO ao `www`: hoje a Vercel tem `www.m7movelaria.com.br` como domínio
+ * primário e responde 308 no apex. O canonical precisa apontar para o host que
+ * devolve 200, senão cada página manda o Google para uma URL que redireciona.
+ * Se um dia o primário virar o apex, trocar aqui (ou definir VITE_SITE_URL).
  */
-export const SITE_URL = "https://m7movelaria.com.br";
+export const SITE_URL: string = import.meta.env.VITE_SITE_URL ?? "https://www.m7movelaria.com.br";
 
 export const SITE_NAME = "M7 Movelaria";
 export const OG_IMAGE = `${SITE_URL}/og-cover.jpg`;

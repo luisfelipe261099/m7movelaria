@@ -1,7 +1,6 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { SITE_URL } from "./lib/seo";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -18,8 +17,6 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-const CANONICAL_HOST = new URL(SITE_URL).host;
-
 /** Rotas cujo HTML pode ser guardado na CDN — todo o site é conteúdo estático. */
 const HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400";
 
@@ -33,12 +30,14 @@ const HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=3600, stale-while-revali
  *    cache compartilhado, e `stale-while-revalidate` evita que a expiração do
  *    cache faça alguém esperar pela função.
  *
- * 2. **noindex fora do domínio canônico.** O alias `*.vercel.app` e as URLs de
- *    preview servem o site inteiro com 200. Sem isso o Google indexa duas
- *    cópias do mesmo conteúdo e escolhe sozinho qual mostrar. Escolhemos
- *    `X-Robots-Tag` em vez de redirecionar por host porque redirect mataria os
- *    previews de deploy — e porque, enquanto o DNS de m7movelaria.com.br não
- *    estiver apontado, um redirect deixaria o site inacessível.
+ * 2. **noindex nos hosts da Vercel.** O alias `*.vercel.app` e as URLs de
+ *    preview servem o site inteiro com 200; sem isso o Google indexa duas
+ *    cópias do mesmo conteúdo e escolhe sozinho qual mostrar. A regra casa
+ *    explicitamente `.vercel.app` em vez de "qualquer host diferente do
+ *    canônico" de propósito: a segunda forma marcaria o site inteiro como
+ *    noindex se o host chegasse diferente do esperado (com/sem `www`, header
+ *    de proxy ausente), e esse erro é silencioso e caro. Domínio próprio novo
+ *    passa a ser indexável por padrão, que é o comportamento seguro.
  *
  * 3. **Cabeçalhos de segurança.** Baratos, e o `Referrer-Policy` também evita
  *    vazar a URL completa para o WhatsApp e para os sites externos linkados.
@@ -92,13 +91,8 @@ const responseMiddleware = createMiddleware().server(async ({ next, request }) =
   }
 
   // O host de verdade chega em x-forwarded-host atrás do proxy da Vercel.
-  const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
-  if (
-    host &&
-    host !== CANONICAL_HOST &&
-    !host.startsWith("localhost") &&
-    !host.startsWith("127.")
-  ) {
+  const host = request.headers.get("x-forwarded-host") ?? url.host;
+  if (host.endsWith(".vercel.app")) {
     headers.set("x-robots-tag", "noindex, nofollow");
   }
 

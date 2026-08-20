@@ -3,8 +3,16 @@
 ## SEO
 
 - **URLs de SEO têm fonte única**: `SITE_URL` em `src/lib/seo.ts`. Nunca hardcodar
-  domínio em rota, sitemap ou schema — usar `pageSeo()`/`canonical()`/`SITE_URL`.
-  O único lugar fora do módulo é o `Sitemap:` de `public/robots.txt` (atualizar junto).
+  domínio em rota, sitemap, robots ou schema — usar `pageSeo()`/`canonical()`/`SITE_URL`.
+  Não existe mais `public/robots.txt`: virou rota (`src/routes/robots[.]txt.ts`)
+  justamente para não haver um segundo lugar com o domínio escrito à mão.
+- **O canonical inclui `www`** porque o domínio primário na Vercel é
+  `www.m7movelaria.com.br` (o apex responde 308). Canonical apontando para uma
+  URL que redireciona faz o Google seguir um salto a mais em cada página.
+- **O `noindex` de host casa `.vercel.app` explicitamente**, não "qualquer host
+  diferente do canônico". A segunda forma marca o site inteiro como noindex se o
+  host chegar diferente do esperado (com/sem `www`, header de proxy ausente) —
+  falha silenciosa e cara. Não trocar por comparação com `SITE_URL`.
 - **Um `@id` por entidade**: o negócio e o site são declarados uma única vez, no
   root (`globalGraph()` em `src/lib/schema.ts`). As rotas só referenciam por
   `@id`. Não voltar a declarar `Organization`/`LocalBusiness` dentro de uma rota —

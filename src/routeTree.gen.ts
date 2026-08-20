@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as Showroom3dRouteImport } from './routes/showroom-3d'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreRouteImport } from './routes/sobre'
@@ -40,6 +41,11 @@ const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
 const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
   id: '/politica-de-privacidade',
   path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Showroom3dRoute = Showroom3dRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/contato': typeof ContatoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/robots.txt'
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/robots.txt'
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/robots.txt'
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   Showroom3dRoute: typeof Showroom3dRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
@@ -215,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/politica-de-privacidade'
       fullPath: '/politica-de-privacidade'
       preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/showroom-3d': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   Showroom3dRoute: Showroom3dRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,

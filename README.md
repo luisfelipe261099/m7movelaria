@@ -1,6 +1,6 @@
 # M7 Movelaria — site institucional
 
-Site da [M7 Movelaria](https://m7movelaria.com.br) (móveis planejados sob medida,
+Site da [M7 Movelaria](https://www.m7movelaria.com.br) (móveis planejados sob medida,
 São José dos Pinhais/PR): landing pages por serviço e por cidade, portfólio
 interativo com hotspots, tour 360° em Three.js e contato via WhatsApp.
 
@@ -34,15 +34,22 @@ O projeto está pronto para import direto na Vercel — o nitro detecta o ambien
 
 1. Importar o repositório na Vercel (framework: **Vite**, build `npm run build`).
 2. Apontar o domínio no painel da Vercel.
-3. **Se o domínio mudar**, atualizar `SITE_URL` em `src/lib/seo.ts` (uma linha —
-   canonicals, og:url, sitemap, schema e links internos seguem juntos) e o
-   `Sitemap:` de `public/robots.txt`.
+3. **Se o domínio mudar**, atualizar `SITE_URL` em `src/lib/seo.ts` — é uma
+   linha só, e canonical, og:url, sitemap, robots.txt, schema e links internos
+   seguem juntos. Dá para sobrescrever sem mexer no código definindo
+   `VITE_SITE_URL` na Vercel.
+
+   Atenção ao `www`: o domínio primário na Vercel é `www.m7movelaria.com.br` e o
+   apex responde 308 para ele. O canonical tem que apontar para o host que
+   devolve 200 — se você trocar o primário para o apex no painel, troque o
+   `SITE_URL` junto.
 
 ### Variáveis de ambiente
 
 | Variável | Para quê |
 |---|---|
 | `VITE_GOOGLE_SITE_VERIFICATION` | Verificação do Google Search Console. Cole só o valor do `content=` do método "tag HTML". Sem ela, a meta tag simplesmente não é emitida. |
+| `VITE_SITE_URL` | Sobrescreve o domínio canônico sem editar código. Sem barra no fim (ex.: `https://www.m7movelaria.com.br`). |
 
 ## Mapa de URLs
 
@@ -58,7 +65,8 @@ O projeto está pronto para import direto na Vercel — o nitro detecta o ambien
 | `/sobre` | E-E-A-T: quem é a M7 e como o projeto acontece |
 | `/contato` | NAP e canais |
 | `/politica-de-privacidade` | LGPD |
-| `/sitemap.xml`, `/robots.txt`, `/llms.txt` | Rastreamento |
+| `/sitemap.xml`, `/robots.txt` | Rotas geradas a partir do `SITE_URL` |
+| `/llms.txt` | Resumo do site para modelos de linguagem (arquivo estático) |
 
 ## Onde editar conteúdo
 
@@ -66,7 +74,7 @@ Não há CMS — o conteúdo é código:
 
 | O quê | Onde |
 |---|---|
-| Domínio canônico, NAP, meta tags | `src/lib/seo.ts` |
+| Domínio canônico, NAP, meta tags | `src/lib/seo.ts` (fonte única — inclusive do robots.txt) |
 | JSON-LD (LocalBusiness, WebSite, FAQ, Service, Breadcrumb) | `src/lib/schema.ts` |
 | Nome/slug/title/description de serviços e cidades | `src/data/catalog.ts` |
 | Texto longo das páginas de serviço | `src/data/services.ts` |
