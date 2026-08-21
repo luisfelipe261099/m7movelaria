@@ -92,9 +92,10 @@ commitar o que aparecer em `src/assets/generated/`.
 
 ## Relatório para o cliente
 
-`docs/relatorio-migracao-e-otimizacao.pdf` — documento de 18 páginas com tudo o
-que mudou desde a versão original gerada no Lovable até a publicação atual, com
-os números medidos, o histórico de alterações e a metodologia de medição.
+`docs/relatorio-migracao-e-otimizacao.pdf` — documento de 23 páginas com tudo o
+que mudou desde a versão original gerada no Lovable até a publicação atual: os
+números medidos, a comparação visual no celular (`docs/img/`), o histórico de
+alterações, a metodologia de medição e a estimativa de custo de reposição.
 Regenerar com `python3 scripts/gerar-relatorio.py` (requer `pip install reportlab`).
 
 ## Pendências conhecidas

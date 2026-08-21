@@ -16,6 +16,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
+    Image,
     KeepTogether,
     NextPageTemplate,
     PageBreak,
@@ -28,6 +29,8 @@ from reportlab.platypus import (
 
 # Caminho de saída relativo à raiz do repositório.
 import os
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+IMG = os.path.join(ROOT, "docs", "img")
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                    "docs", "relatorio-migracao-e-otimizacao.pdf")
 
@@ -198,6 +201,37 @@ def code(lines):
     story.append(Spacer(1, 8))
 
 
+def img_compare(left, right, cap_left, cap_right, h=52 * mm):
+    """Duas capturas lado a lado, com legenda embaixo de cada uma."""
+    w = (PAGE_W - 2 * MARGIN) / 2 - 4 * mm
+    cells = []
+    for path, cap, col in ((left, cap_left, RED), (right, cap_right, GREEN)):
+        inner = Table(
+            [[Image(path, width=w, height=h, kind="proportional")],
+             [Paragraph(cap, P("ic", fontName="Helvetica-Bold", fontSize=7.6, leading=11,
+                               textColor=col, alignment=TA_CENTER))]],
+            colWidths=[w],
+        )
+        inner.setStyle(TableStyle([
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("BOX", (0, 0), (0, 0), 0.5, LIGHT),
+            ("TOPPADDING", (0, 0), (-1, 0), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 4),
+            ("TOPPADDING", (0, 1), (-1, 1), 0),
+            ("BOTTOMPADDING", (0, 1), (-1, 1), 0),
+        ]))
+        cells.append(inner)
+    t = Table([cells], colWidths=[(PAGE_W - 2 * MARGIN) / 2] * 2, hAlign="LEFT")
+    t.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 10))
+
+
 def kpi_row(items):
     """items = [(valor, rótulo, cor)]"""
     cells = []
@@ -299,9 +333,14 @@ kpi_row([
     ("0", "dependências do Lovable restantes", BRONZE),
 ])
 
-h2("Os cinco pontos que mais importam")
+h2("Os seis pontos que mais importam")
 
 bullets([
+    "<b>No celular, o site não tinha menu, telefone clicável nem botão de orçamento.</b> "
+    "Os três elementos estavam programados para aparecer só em tela grande, e não havia botão de "
+    "menu em lugar nenhum. Como a maior parte da busca local acontece pelo telefone, cada visita "
+    "nessas condições era um orçamento que não chegou.",
+
     "<b>O site saiu da plataforma e passou a ser um ativo do cliente.</b> Antes, o vídeo da página "
     "inicial era carregado de um endereço interno do Lovable; fora da plataforma, ele simplesmente "
     "não existia. Hoje todo o site roda em infraestrutura própria (GitHub + Vercel), sem nenhuma "
@@ -343,7 +382,68 @@ para(
     "<font face='Courier' size='8'>c31d46e</font>, 13/08/2026). Ela foi reconstruída e executada "
     "para este relatório, o que permite afirmar com precisão o que o site fazia — e o que não fazia.")
 
-h2("1.1  O site dependia do Lovable para funcionar")
+callout(
+    "Uma observação justa antes da lista",
+    "Ferramentas de geração assistida por IA como o Lovable fazem bem aquilo a que se propõem: "
+    "transformar uma ideia em um protótipo visual navegável em pouco tempo, por pouco dinheiro. "
+    "O resultado <i>parece</i> um site pronto — e é justamente por parecer que a diferença passa "
+    "despercebida. O que uma ferramenta de prototipagem não entrega, e nunca prometeu entregar, é "
+    "um ativo de negócio: endereço próprio consolidado, páginas para as buscas do mercado, "
+    "funcionamento no celular, conformidade legal e independência da plataforma. "
+    "As páginas a seguir medem exatamente essa distância. Prototipar barato foi uma decisão "
+    "acertada; o erro seria confundir o protótipo com o produto final.")
+
+h2("1.1  No celular, o site não tinha navegação nem botão de orçamento")
+
+para(
+    "Este é, de longe, o achado de maior impacto comercial — e o mais fácil de qualquer pessoa "
+    "conferir: bastava abrir o site no telefone.")
+
+para(
+    "No código do cabeçalho original, três elementos essenciais estavam condicionados a telas "
+    "grandes, e não havia nenhuma alternativa para telas pequenas:")
+
+code([
+    '<nav className="hidden lg:flex ...">        // menu: some abaixo de 1024px',
+    '<a ... className="hidden md:inline-flex">   // botao "Solicitar Orcamento": some abaixo de 768px',
+    '<span className="hidden md:flex ...">       // telefone: some abaixo de 768px',
+])
+
+para(
+    "Não existia botão de menu (“hambúrguer”) em lugar nenhum do projeto — a busca por "
+    "<font face='Courier' size='8'>menu</font> ou <font face='Courier' size='8'>hamburg</font> no "
+    "código original retorna zero ocorrências. Ou seja, o menu não ficava escondido atrás de um "
+    "botão: ele simplesmente deixava de existir.")
+
+para(
+    "Medição automatizada em tela de 390 px de largura (um iPhone comum), contando os elementos "
+    "efetivamente visíveis no cabeçalho:")
+
+table(
+    [["Elemento no cabeçalho", "Original", "Hoje"],
+     ["Links de navegação visíveis", "0", "Menu completo atrás do botão"],
+     ["Botão de menu", "0 — não existia", "1"],
+     ["Botão “Solicitar Orçamento”", "0", "Presente no menu"],
+     ["Telefone visível", "0", "Presente no menu"],
+     ["Telefone clicável (<font face='Courier' size='8'>tel:</font>)", "0 em todo o site", "5 links"]],
+    widths=[62 * mm, 40 * mm, None])
+
+para(
+    "O que sobrava no celular era o endereço e o logotipo. Nada mais:")
+
+img_compare(os.path.join(IMG, "celular-antes.png"), os.path.join(IMG, "celular-depois.png"),
+            "ANTES — sem menu, sem telefone, sem botão", "DEPOIS — menu acessível no botão")
+
+callout(
+    "Por que isso custa dinheiro, não só posição no Google",
+    "Marcenaria é um negócio em que o contato acontece por telefone e WhatsApp, e a maior parte do "
+    "tráfego de busca local vem de celular. Um visitante que chegava pelo telefone não tinha como "
+    "navegar para os projetos, não via o botão de orçamento e não conseguia tocar no número para "
+    "ligar. Cada visita nessas condições é um orçamento que não foi pedido — e isso vinha "
+    "acontecendo desde a publicação.",
+    color=RED, bg=colors.HexColor("#FBF1EF"))
+
+h2("1.2  O site dependia do Lovable para funcionar")
 
 para(
     "O vídeo da página inicial não era um arquivo do projeto. Era uma referência a um endereço "
@@ -363,7 +463,7 @@ para(
     "não conseguia exibir o próprio vídeo institucional fora da plataforma onde foi criado. "
     "O arquivo tinha 11.245.821 bytes — <b>11,2 MB</b> em uma única peça da página inicial.")
 
-h2("1.2  O site declarava que o conteúdo era de outro endereço")
+h2("1.3  O site declarava que o conteúdo era de outro endereço")
 
 para(
     "Toda página web informa ao Google qual é o endereço oficial do seu conteúdo, através da tag "
@@ -393,7 +493,7 @@ callout(
     "entrasse no ar, ele começaria do zero, e o Google poderia inclusive tratá-lo como cópia.",
     color=RED, bg=colors.HexColor("#FBF1EF"))
 
-h2("1.3  Havia rotas técnicas da plataforma abertas ao público")
+h2("1.4  Havia rotas técnicas da plataforma abertas ao público")
 
 para(
     "O plugin do Lovable gerava automaticamente 12 arquivos no projeto, incluindo quatro rotas "
@@ -414,22 +514,80 @@ para(
     "(<font face='Courier' size='8'>lovable-error-reporting.ts</font>) que enviava dados de erro "
     "para a plataforma.")
 
-h2("1.4  Conteúdo que não se sustentava")
+h2("1.5  Avaliações do Google fabricadas, com o logotipo da marca")
+
+para(
+    "O site exibia um bloco de depoimentos montado para parecer um resumo de avaliações reais do "
+    "Google. Não era uma imprecisão de texto: era um widget completo, construído peça por peça.")
 
 table(
-    [["O que o site exibia", "Por que era problema"],
-     ["Nota <b>4,9</b> e a expressão <b>“há 2 meses”</b>, com o visual de avaliações do Google",
-      "Simulava avaliações que não existem. Publicidade enganosa pelo art. 37 do Código de Defesa do "
-      "Consumidor, e violação de diretriz de dados estruturados do Google."],
-     ["Depoimentos assinados por nomes de clientes",
-      "Textos criados pela IA geradora, não fornecidos por clientes reais."],
-     ["Imagens de render apresentadas como projetos executados",
-      "As imagens do portfólio são renderizações 3D, não fotos de obra entregue."],
-     ["Foto duplicada no portfólio e textos alternativos trocados",
-      "Prejudica a leitura por deficientes visuais e a indexação em Google Imagens."]],
+    [["Elemento exibido", "O que era de fato"],
+     ["Logotipo “G” do Google ao lado do título e de cada nome",
+      "Reproduzido à mão em SVG, com as quatro cores exatas da marca (#EA4335, #4285F4, #FBBC05, #34A853)"],
+     ["Nota <b>4,9</b> seguida de cinco estrelas preenchidas",
+      "Número inventado. A empresa não tinha avaliações publicadas"],
+     ["O texto “· Avaliações Google”", "Atribuição direta a uma fonte que não existia"],
+     ["“há 2 meses” em cada depoimento", "Data fixa no código, idêntica em todos os cartões"],
+     ["Foto de rosto em cada depoimento",
+      "Seis imagens de banco de imagens (avatar-1 a avatar-6), pessoas que não são clientes"],
+     ["Nomes e textos dos depoimentos", "Gerados pela IA, não fornecidos por clientes"]],
     widths=[62 * mm, None])
 
-h2("1.5  Nota do site original nas ferramentas do Google")
+callout(
+    "Por que isso é sério",
+    "Somados, esses elementos afirmam ao visitante que a M7 tem nota 4,9 no Google, com avaliações "
+    "recentes de seis pessoas identificadas por foto e nome. Nenhuma dessas afirmações era "
+    "verdadeira. Isso configura publicidade enganosa pelo art. 37 do Código de Defesa do Consumidor, "
+    "usa marca registrada de terceiro (o logotipo do Google) para dar credibilidade a informação "
+    "falsa, e viola diretriz explícita do próprio Google sobre dados de avaliação. "
+    "O risco não é hipotético: é o tipo de coisa que um concorrente denuncia ou um cliente "
+    "insatisfeito leva ao Procon. Todo o bloco foi removido.",
+    color=RED, bg=colors.HexColor("#FBF1EF"))
+
+h2("1.6  O portfólio se contradizia")
+
+para(
+    "A seção de portfólio da página inicial tinha cinco cartões, mas apenas quatro imagens "
+    "distintas — e as legendas não correspondiam ao que as imagens mostravam:")
+
+code([
+    "const portfolio = [",
+    '  { img: heroLiving,    alt: "Cozinha planejada" },      // <- sala de estar',
+    '  { img: projectCloset, alt: "Home theater sob medida" },// <- closet',
+    '  { img: projectKitchen, alt: "Cozinha compacta" },',
+    '  { img: projectOffice, alt: "Escritorio planejado" },',
+    '  { img: heroLiving,    alt: "Dormitorio planejado" },   // <- MESMA imagem da primeira',
+    "];",
+])
+
+para(
+    "A mesma fotografia aparecia duas vezes no mesmo bloco: uma legendada como "
+    "<b>“Cozinha planejada”</b> e outra como <b>“Dormitório planejado”</b>. Uma imagem de closet "
+    "estava legendada como <b>“Home theater sob medida”</b>.")
+
+para(
+    "Para uma marcenaria, cujo portfólio é o principal argumento de venda, mostrar a mesma foto "
+    "como dois ambientes diferentes é um problema de credibilidade com o cliente final antes de ser "
+    "um problema de SEO. As legendas erradas também prejudicam quem usa leitor de tela e a "
+    "indexação no Google Imagens.")
+
+h2("1.7  Outros problemas técnicos encontrados")
+
+table(
+    [["Item", "Situação no original"],
+     ["Endereço oficial da página de projeto (<font face='Courier' size='8'>/projetos/[id]</font>)",
+      "Sem tag <i>canonical</i> — a única rota do site sem ela"],
+     ["Dimensões declaradas nas imagens", "Nenhuma das 5 imagens da home declarava largura e altura"],
+     ["Links de redes sociais no cabeçalho",
+      "Instagram e Facebook apontando para <font face='Courier' size='8'>href=\"#\"</font> — dois links mortos, "
+      "visíveis para o visitante"],
+     ["Cabeçalhos de segurança HTTP", "Nenhum configurado"],
+     ["Fonte tipográfica", "Carregada do Google Fonts, bloqueando a primeira exibição da página"],
+     ["Padrão de formatação do código", "12 arquivos fora do padrão, 117 apontamentos do verificador"],
+     ["Arquivos gerados pela plataforma", "12 arquivos, incluindo 4 rotas públicas e um módulo de telemetria"]],
+    widths=[62 * mm, None])
+
+h2("1.8  Nota do site original nas ferramentas do Google")
 
 para(
     "Medição do site original, reconstruído e executado localmente (Lighthouse, perfil celular):")
@@ -1028,11 +1186,77 @@ para(
     "<font face='Courier' size='8'>https://www.m7movelaria.com.br</font>. Essa medição roda na "
     "infraestrutura do próprio Google e é a referência final.")
 
+story.append(PageBreak())
+
+
+# ============================================================== ANEXO C
+h1("C", "Anexo C — Valor de mercado do que foi entregue")
+
+para(
+    "Este anexo não é uma cobrança nem uma proposta. É a estimativa do que custaria contratar, "
+    "separadamente e no mercado, cada frente de trabalho executada — o chamado custo de reposição. "
+    "Serve para dimensionar o escopo.", "lead")
+
+h2("Volume efetivamente produzido")
+
+table(
+    [["Indicador", "Quantidade"],
+     ["Linhas de código e de conteúdo escritas", "5.742, em 48 arquivos"],
+     ["Arquivos novos criados", "26"],
+     ["Palavras de conteúdo redigido", "aproximadamente 10.000"],
+     ["Páginas novas construídas", "11"],
+     ["Registros de alteração documentados", "20"],
+     ["Estimativa de horas de trabalho sênior", "70 a 110 horas"]],
+    widths=[80 * mm, None])
+
+h2("Custo de reposição por frente de trabalho")
+
+table(
+    [["Frente de trabalho", "Faixa de mercado"],
+     ["Auditoria técnica de SEO e diagnóstico", "R$ 1.500 – 5.000"],
+     ["Migração e desacoplamento da plataforma de origem", "R$ 1.500 – 4.000"],
+     ["SEO técnico: endereço oficial, sitemap, robots, redirecionamentos, cabeçalhos", "R$ 2.000 – 6.000"],
+     ["Dados estruturados schema.org (8 tipos integrados)", "R$ 800 – 2.500"],
+     ["Redação de aproximadamente 10.000 palavras de conteúdo técnico", "R$ 3.000 – 9.000"],
+     ["Desenvolvimento das 11 páginas novas", "R$ 3.000 – 8.000"],
+     ["Engenharia de performance (imagens, carregamento, cache, código)", "R$ 2.000 – 6.000"],
+     ["Adequação de acessibilidade ao padrão WCAG AA", "R$ 1.500 – 4.000"],
+     ["Documentação técnica e este relatório", "R$ 800 – 3.000"]],
+    widths=[100 * mm, None])
+
+h2("Consolidado por perfil de prestador")
+
+table(
+    [["Perfil", "Valor/hora praticado", "Projeto fechado"],
+     ["Profissional pleno, autônomo", "R$ 80 – 150", "R$ 8.000 – 16.000"],
+     ["Profissional sênior ou estúdio pequeno", "R$ 150 – 300", "R$ 16.000 – 33.000"],
+     ["Agência estabelecida", "R$ 300 – 500", "R$ 30.000 – 55.000"]],
+    widths=[62 * mm, 42 * mm, None])
+
+para(
+    "Fora do escopo deste projeto, o acompanhamento contínuo de SEO — monitoramento no Search "
+    "Console, ajustes e produção de conteúdo novo — é normalmente contratado como mensalidade, na "
+    "faixa de R$ 1.500 a R$ 6.000 por mês.")
+
+callout(
+    "O que normalmente não está incluído em um orçamento de “otimizar o site”",
+    "Boa parte do que foi corrigido aqui só aparece quando alguém vai procurar. Que o endereço "
+    "oficial apontava para o domínio da plataforma, que o vídeo institucional retornava erro fora "
+    "dela, que o menu não existia no celular, que a mesma foto aparecia duas vezes com nomes "
+    "diferentes, que havia um logotipo do Google sustentando uma nota inventada — nada disso "
+    "estava em uma lista de tarefas. Um pacote fechado de otimização entrega o que está na lista; "
+    "diagnóstico entrega o que ninguém sabia que estava quebrado.")
+
+para(
+    "As faixas acima refletem a prática de mercado brasileira para serviços equivalentes e devem "
+    "ser tratadas como ordem de grandeza, não como cotação. Valores variam com região, senioridade, "
+    "prazo e formato de contratação.", "small")
+
 story.append(Spacer(1, 10))
 story.append(rule(BRONZE, 1.2, 6))
 story.append(Spacer(1, 6))
 para(
-    "Relatório gerado em 20 de agosto de 2026, referente à versão publicada sob o registro "
+    "Relatório gerado em 21 de agosto de 2026, referente à versão publicada sob o registro "
     "<font face='Courier' size='8'>4aabdf7</font>.", "small")
 
 
