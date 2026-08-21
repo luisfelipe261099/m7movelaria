@@ -30,6 +30,12 @@
 - **Páginas de cidade não podem virar doorway pages**: cada uma tem conteúdo
   próprio (contexto urbano, bairros, o que muda no projeto ali). Cidade nova
   precisa de texto novo — copiar de outra é pior do que não ter a página.
+- **`/links` (bio do Instagram) tem regras próprias**: HTML escrito à mão, sem
+  React, sem webfont, `noindex, follow` e fora do sitemap. O selo "aberto agora"
+  é derivado de `OPENING_HOURS` (a mesma constante do `LocalBusiness`) no fuso
+  `America/Sao_Paulo` — não duplicar o horário em uma tabela própria, e não
+  subir o `s-maxage` de 300s: com uma hora de CDN o status fica errado por uma
+  hora, o que é pior do que não ter status.
 - `lastmod` do sitemap é constante manual (`LASTMOD` em `src/routes/sitemap[.]xml.ts`).
   Gerar `new Date()` a cada request faz o Google desprezar o campo no site todo.
 
