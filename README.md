@@ -65,6 +65,7 @@ O projeto está pronto para import direto na Vercel — o nitro detecta o ambien
 | `/sobre` | E-E-A-T: quem é a M7 e como o projeto acontece |
 | `/contato` | NAP e canais |
 | `/politica-de-privacidade` | LGPD |
+| `/links` | Página de link da bio do Instagram — HTML puro, sem JS, `noindex` e fora do sitemap |
 | `/sitemap.xml`, `/robots.txt` | Rotas geradas a partir do `SITE_URL` |
 | `/llms.txt` | Resumo do site para modelos de linguagem (arquivo estático) |
 
@@ -85,6 +86,7 @@ Não há CMS — o conteúdo é código:
 | Ambientes do tour 360° | `src/data/rooms.ts` |
 | Home (ferragens, acabamentos, depoimentos) | `src/routes/index.tsx` |
 | Cabeçalho/rodapé | `src/components/SiteChrome.tsx` |
+| Botões da página do Instagram | `src/routes/links.tsx` (array `ITEMS`) |
 | `lastmod` do sitemap | `src/routes/sitemap[.]xml.ts` (constante `LASTMOD`) |
 
 Ao adicionar ou trocar imagem em `src/assets/`, rodar `npm run images` e
