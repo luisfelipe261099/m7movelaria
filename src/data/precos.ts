@@ -9,10 +9,10 @@
  * inventado pode aparecer para o público como se fosse preço da empresa.
  *
  * Para virar produção: substituir os números, marcar `TABELA_CONFIRMADA = true`
- * e revisar `FATOR_SITE` com o cliente.
+ * (em `simulador.ts`) e revisar `FATOR_SITE` com o cliente.
  */
 
-export const TABELA_CONFIRMADA = false;
+export { TABELA_CONFIRMADA } from "./simulador";
 
 /**
  * Multiplicador sobre o custo. Na marcenaria sob medida a M7 trabalha com 3,0;

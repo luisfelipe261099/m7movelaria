@@ -18,7 +18,8 @@ import { Breadcrumbs } from "@/components/PageParts";
 import { PreviewMovel } from "@/components/PreviewMovel";
 import { whatsappLink } from "@/lib/whatsapp";
 import { pageSeo } from "@/lib/seo";
-import { CORES, MODULOS, TABELA_CONFIRMADA, type Modulo, type ModuloId } from "@/data/precos";
+import { CORES, MODULOS, type Modulo, type ModuloId } from "@/data/precos";
+import { TABELA_CONFIRMADA } from "@/data/simulador";
 import {
   brl,
   calculaOrcamento,
