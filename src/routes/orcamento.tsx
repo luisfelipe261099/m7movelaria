@@ -15,12 +15,12 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
+import { PreviewMovel } from "@/components/PreviewMovel";
 import { whatsappLink } from "@/lib/whatsapp";
 import { pageSeo } from "@/lib/seo";
 import { CORES, MODULOS, TABELA_CONFIRMADA, type Modulo, type ModuloId } from "@/data/precos";
 import {
   brl,
-  brlExato,
   calculaOrcamento,
   corredicaPara,
   type Acabamento,
@@ -178,9 +178,16 @@ function Simulador() {
             <div>
               {etapa === 0 && <PassoAmbiente valor={ambiente} onChange={setAmbiente} />}
               {etapa === 1 && (
-                <PassoModulos itens={itens} onAdd={addModulo} onRemove={removeItem} />
+                <PassoModulos
+                  itens={itens}
+                  onAdd={addModulo}
+                  onRemove={removeItem}
+                  acabamento={acabamento}
+                />
               )}
-              {etapa === 2 && <PassoMedidas itens={itens} onPatch={patchItem} />}
+              {etapa === 2 && (
+                <PassoMedidas itens={itens} onPatch={patchItem} acabamento={acabamento} />
+              )}
               {etapa === 3 && (
                 <PassoAcabamento valor={acabamento} onChange={setAcabamento} itens={itens} />
               )}
@@ -326,10 +333,12 @@ function PassoModulos({
   itens,
   onAdd,
   onRemove,
+  acabamento,
 }: {
   itens: ItemConfig[];
   onAdd: (m: Modulo) => void;
   onRemove: (uid: string) => void;
+  acabamento: Acabamento;
 }) {
   const conta = (id: ModuloId) => itens.filter((i) => i.moduloId === id).length;
   return (
@@ -385,11 +394,9 @@ function PassoModulos({
           );
         })}
       </div>
-      {itens.length === 0 && (
-        <p className="mt-6 text-sm text-muted-foreground">
-          Adicione ao menos um módulo para continuar.
-        </p>
-      )}
+      <div className="mt-6">
+        <PreviewMovel itens={itens} acabamento={acabamento} />
+      </div>
     </section>
   );
 }
@@ -434,16 +441,21 @@ function CampoMm({
 function PassoMedidas({
   itens,
   onPatch,
+  acabamento,
 }: {
   itens: ItemConfig[];
   onPatch: (uid: string, patch: Partial<ItemConfig>) => void;
+  acabamento: Acabamento;
 }) {
   return (
     <section>
       <TituloPasso
         titulo="Informe as medidas"
-        apoio="Meça o vão em três pontos e use a menor medida. Na torre quente, as medidas do forno e do micro-ondas definem o nicho."
+        apoio="Meça o vão em três pontos e use a menor medida. O desenho acompanha o que você digita."
       />
+      <div className="mb-6">
+        <PreviewMovel itens={itens} acabamento={acabamento} />
+      </div>
       <div className="space-y-5">
         {itens.map((item) => {
           const modulo = MODULOS.find((m) => m.id === item.moduloId)!;
@@ -707,6 +719,35 @@ function Opcao({
   );
 }
 
+/**
+ * O que o módulo tem, dito como o cliente fala.
+ *
+ * A composição técnica (metro quadrado de chapa, metro de fita, quantidade de
+ * dobradiça) saiu da tela de propósito: aberta daquele jeito ela é quase uma
+ * lista de corte pronta, e um print bastaria para um concorrente refazer o
+ * orçamento sem ter dimensionado nada. O detalhamento continua existindo — vai
+ * no PDF, depois do pedido fechado.
+ */
+function descreve(calc: ReturnType<typeof calculaOrcamento>["itens"][number], acab: Acabamento) {
+  const { modulo, corredica } = calc;
+  const partes: string[] = [];
+  if (modulo.eletros) partes.push("nichos para forno e micro-ondas nas suas medidas");
+  if (modulo.portas > 0) {
+    partes.push(
+      `${modulo.portas} ${modulo.portas === 1 ? "porta" : "portas"}${acab.ripada ? " ripadas" : ""}`,
+    );
+  }
+  if (modulo.gavetas > 0 && corredica) {
+    partes.push(`${modulo.gavetas} gavetas com corrediça ${corredica.nome.toLowerCase()}`);
+  }
+  if (modulo.prateleiras > 0) {
+    partes.push(`${modulo.prateleiras} ${modulo.prateleiras === 1 ? "prateleira" : "prateleiras"}`);
+  }
+  partes.push(`lateral ${acab.lateral} mm`);
+  const texto = partes.join(" · ");
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
 function PassoResumo({
   orcamento,
   entrega,
@@ -723,41 +764,34 @@ function PassoResumo({
     <section>
       <TituloPasso
         titulo="Seu orçamento"
-        apoio="Cada módulo com a composição aberta: chapa, fita, ferragem e insumo. É a mesma conta que a marcenaria faz na planilha."
+        apoio="O conjunto desenhado em escala e o valor de cada peça. A composição completa de chapa, fita e ferragem vai no PDF junto com a confirmação do pedido."
       />
+
+      <div className="mb-6">
+        <PreviewMovel
+          itens={orcamento.itens.map((c) => c.item)}
+          acabamento={acabamento}
+          numero="2026-0001"
+        />
+      </div>
 
       <div className="space-y-4">
         {orcamento.itens.map((calc) => (
-          <details key={calc.item.uid} className="rounded border border-border bg-white">
-            <summary className="flex items-center justify-between gap-4 p-5 cursor-pointer list-none">
-              <div>
-                <h3 className="font-semibold text-ink">
-                  {calc.modulo.nome}
-                  {calc.item.quantidade > 1 && ` × ${calc.item.quantidade}`}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {calc.item.largura} × {calc.item.altura} × {calc.item.profundidade} mm ·{" "}
-                  {cor.nome}
-                </p>
-              </div>
-              <span className="text-lg font-semibold text-ink shrink-0">{brl(calc.preco)}</span>
-            </summary>
-            <div className="border-t border-border px-5 py-4">
-              <table className="w-full text-sm">
-                <tbody>
-                  {calc.linhas.map((l) => (
-                    <tr key={l.descricao} className="border-b border-border/60 last:border-0">
-                      <td className="py-2 pr-4 text-ink">{l.descricao}</td>
-                      <td className="py-2 pr-4 text-muted-foreground">{l.detalhe}</td>
-                      <td className="py-2 text-right text-muted-foreground tabular-nums">
-                        {brlExato(l.valor)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div
+            key={calc.item.uid}
+            className="flex items-start justify-between gap-4 rounded border border-border bg-white p-5"
+          >
+            <div>
+              <h3 className="font-semibold text-ink">
+                {calc.modulo.nome}
+                {calc.item.quantidade > 1 && ` × ${calc.item.quantidade}`}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {calc.item.largura} × {calc.item.altura} × {calc.item.profundidade} mm · {cor.nome}
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">{descreve(calc, acabamento)}</p>
               {calc.avisos.length > 0 && (
-                <ul className="mt-3 space-y-1">
+                <ul className="mt-2 space-y-1">
                   {calc.avisos.map((a) => (
                     <li key={a} className="text-sm text-destructive">
                       {a}
@@ -766,7 +800,8 @@ function PassoResumo({
                 </ul>
               )}
             </div>
-          </details>
+            <span className="text-lg font-semibold text-ink shrink-0">{brl(calc.preco)}</span>
+          </div>
         ))}
       </div>
 
