@@ -30,6 +30,19 @@ const TRACO = "#6b6259";
 
 type Peca = { x: number; y: number; w: number; h: number };
 
+/**
+ * Nada de medida negativa ou NaN chegando no SVG.
+ *
+ * O campo de medida é livre — a pessoa apaga para digitar de novo, ou digita
+ * uma torre de 700 mm que não comporta o forno que ela mesma informou. Nesses
+ * casos a conta de "altura que sobra para a porta" fica negativa, e o navegador
+ * recusa o atributo (`<rect height="-16">`) deixando o desenho quebrado no meio
+ * do preenchimento. Aqui a peça simplesmente deixa de existir até a medida
+ * voltar a fazer sentido; quem avisa que a medida está fora da faixa é o texto
+ * de aviso do orçamento, não o desenho.
+ */
+const positivo = (n: number) => (Number.isFinite(n) && n > 0 ? n : 0);
+
 /** Converte a altura real (piso = 0, crescendo para cima) em Y do SVG. */
 const paraSvg = (alturaCena: number, yReal: number, h: number) => alturaCena - yReal - h;
 
@@ -71,7 +84,10 @@ function Frente({
   /** Onde entra o puxador: porta leva puxador vertical, gaveta leva horizontal. */
   orientacao: "porta" | "gaveta";
 }) {
-  const { x, y, w, h } = peca;
+  const { x, y } = peca;
+  const w = positivo(peca.w);
+  const h = positivo(peca.h);
+  if (w === 0 || h === 0) return null;
   return (
     <g>
       <rect x={x} y={y} width={w} height={h} fill={cor} stroke={contorno} strokeWidth={3} rx={4} />
@@ -88,6 +104,7 @@ function Frente({
 
 /** Forno e micro-ondas: caixa escura com o vidro e a barra do puxador. */
 function Eletro({ x, y, w, h }: Peca) {
+  if (positivo(w) === 0 || positivo(h) === 0) return null;
   return (
     <g>
       <rect x={x} y={y} width={w} height={h} fill="#3b3733" rx={5} />
@@ -154,20 +171,27 @@ function DesenhoModulo({
   contorno: string;
   acabamento: Acabamento;
 }) {
-  const { largura: L, altura: A } = item;
+  const L = positivo(item.largura);
+  const A = positivo(item.altura);
   const baseReal = modulo.id === "aereo" ? ALTURA_AEREO : 0;
   const y = paraSvg(alturaCena, baseReal, A);
   const temRodape = modulo.id !== "aereo";
   const corpoY = y;
-  const corpoH = temRodape ? A - RODAPE : A;
+  const corpoH = positivo(temRodape ? A - RODAPE : A);
 
   // Torre quente: os nichos ocupam o miolo e as portas ficam com o que sobra.
   const nichos = (() => {
     if (!modulo.eletros || !item.forno || !item.micro) return null;
-    const hForno = item.forno.altura + FOLGA_ELETRO * 2;
-    const hMicro = item.micro.altura + FOLGA_ELETRO * 2;
+    const disponivel = positivo(A - RODAPE);
+    const pedido = positivo(item.forno.altura) + positivo(item.micro.altura) + FOLGA_ELETRO * 4;
+    // Se o vão não comporta os dois aparelhos, os nichos encolhem na proporção
+    // pedida em vez de invadirem o resto do móvel — o orçamento avisa que a
+    // medida não fecha, e o desenho mostra por quê.
+    const escala = pedido > disponivel && pedido > 0 ? disponivel / pedido : 1;
+    const hForno = (positivo(item.forno.altura) + FOLGA_ELETRO * 2) * escala;
+    const hMicro = (positivo(item.micro.altura) + FOLGA_ELETRO * 2) * escala;
     const total = hForno + hMicro;
-    const restante = Math.max(0, A - RODAPE - total);
+    const restante = positivo(disponivel - total);
     const hPortaBaixo = restante * 0.45;
     const hPortaCima = restante - hPortaBaixo;
     return { hForno, hMicro, hPortaBaixo, hPortaCima };
@@ -223,8 +247,8 @@ function DesenhoModulo({
           <rect
             x={x + 14}
             y={corpoY + nichos.hPortaCima}
-            width={L - 28}
-            height={nichos.hMicro}
+            width={positivo(L - 28)}
+            height={positivo(nichos.hMicro)}
             fill="#efe9e2"
             stroke={contorno}
             strokeWidth={3}
@@ -232,14 +256,14 @@ function DesenhoModulo({
           <Eletro
             x={x + 26}
             y={corpoY + nichos.hPortaCima + 10}
-            w={L - 52}
-            h={nichos.hMicro - 20}
+            w={positivo(L - 52)}
+            h={positivo(nichos.hMicro - 20)}
           />
           <rect
             x={x + 14}
             y={corpoY + nichos.hPortaCima + nichos.hMicro}
-            width={L - 28}
-            height={nichos.hForno}
+            width={positivo(L - 28)}
+            height={positivo(nichos.hForno)}
             fill="#efe9e2"
             stroke={contorno}
             strokeWidth={3}
@@ -247,8 +271,8 @@ function DesenhoModulo({
           <Eletro
             x={x + 26}
             y={corpoY + nichos.hPortaCima + nichos.hMicro + 10}
-            w={L - 52}
-            h={nichos.hForno - 20}
+            w={positivo(L - 52)}
+            h={positivo(nichos.hForno - 20)}
           />
         </g>
       )}
@@ -269,7 +293,7 @@ function DesenhoModulo({
         <rect
           x={x + 30}
           y={corpoY + corpoH}
-          width={L - 60}
+          width={positivo(L - 60)}
           height={RODAPE}
           fill={contorno}
           opacity={0.35}
@@ -312,17 +336,29 @@ export function PreviewMovel({
   // isso a cena mede exatamente isso, e não uma altura fixa de referência.
   const alturaCena = Math.max(
     ...itens.map((i) =>
-      MODULOS.find((m) => m.id === i.moduloId)?.id === "aereo" ? ALTURA_AEREO + i.altura : i.altura,
+      MODULOS.find((m) => m.id === i.moduloId)?.id === "aereo"
+        ? ALTURA_AEREO + positivo(i.altura)
+        : positivo(i.altura),
     ),
   );
   const larguraCena =
-    itens.reduce((s, i) => s + i.largura, 0) + VAO * Math.max(0, itens.length - 1);
+    itens.reduce((s, i) => s + positivo(i.largura), 0) + VAO * Math.max(0, itens.length - 1);
+
+  if (alturaCena <= 0 || larguraCena <= 0) {
+    return (
+      <div className="rounded border border-dashed border-border bg-white p-10 text-center">
+        <p className="text-sm text-muted-foreground">
+          Informe as medidas do módulo para ver o desenho.
+        </p>
+      </div>
+    );
+  }
 
   let cursor = 0;
   const desenhos = itens.map((item) => {
     const modulo = MODULOS.find((m) => m.id === item.moduloId)!;
     const x = cursor;
-    cursor += item.largura + VAO;
+    cursor += positivo(item.largura) + VAO;
     return { item, modulo, x };
   });
 

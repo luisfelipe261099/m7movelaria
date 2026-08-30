@@ -486,6 +486,8 @@ function PassoMedidas({
                 />
               </div>
 
+              <ForaDaFaixa item={item} modulo={modulo} />
+
               {modulo.eletros && item.forno && item.micro && (
                 <div className="mt-6 pt-5 border-t border-border">
                   <p className="text-sm text-ink font-medium">Medidas dos seus eletrodomésticos</p>
@@ -571,6 +573,47 @@ function PassoMedidas({
         })}
       </div>
     </section>
+  );
+}
+
+/**
+ * Aviso na hora, na etapa em que a medida é digitada.
+ *
+ * Antes o alerta só aparecia lá no resumo: a pessoa digitava uma torre de
+ * 700 mm, seguia adiante e só descobria o problema três telas depois. Como o
+ * campo é livre de propósito (dá para apagar e redigitar), o aviso precisa
+ * estar ao lado do campo.
+ */
+function ForaDaFaixa({ item, modulo }: { item: ItemConfig; modulo: Modulo }) {
+  const problemas: string[] = [];
+  const checa = (valor: number, [min, max]: [number, number], nome: string) => {
+    if (!valor) problemas.push(`Informe a ${nome.toLowerCase()}.`);
+    else if (valor < min || valor > max) {
+      problemas.push(`${nome} aceita de ${min} a ${max} mm neste módulo.`);
+    }
+  };
+  checa(item.largura, modulo.limites.largura, "Largura");
+  checa(item.altura, modulo.limites.altura, "Altura");
+  checa(item.profundidade, modulo.limites.profundidade, "Profundidade");
+
+  if (modulo.eletros && item.forno && item.micro) {
+    const precisa = item.forno.altura + item.micro.altura + 40 + 100;
+    if (item.altura && item.altura < precisa) {
+      problemas.push(
+        `Com esse forno e esse micro-ondas, a torre precisa de pelo menos ${precisa} mm de altura.`,
+      );
+    }
+  }
+
+  if (problemas.length === 0) return null;
+  return (
+    <ul className="mt-4 space-y-1">
+      {problemas.map((p) => (
+        <li key={p} className="text-sm text-destructive">
+          {p}
+        </li>
+      ))}
+    </ul>
   );
 }
 
