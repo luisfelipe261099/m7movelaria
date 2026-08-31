@@ -53,6 +53,9 @@ export const Route = createFileRoute("/orcamento")({
 
 const ETAPAS = ["Ambiente", "Módulos", "Medidas", "Acabamento", "Resumo", "Pagamento"] as const;
 
+/** Código e validade da simulação, carimbados no desenho. */
+type Identificacao = { numero: string; validade: string };
+
 const AMBIENTES = [
   {
     id: "cozinha",
@@ -108,6 +111,25 @@ function Simulador() {
   });
   const [entrega, setEntrega] = useState<Entrega>("local");
   const [pagamento, setPagamento] = useState<"pix" | "credito">("pix");
+  const [identificacao, setIdentificacao] = useState({ numero: "", validade: "" });
+
+  /**
+   * Código e validade da simulação, para a marca d'água e para o rodapé.
+   *
+   * Gerado depois da montagem, e não durante a renderização, porque o valor
+   * muda a cada chamada: no servidor sairia um código e no cliente outro, e o
+   * React acusaria divergência de hidratação na página inteira.
+   */
+  useEffect(() => {
+    const agora = new Date();
+    const d = (n: number) => String(n).padStart(2, "0");
+    const sufixo = Math.random().toString(36).slice(2, 6).toUpperCase();
+    const validade = new Date(agora.getTime() + 7 * 24 * 60 * 60 * 1000);
+    setIdentificacao({
+      numero: `${String(agora.getFullYear()).slice(2)}${d(agora.getMonth() + 1)}${d(agora.getDate())}-${sufixo}`,
+      validade: validade.toLocaleDateString("pt-BR"),
+    });
+  }, []);
 
   /**
    * `?etapa=4&demo=cozinha` abre o simulador já num passo, com um carrinho de
@@ -184,10 +206,16 @@ function Simulador() {
                   onAdd={addModulo}
                   onRemove={removeItem}
                   acabamento={acabamento}
+                  identificacao={identificacao}
                 />
               )}
               {etapa === 2 && (
-                <PassoMedidas itens={itens} onPatch={patchItem} acabamento={acabamento} />
+                <PassoMedidas
+                  itens={itens}
+                  onPatch={patchItem}
+                  acabamento={acabamento}
+                  identificacao={identificacao}
+                />
               )}
               {etapa === 3 && (
                 <PassoAcabamento valor={acabamento} onChange={setAcabamento} itens={itens} />
@@ -198,6 +226,7 @@ function Simulador() {
                   entrega={entrega}
                   onEntrega={setEntrega}
                   acabamento={acabamento}
+                  identificacao={identificacao}
                 />
               )}
               {etapa === 5 && (
@@ -335,11 +364,13 @@ function PassoModulos({
   onAdd,
   onRemove,
   acabamento,
+  identificacao,
 }: {
   itens: ItemConfig[];
   onAdd: (m: Modulo) => void;
   onRemove: (uid: string) => void;
   acabamento: Acabamento;
+  identificacao: Identificacao;
 }) {
   const conta = (id: ModuloId) => itens.filter((i) => i.moduloId === id).length;
   return (
@@ -396,7 +427,7 @@ function PassoModulos({
         })}
       </div>
       <div className="mt-6">
-        <PreviewMovel itens={itens} acabamento={acabamento} />
+        <PreviewMovel itens={itens} acabamento={acabamento} {...identificacao} />
       </div>
     </section>
   );
@@ -443,10 +474,12 @@ function PassoMedidas({
   itens,
   onPatch,
   acabamento,
+  identificacao,
 }: {
   itens: ItemConfig[];
   onPatch: (uid: string, patch: Partial<ItemConfig>) => void;
   acabamento: Acabamento;
+  identificacao: Identificacao;
 }) {
   return (
     <section>
@@ -455,7 +488,7 @@ function PassoMedidas({
         apoio="Meça o vão em três pontos e use a menor medida. O desenho acompanha o que você digita."
       />
       <div className="mb-6">
-        <PreviewMovel itens={itens} acabamento={acabamento} />
+        <PreviewMovel itens={itens} acabamento={acabamento} {...identificacao} />
       </div>
       <div className="space-y-5">
         {itens.map((item) => {
@@ -797,11 +830,13 @@ function PassoResumo({
   entrega,
   onEntrega,
   acabamento,
+  identificacao,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
   entrega: Entrega;
   onEntrega: (e: Entrega) => void;
   acabamento: Acabamento;
+  identificacao: Identificacao;
 }) {
   const cor = CORES.find((c) => c.id === acabamento.corId)!;
   return (
@@ -815,7 +850,7 @@ function PassoResumo({
         <PreviewMovel
           itens={orcamento.itens.map((c) => c.item)}
           acabamento={acabamento}
-          numero="2026-0001"
+          {...identificacao}
         />
       </div>
 
@@ -848,6 +883,13 @@ function PassoResumo({
           </div>
         ))}
       </div>
+
+      {identificacao.numero && (
+        <p className="mt-4 text-xs text-muted-foreground">
+          Simulação {identificacao.numero} · válida até {identificacao.validade}. O preço é
+          confirmado com a conferência das medidas; cópia ou print não vale como proposta comercial.
+        </p>
+      )}
 
       <div className="mt-8">
         <p className="text-sm font-medium text-ink mb-3">Entrega e montagem</p>

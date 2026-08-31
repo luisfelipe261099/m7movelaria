@@ -313,11 +313,17 @@ export function PreviewMovel({
   itens,
   acabamento,
   numero,
+  validade,
 }: {
   itens: ItemConfig[];
   acabamento: Acabamento;
-  /** Número do orçamento, usado na marca d'água. */
+  /**
+   * Código do orçamento. Vai na marca d'água em mosaico: print recortado
+   * continua carregando de onde saiu e de qual simulação.
+   */
   numero?: string;
+  /** Data de validade, escrita no desenho para o print envelhecer sozinho. */
+  validade?: string;
 }) {
   const cor = CORES.find((c) => c.id === acabamento.corId) ?? CORES[0];
   const contorno = cor.id === "branco" || cor.id === "cinza" ? "#8f8880" : "#4a3a2c";
@@ -361,6 +367,9 @@ export function PreviewMovel({
     cursor += positivo(item.largura) + VAO;
     return { item, modulo, x };
   });
+
+  // O id do <pattern> não pode colidir se dois desenhos coexistirem na página.
+  const idMarca = `marca-m7-${numero ?? "simulacao"}`;
 
   const vbW = larguraCena + MARGEM.esquerda + MARGEM.direita;
   const vbH = alturaCena + MARGEM.topo + MARGEM.baixo;
@@ -406,27 +415,67 @@ export function PreviewMovel({
           vertical
         />
 
-        {/* Marca d'água: o print que sair daqui sai com o nome da M7 junto. */}
-        <text
-          x={larguraCena / 2}
-          y={alturaCena / 2}
-          fill={contorno}
-          opacity={0.09}
-          fontSize={Math.max(120, larguraCena / 9)}
-          textAnchor="middle"
-          transform={`rotate(-18 ${larguraCena / 2} ${alturaCena / 2})`}
-          style={{ letterSpacing: "0.2em", fontWeight: 700 }}
-        >
-          M7 MOVELARIA
-        </text>
+        {/*
+          Marca d'água em mosaico.
+          Print não dá para impedir — não existe API de navegador para isso, e
+          quem quiser fotografa a tela com outro aparelho. O que dá para fazer é
+          o print sair pouco útil para quem quer levar a terceiros: a origem, o
+          código da simulação e a validade aparecem repetidos, então qualquer
+          recorte continua dizendo de onde veio e de quando é. Uma marca única
+          no meio era só recortar fora.
+        */}
+        <defs>
+          <pattern
+            id={idMarca}
+            width={1100}
+            height={620}
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(-20)"
+          >
+            <text
+              x={0}
+              y={80}
+              fill={contorno}
+              opacity={0.085}
+              fontSize={76}
+              style={{ letterSpacing: "0.18em", fontWeight: 700 }}
+            >
+              M7 MOVELARIA
+            </text>
+            <text x={0} y={150} fill={contorno} opacity={0.075} fontSize={48}>
+              m7movelaria.com.br{numero ? ` · ${numero}` : ""}
+            </text>
+          </pattern>
+        </defs>
+        <rect
+          x={-MARGEM.esquerda}
+          y={-MARGEM.topo}
+          width={larguraCena + MARGEM.esquerda + MARGEM.direita}
+          height={alturaCena + MARGEM.topo + MARGEM.baixo}
+          fill={`url(#${idMarca})`}
+          pointerEvents="none"
+        />
       </svg>
       <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
           Desenho em escala do que você montou · {cor.nome}
           {acabamento.ripada && " · porta ripada"} · aéreo a {ALTURA_AEREO} mm do piso
         </span>
-        <span>M7 Movelaria{numero ? ` · orçamento ${numero}` : ""}</span>
+        <span>
+          M7 Movelaria{numero ? ` · orçamento ${numero}` : ""}
+          {validade ? ` · válido até ${validade}` : ""}
+        </span>
       </figcaption>
+      {/*
+        Impressão e "salvar como PDF" do navegador: a faixa só existe no papel,
+        então não polui a tela de quem está comprando.
+      */}
+      <p className="hidden print:block mt-2 text-xs text-muted-foreground">
+        Simulação gerada em m7movelaria.com.br
+        {numero ? ` · orçamento ${numero}` : ""}
+        {validade ? ` · válido até ${validade}` : ""}. Cópia impressa não vale como proposta
+        comercial e não garante preço nem prazo.
+      </p>
     </figure>
   );
 }
