@@ -87,7 +87,7 @@ export const faq: FaqItem[] = [
   {
     group: "Atendimento",
     q: "Posso visitar o ateliê antes de fechar?",
-    a: "Pode, e recomendamos. O ateliê fica na R. Orestes Fogiato, 710, em São José dos Pinhais. Combine o horário pelo WhatsApp para garantir que haja alguém disponível para te acompanhar — é a melhor forma de ver acabamento e ferragem de perto em vez de decidir por foto.",
+    a: "Pode, e recomendamos. O ateliê fica na R. Henrique Bortolam, 182, no bairro Costeira, em São José dos Pinhais. Combine o horário pelo WhatsApp para garantir que haja alguém disponível para te acompanhar — é a melhor forma de ver acabamento e ferragem de perto em vez de decidir por foto.",
   },
   {
     group: "Atendimento",

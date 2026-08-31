@@ -29,7 +29,7 @@ export type City = CitySummary & CityBody;
 const content: Record<string, CityBody> = {
   "sao-jose-dos-pinhais": {
     logistics:
-      "O ateliê da M7 fica em São José dos Pinhais, na R. Orestes Fogiato, 710. Aqui a visita técnica, a medição e a instalação acontecem na mesma cidade da produção — o que encurta o caminho entre um ajuste no projeto e a peça pronta.",
+      "O ateliê da M7 fica em São José dos Pinhais, na R. Henrique Bortolam, 182, no bairro Costeira. Aqui a visita técnica, a medição e a instalação acontecem na mesma cidade da produção — o que encurta o caminho entre um ajuste no projeto e a peça pronta.",
     intro: [
       "São José dos Pinhais é a cidade onde a M7 produz. Isso muda coisas práticas para quem mora aqui: a medição não depende de deslocamento entre municípios, um ajuste de última hora no projeto não vira uma semana de logística, e a assistência pós-instalação é resolvida sem agendamento de viagem.",
       "É também a cidade cujo estoque de imóveis conhecemos melhor — do sobrado antigo do Centro e do Afonso Pena aos apartamentos e condomínios mais recentes, cada um com um tipo diferente de problema de marcenaria.",
@@ -55,7 +55,7 @@ const content: Record<string, CityBody> = {
     faq: [
       {
         q: "Onde fica o ateliê da M7 em São José dos Pinhais?",
-        a: "Na R. Orestes Fogiato, 710, São José dos Pinhais - PR. O atendimento é de segunda a sexta, das 8h às 18h, e aos sábados das 8h às 12h. A visita ao ateliê é combinada previamente pelo WhatsApp para garantir que haja alguém disponível para te acompanhar.",
+        a: "Na R. Henrique Bortolam, 182, bairro Costeira, São José dos Pinhais - PR. O atendimento é de segunda a sexta, das 8h às 18h, e aos sábados das 8h às 12h. A visita ao ateliê é combinada previamente pelo WhatsApp para garantir que haja alguém disponível para te acompanhar.",
       },
       {
         q: "Vocês atendem toda São José dos Pinhais?",
@@ -103,7 +103,7 @@ const content: Record<string, CityBody> = {
       },
       {
         q: "Dá para visitar o ateliê antes de fechar?",
-        a: "Dá, e recomendamos. O ateliê fica na R. Orestes Fogiato, 710, em São José dos Pinhais, a poucos minutos da divisa com Curitiba. É onde você vê o acabamento e a ferragem de perto, em vez de decidir por foto.",
+        a: "Dá, e recomendamos. O ateliê fica na R. Henrique Bortolam, 182, no bairro Costeira, em São José dos Pinhais, a poucos minutos da divisa com Curitiba. É onde você vê o acabamento e a ferragem de perto, em vez de decidir por foto.",
       },
     ],
   },

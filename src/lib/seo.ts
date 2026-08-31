@@ -25,7 +25,7 @@ export const PHONE_E164 = "+5541987116308";
 /** Formato de exibição, igual ao do Perfil da Empresa no Google. */
 export const PHONE_LOCAL = "(41) 98711-6308";
 export const EMAIL = "m7movelaria@outlook.com.br";
-export const STREET_ADDRESS = "R. Orestes Fogiato, 710";
+export const STREET_ADDRESS = "R. Henrique Bortolam, 182 - Costeira";
 export const CITY = "São José dos Pinhais";
 export const REGION = "PR";
 export const COUNTRY = "BR";
