@@ -280,7 +280,7 @@ story.append(Paragraph(
 story.append(Spacer(1, 26 * mm))
 meta_rows = [
     ["CLIENTE", "M7 Movelaria — Móveis planejados sob medida"],
-    ["ENDEREÇO", "R. Orestes Fogiato, 710 — São José dos Pinhais / PR"],
+    ["ENDEREÇO", "R. Henrique Bortolam, 182 - Costeira — São José dos Pinhais / PR"],
     ["SITE", "https://www.m7movelaria.com.br"],
     ["PERÍODO", "13 de agosto a 20 de agosto de 2026"],
     ["ESCOPO", "Migração de plataforma, SEO técnico e de conteúdo, performance, acessibilidade e conformidade"],
