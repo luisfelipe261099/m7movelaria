@@ -314,6 +314,7 @@ export function PreviewMovel({
   acabamento,
   numero,
   validade,
+  cliente,
 }: {
   itens: ItemConfig[];
   acabamento: Acabamento;
@@ -324,6 +325,12 @@ export function PreviewMovel({
   numero?: string;
   /** Data de validade, escrita no desenho para o print envelhecer sozinho. */
   validade?: string;
+  /**
+   * Primeiro nome de quem simulou. Entra na marca d'água: o print deixa de ser
+   * um documento anônimo e passa a ser o orçamento de uma pessoa — bem menos
+   * confortável de levar para outra marcenaria pedir cobertura.
+   */
+  cliente?: string;
 }) {
   const cor = CORES.find((c) => c.id === acabamento.corId) ?? CORES[0];
   const contorno = cor.id === "branco" || cor.id === "cinza" ? "#8f8880" : "#4a3a2c";
@@ -369,7 +376,7 @@ export function PreviewMovel({
   });
 
   // O id do <pattern> não pode colidir se dois desenhos coexistirem na página.
-  const idMarca = `marca-m7-${numero ?? "simulacao"}`;
+  const idMarca = `marca-m7-${numero || "simulacao"}`;
 
   const vbW = larguraCena + MARGEM.esquerda + MARGEM.direita;
   const vbH = alturaCena + MARGEM.topo + MARGEM.baixo;
@@ -445,6 +452,11 @@ export function PreviewMovel({
             <text x={0} y={150} fill={contorno} opacity={0.075} fontSize={48}>
               m7movelaria.com.br{numero ? ` · ${numero}` : ""}
             </text>
+            {cliente && (
+              <text x={0} y={214} fill={contorno} opacity={0.075} fontSize={48}>
+                Simulação de {cliente}
+              </text>
+            )}
           </pattern>
         </defs>
         <rect
@@ -462,7 +474,8 @@ export function PreviewMovel({
           {acabamento.ripada && " · porta ripada"} · aéreo a {ALTURA_AEREO} mm do piso
         </span>
         <span>
-          M7 Movelaria{numero ? ` · orçamento ${numero}` : ""}
+          {cliente ? `Simulação de ${cliente} · ` : ""}M7 Movelaria
+          {numero ? ` · orçamento ${numero}` : ""}
           {validade ? ` · válido até ${validade}` : ""}
         </span>
       </figcaption>

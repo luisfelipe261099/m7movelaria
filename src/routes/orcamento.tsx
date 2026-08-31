@@ -17,6 +17,15 @@ import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
 import { PreviewMovel } from "@/components/PreviewMovel";
 import { whatsappLink } from "@/lib/whatsapp";
+import {
+  carregaLead,
+  contatoValido,
+  enviaLead,
+  nomeValido,
+  primeiroNome,
+  salvaLead,
+  type Lead,
+} from "@/lib/lead";
 import { pageSeo } from "@/lib/seo";
 import { CORES, MODULOS, type Modulo, type ModuloId } from "@/data/precos";
 import { TABELA_CONFIRMADA } from "@/data/simulador";
@@ -54,7 +63,7 @@ export const Route = createFileRoute("/orcamento")({
 const ETAPAS = ["Ambiente", "Módulos", "Medidas", "Acabamento", "Resumo", "Pagamento"] as const;
 
 /** Código e validade da simulação, carimbados no desenho. */
-type Identificacao = { numero: string; validade: string };
+type Identificacao = { numero: string; validade: string; cliente?: string };
 
 const AMBIENTES = [
   {
@@ -112,6 +121,7 @@ function Simulador() {
   const [entrega, setEntrega] = useState<Entrega>("local");
   const [pagamento, setPagamento] = useState<"pix" | "credito">("pix");
   const [identificacao, setIdentificacao] = useState({ numero: "", validade: "" });
+  const [lead, setLead] = useState<Lead | null>(null);
 
   /**
    * Código e validade da simulação, para a marca d'água e para o rodapé.
@@ -137,6 +147,9 @@ function Simulador() {
    * para gerar as imagens da proposta) sem ter que refazer o preenchimento.
    */
   useEffect(() => {
+    // Quem já se identificou numa visita anterior não preenche de novo.
+    setLead(carregaLead());
+
     const params = new URLSearchParams(window.location.search);
     if (params.get("demo") === "cozinha" && itens.length === 0) {
       setItens([
@@ -164,6 +177,14 @@ function Simulador() {
 
   const podeAvancar = etapa === 1 ? itens.length > 0 : true;
 
+  const identificar = (novo: Lead) => {
+    setLead(novo);
+    salvaLead(novo);
+    enviaLead(novo, identificacao.numero, orcamento.total);
+  };
+
+  const carimbo = { ...identificacao, cliente: lead ? primeiroNome(lead.nome) : undefined };
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -178,8 +199,9 @@ function Simulador() {
               Monte seu móvel e veja o preço sem esperar retorno
             </h1>
             <p className="text-muted-foreground mt-4 max-w-2xl leading-relaxed">
-              Escolha os módulos, informe as medidas do seu espaço e feche o pedido pelo site. A
-              produção é a mesma marcenaria — com a linha de acabamento pensada para venda direta.
+              Escolha os módulos, informe as medidas do seu espaço e veja o móvel desenhado na tela.
+              Para liberar o valor pedimos só seu nome e um contato — a produção é a mesma
+              marcenaria, com a linha de acabamento pensada para venda direta.
             </p>
             {!TABELA_CONFIRMADA && (
               <p className="mt-6 inline-flex items-start gap-2 rounded border border-bronze/40 bg-white px-4 py-3 text-sm text-muted-foreground">
@@ -206,7 +228,7 @@ function Simulador() {
                   onAdd={addModulo}
                   onRemove={removeItem}
                   acabamento={acabamento}
-                  identificacao={identificacao}
+                  identificacao={carimbo}
                 />
               )}
               {etapa === 2 && (
@@ -214,7 +236,7 @@ function Simulador() {
                   itens={itens}
                   onPatch={patchItem}
                   acabamento={acabamento}
-                  identificacao={identificacao}
+                  identificacao={carimbo}
                 />
               )}
               {etapa === 3 && (
@@ -226,7 +248,9 @@ function Simulador() {
                   entrega={entrega}
                   onEntrega={setEntrega}
                   acabamento={acabamento}
-                  identificacao={identificacao}
+                  identificacao={carimbo}
+                  lead={lead}
+                  onIdentificar={identificar}
                 />
               )}
               {etapa === 5 && (
@@ -235,6 +259,9 @@ function Simulador() {
                   entrega={entrega}
                   pagamento={pagamento}
                   onPagamento={setPagamento}
+                  lead={lead}
+                  identificacao={carimbo}
+                  onIdentificar={identificar}
                 />
               )}
 
@@ -260,7 +287,7 @@ function Simulador() {
               </div>
             </div>
 
-            <ResumoLateral orcamento={orcamento} etapa={etapa} />
+            <ResumoLateral orcamento={orcamento} etapa={etapa} lead={lead} />
           </div>
         </div>
       </main>
@@ -825,20 +852,143 @@ function descreve(calc: ReturnType<typeof calculaOrcamento>["itens"][number], ac
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
+/**
+ * Valor que só aparece depois da identificação.
+ *
+ * O número continua sendo calculado no navegador — quem abrir as ferramentas
+ * do desenvolvedor chega nele. Isso aqui é porteira comercial, não cofre: a
+ * função é trocar o valor pelo contato de quem está comprando, não esconder
+ * segredo. Blindagem real exigiria calcular o preço no servidor, o que só faz
+ * sentido quando a tabela verdadeira entrar.
+ */
+function Valor({
+  valor,
+  liberado,
+  className = "",
+}: {
+  valor: string;
+  liberado: boolean;
+  className?: string;
+}) {
+  if (liberado) return <span className={className}>{valor}</span>;
+  return (
+    <span className={className}>
+      <span aria-hidden className="select-none blur-[6px]">
+        {valor}
+      </span>
+      <span className="sr-only">Valor disponível após informar seu contato</span>
+    </span>
+  );
+}
+
+/**
+ * A troca: o desenho e a composição são livres, o valor pede nome e contato.
+ *
+ * Sem isso, alguém monta a cozinha inteira, tira um print do preço e some — e
+ * a M7 nunca fica sabendo que essa pessoa existiu. Com o contato na mão, o
+ * orçamento vira atendimento mesmo quando a pessoa sai para pesquisar.
+ */
+function PortaoDeContato({
+  onIdentificar,
+  titulo = "Veja o valor do seu orçamento",
+}: {
+  onIdentificar: (lead: Lead) => void;
+  titulo?: string;
+}) {
+  const [nome, setNome] = useState("");
+  const [contato, setContato] = useState("");
+  const [tentou, setTentou] = useState(false);
+
+  const nomeOk = nomeValido(nome);
+  const contatoOk = contatoValido(contato);
+
+  const enviar = (e: React.FormEvent) => {
+    e.preventDefault();
+    setTentou(true);
+    if (nomeOk && contatoOk) onIdentificar({ nome: nome.trim(), contato: contato.trim() });
+  };
+
+  return (
+    <form onSubmit={enviar} className="rounded border border-bronze bg-cream p-6">
+      <h3 className="text-lg font-semibold text-ink">{titulo}</h3>
+      <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-xl">
+        Seu orçamento está pronto. Informe como falar com você e o valor aparece na hora — junto com
+        o desenho e o resumo do que você montou.
+      </p>
+
+      <div className="mt-5 grid sm:grid-cols-2 gap-4">
+        <label className="block">
+          <span className="text-xs uppercase tracking-wider text-muted-foreground">Seu nome</span>
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            autoComplete="name"
+            placeholder="Como podemos te chamar"
+            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+          />
+          {tentou && !nomeOk && (
+            <span className="mt-1 block text-sm text-destructive">Informe seu nome.</span>
+          )}
+        </label>
+        <label className="block">
+          <span className="text-xs uppercase tracking-wider text-muted-foreground">
+            WhatsApp ou e-mail
+          </span>
+          <input
+            type="text"
+            value={contato}
+            onChange={(e) => setContato(e.target.value)}
+            autoComplete="tel"
+            inputMode="text"
+            placeholder="(41) 90000-0000"
+            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+          />
+          {tentou && !contatoOk && (
+            <span className="mt-1 block text-sm text-destructive">
+              Informe um WhatsApp com DDD ou um e-mail válido.
+            </span>
+          )}
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        className="mt-5 inline-flex items-center gap-2 px-7 py-3 bg-bronze text-primary-foreground rounded text-sm font-medium hover:bg-bronze-dark transition-colors"
+      >
+        Ver meu orçamento <ArrowRight className="w-4 h-4" aria-hidden />
+      </button>
+
+      <p className="mt-4 text-xs text-muted-foreground leading-relaxed max-w-xl">
+        Usamos seu contato apenas para falar sobre este orçamento. Nada de lista de disparo — veja a{" "}
+        <Link to="/politica-de-privacidade" className="underline hover:text-bronze">
+          política de privacidade
+        </Link>
+        .
+      </p>
+    </form>
+  );
+}
+
 function PassoResumo({
   orcamento,
   entrega,
   onEntrega,
   acabamento,
   identificacao,
+  lead,
+  onIdentificar,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
   entrega: Entrega;
   onEntrega: (e: Entrega) => void;
   acabamento: Acabamento;
   identificacao: Identificacao;
+  lead: Lead | null;
+  onIdentificar: (lead: Lead) => void;
 }) {
   const cor = CORES.find((c) => c.id === acabamento.corId)!;
+  const liberado = lead !== null;
   return (
     <section>
       <TituloPasso
@@ -853,6 +1003,12 @@ function PassoResumo({
           {...identificacao}
         />
       </div>
+
+      {!liberado && orcamento.itens.length > 0 && (
+        <div className="mb-6">
+          <PortaoDeContato onIdentificar={onIdentificar} />
+        </div>
+      )}
 
       <div className="space-y-4">
         {orcamento.itens.map((calc) => (
@@ -879,7 +1035,11 @@ function PassoResumo({
                 </ul>
               )}
             </div>
-            <span className="text-lg font-semibold text-ink shrink-0">{brl(calc.preco)}</span>
+            <Valor
+              valor={brl(calc.preco)}
+              liberado={liberado}
+              className="text-lg font-semibold text-ink shrink-0"
+            />
           </div>
         ))}
       </div>
@@ -926,7 +1086,7 @@ function PassoResumo({
         </div>
       </div>
 
-      <FaleComArquiteto />
+      <FaleComArquiteto lead={lead} identificacao={identificacao} />
     </section>
   );
 }
@@ -936,7 +1096,13 @@ function PassoResumo({
  * projeto e sem medida. Em vez de perder a visita, o simulador vira porta de
  * entrada para o atendimento com os arquitetos parceiros.
  */
-function FaleComArquiteto() {
+function FaleComArquiteto({
+  lead,
+  identificacao,
+}: {
+  lead: Lead | null;
+  identificacao: Identificacao;
+}) {
   return (
     <div className="mt-8 p-6 rounded border border-border bg-cream">
       <h3 className="font-semibold text-ink">Ficou acima do que você esperava?</h3>
@@ -948,7 +1114,13 @@ function FaleComArquiteto() {
       <div className="mt-5 flex flex-wrap gap-3">
         <a
           href={whatsappLink(
-            "Olá M7 Movelaria, montei um orçamento no site e gostaria de falar com a equipe.",
+            [
+              "Olá M7 Movelaria, montei um orçamento no site e gostaria de falar com a equipe.",
+              identificacao.numero ? `Orçamento ${identificacao.numero}.` : "",
+              lead ? `Meu nome é ${lead.nome}.` : "",
+            ]
+              .filter(Boolean)
+              .join(" "),
           )}
           target="_blank"
           rel="noopener noreferrer"
@@ -972,12 +1144,34 @@ function PassoPagamento({
   entrega,
   pagamento,
   onPagamento,
+  lead,
+  identificacao,
+  onIdentificar,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
   entrega: Entrega;
   pagamento: "pix" | "credito";
   onPagamento: (p: "pix" | "credito") => void;
+  lead: Lead | null;
+  identificacao: Identificacao;
+  onIdentificar: (lead: Lead) => void;
 }) {
+  // Sem identificação não há para quem emitir o pedido: o portão vem antes.
+  if (!lead) {
+    return (
+      <section>
+        <TituloPasso
+          titulo="Pagamento"
+          apoio="Falta só saber com quem estamos falando para fechar o pedido."
+        />
+        <PortaoDeContato
+          onIdentificar={onIdentificar}
+          titulo="Informe seu contato para fechar o pedido"
+        />
+      </section>
+    );
+  }
+
   return (
     <section>
       <TituloPasso
@@ -1034,26 +1228,75 @@ function PassoPagamento({
         </ul>
       </div>
 
-      <button
-        type="button"
+      <a
+        href={whatsappLink(
+          mensagemDoPedido({ orcamento, lead, identificacao, pagamento, entrega }),
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
         className="mt-6 w-full inline-flex items-center justify-center gap-2 px-7 py-4 bg-bronze text-primary-foreground rounded font-medium hover:bg-bronze-dark transition-colors"
       >
-        Finalizar pedido — {pagamento === "pix" ? brl(orcamento.totalPix) : brl(orcamento.total)}
-      </button>
+        <MessageCircle className="w-4 h-4" aria-hidden /> Enviar pedido —{" "}
+        {pagamento === "pix" ? brl(orcamento.totalPix) : brl(orcamento.total)}
+      </a>
       <p className="mt-3 text-center text-sm text-muted-foreground">
-        Você recebe o orçamento completo em PDF por e-mail e no WhatsApp.
+        O pedido chega à equipe com tudo que você montou. A confirmação e a chave de pagamento
+        voltam por ali mesmo.
       </p>
     </section>
   );
 }
 
+/**
+ * O pedido fechado, escrito para chegar no WhatsApp da M7.
+ *
+ * É a ponte enquanto a integração de pagamento não existe: o pedido sai da
+ * tela com medida, acabamento, forma de pagamento escolhida e o código da
+ * simulação, e chega em alguém que pode responder. Quando o gateway entrar,
+ * este botão passa a abrir o checkout e a mensagem vira a confirmação.
+ */
+function mensagemDoPedido({
+  orcamento,
+  lead,
+  identificacao,
+  pagamento,
+  entrega,
+}: {
+  orcamento: ReturnType<typeof calculaOrcamento>;
+  lead: Lead;
+  identificacao: Identificacao;
+  pagamento: "pix" | "credito";
+  entrega: Entrega;
+}) {
+  const itens = orcamento.itens.map(
+    (c) =>
+      `• ${c.modulo.nome} — ${c.item.largura} × ${c.item.altura} × ${c.item.profundidade} mm — ${brl(c.preco)}`,
+  );
+  return [
+    `Olá M7 Movelaria! Fechei um orçamento pelo site.`,
+    ``,
+    `Orçamento ${identificacao.numero || "(sem código)"}`,
+    `Nome: ${lead.nome}`,
+    `Contato: ${lead.contato}`,
+    ``,
+    ...itens,
+    ``,
+    `Entrega: ${entrega === "local" ? "Curitiba e região, com montagem" : "outra cidade — frete a cotar, montagem por minha conta"}`,
+    `Pagamento: ${pagamento === "pix" ? `Pix à vista — ${brl(orcamento.totalPix)}` : `Cartão em ${orcamento.parcelas}× de ${brl(orcamento.parcela)}`}`,
+    `Total: ${brl(orcamento.total)}`,
+  ].join("\n");
+}
+
 function ResumoLateral({
   orcamento,
   etapa,
+  lead,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
   etapa: number;
+  lead: Lead | null;
 }) {
+  const liberado = lead !== null;
   return (
     <aside className="lg:sticky lg:top-24 p-6 rounded border border-border bg-white">
       <h2 className="text-sm uppercase tracking-[0.2em] text-bronze">Seu orçamento</h2>
@@ -1070,32 +1313,52 @@ function ResumoLateral({
                   {c.modulo.nome}
                   {c.item.quantidade > 1 && ` × ${c.item.quantidade}`}
                 </span>
-                <span className="text-ink tabular-nums shrink-0">{brl(c.preco)}</span>
+                <Valor
+                  valor={brl(c.preco)}
+                  liberado={liberado}
+                  className="text-ink tabular-nums shrink-0"
+                />
               </li>
             ))}
           </ul>
           <div className="mt-4 pt-4 border-t border-border space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Móveis</span>
-              <span className="text-ink tabular-nums">{brl(orcamento.subtotal)}</span>
+              <Valor
+                valor={brl(orcamento.subtotal)}
+                liberado={liberado}
+                className="text-ink tabular-nums"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Entrega e montagem</span>
-              <span className="text-ink tabular-nums">
-                {orcamento.freteSobConsulta ? "sob cotação" : brl(orcamento.entrega)}
-              </span>
+              <Valor
+                valor={orcamento.freteSobConsulta ? "sob cotação" : brl(orcamento.entrega)}
+                liberado={liberado || orcamento.freteSobConsulta}
+                className="text-ink tabular-nums"
+              />
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-border flex items-baseline justify-between">
             <span className="font-medium text-ink">Total</span>
-            <span className="text-2xl font-bold text-ink tabular-nums">{brl(orcamento.total)}</span>
+            <Valor
+              valor={brl(orcamento.total)}
+              liberado={liberado}
+              className="text-2xl font-bold text-ink tabular-nums"
+            />
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            ou {orcamento.parcelas}× de {brl(orcamento.parcela)} no cartão
-          </p>
+          {liberado ? (
+            <p className="mt-2 text-sm text-muted-foreground">
+              ou {orcamento.parcelas}× de {brl(orcamento.parcela)} no cartão
+            </p>
+          ) : (
+            <p className="mt-3 text-sm text-bronze">
+              Informe seu contato na etapa do resumo para ver o valor.
+            </p>
+          )}
         </>
       )}
-      {etapa < 5 && orcamento.itens.length > 0 && (
+      {etapa < 5 && orcamento.itens.length > 0 && liberado && (
         <p className="mt-5 text-xs text-muted-foreground leading-relaxed">
           O valor se ajusta sozinho a cada medida e acabamento que você muda.
         </p>

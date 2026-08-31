@@ -19,6 +19,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as Showroom3dRouteImport } from './routes/showroom-3d'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as ApiLeadsRouteImport } from './routes/api.leads'
 import { Route as MoveisPlanejadosEmCidadeRouteImport } from './routes/moveis-planejados-em.$cidade'
 import { Route as MoveisPlanejadosIndexRouteImport } from './routes/moveis-planejados.index'
 import { Route as MoveisPlanejadosServicoRouteImport } from './routes/moveis-planejados.$servico'
@@ -75,6 +76,11 @@ const SobreRoute = SobreRouteImport.update({
   path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLeadsRoute = ApiLeadsRouteImport.update({
+  id: '/api/leads',
+  path: '/api/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MoveisPlanejadosEmCidadeRoute =
   MoveisPlanejadosEmCidadeRouteImport.update({
     id: '/moveis-planejados-em/$cidade',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/api/leads': typeof ApiLeadsRoute
   '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
   '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/api/leads': typeof ApiLeadsRoute
   '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
   '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/showroom-3d': typeof Showroom3dRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/api/leads': typeof ApiLeadsRoute
   '/moveis-planejados-em/$cidade': typeof MoveisPlanejadosEmCidadeRoute
   '/moveis-planejados/$servico': typeof MoveisPlanejadosServicoRoute
   '/projetos/$projectId': typeof ProjetosProjectIdRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
+    | '/api/leads'
     | '/moveis-planejados-em/$cidade'
     | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
+    | '/api/leads'
     | '/moveis-planejados-em/$cidade'
     | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/showroom-3d'
     | '/sitemap.xml'
     | '/sobre'
+    | '/api/leads'
     | '/moveis-planejados-em/$cidade'
     | '/moveis-planejados/$servico'
     | '/projetos/$projectId'
@@ -219,6 +231,7 @@ export interface RootRouteChildren {
   Showroom3dRoute: typeof Showroom3dRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
+  ApiLeadsRoute: typeof ApiLeadsRoute
   MoveisPlanejadosEmCidadeRoute: typeof MoveisPlanejadosEmCidadeRoute
   MoveisPlanejadosServicoRoute: typeof MoveisPlanejadosServicoRoute
   ProjetosProjectIdRoute: typeof ProjetosProjectIdRoute
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/leads': {
+      id: '/api/leads'
+      path: '/api/leads'
+      fullPath: '/api/leads'
+      preLoaderRoute: typeof ApiLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/moveis-planejados-em/$cidade': {
       id: '/moveis-planejados-em/$cidade'
       path: '/moveis-planejados-em/$cidade'
@@ -347,6 +367,7 @@ const rootRouteChildren: RootRouteChildren = {
   Showroom3dRoute: Showroom3dRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
+  ApiLeadsRoute: ApiLeadsRoute,
   MoveisPlanejadosEmCidadeRoute: MoveisPlanejadosEmCidadeRoute,
   MoveisPlanejadosServicoRoute: MoveisPlanejadosServicoRoute,
   ProjetosProjectIdRoute: ProjetosProjectIdRoute,
