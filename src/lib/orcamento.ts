@@ -24,8 +24,7 @@ import {
   DOBRADICA,
   ENTREGA_LOCAL,
   FATOR_SITE,
-  FITA_FRENTE,
-  FITA_INTERIOR,
+  FITA_ML,
   FOLGA_ELETRO,
   INSUMOS_PCT,
   MODULOS,
@@ -35,7 +34,7 @@ import {
   PARAFUSOS_POR_PRATELEIRA,
   PARCELAS_MAX,
   PUXADOR,
-  RIPADO_M2,
+  RIPADO_FATOR_MATERIAL,
   UNIBLOCK,
   UNIBLOCK_POR_PRATELEIRA,
   porM2,
@@ -164,13 +163,15 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const fundoM2 = L * A + modulo.gavetas * L * P;
 
   // ————— fita de borda —————
-  // Bordas aparentes: as internas levam fita branca, as frentes levam fita da
-  // cor, que custa quase sete vezes mais.
+  // Preço único por metro aplicado, nas bordas aparentes da caixa e no
+  // perímetro de cada frente.
   const larguraFrente = modulo.portas > 0 ? L / modulo.portas : L;
   const alturaGaveta = modulo.gavetas > 0 ? alturaFrente / modulo.gavetas : 0;
-  const fitaInteriorMl = (2 + modulo.prateleiras + travessasExtras) * L + 2 * A;
-  const fitaFrenteMl =
-    modulo.portas * 2 * (larguraFrente + alturaFrente) + modulo.gavetas * 2 * (L + alturaGaveta);
+  const fitaMl =
+    (2 + modulo.prateleiras + travessasExtras) * L +
+    2 * A +
+    modulo.portas * 2 * (larguraFrente + alturaFrente) +
+    modulo.gavetas * 2 * (L + alturaGaveta);
 
   // ————— ferragem —————
   const dobradicas = modulo.portas * (alturaFrente > 1.2 ? 3 : 2);
@@ -195,25 +196,23 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   ];
 
   if (frentesM2 > 0) {
+    // O ripado dobra o consumo de chapa da frente: as ripas saem da mesma
+    // chapa, então a área cotada vai a duas vezes a área da porta.
+    const consumoFrente = frentesM2 * (acab.ripada ? RIPADO_FATOR_MATERIAL : 1);
     linhas.push({
       descricao: `Frentes em chapa ${cor.nome}${acab.ripada ? " com ripado" : ""}`,
-      detalhe: `${frentesM2.toFixed(2)} m² · ${frentes} ${frentes === 1 ? "frente" : "frentes"}`,
-      valor: frentesM2 * (porM2(CHAPAS.frente) + (acab.ripada ? RIPADO_M2 : 0)),
+      detalhe: acab.ripada
+        ? `${frentesM2.toFixed(2)} m² de porta · ${consumoFrente.toFixed(2)} m² de chapa (o ripado dobra o material)`
+        : `${frentesM2.toFixed(2)} m² · ${frentes} ${frentes === 1 ? "frente" : "frentes"}`,
+      valor: consumoFrente * porM2(CHAPAS.frente),
     });
   }
 
   linhas.push({
-    descricao: "Fita de borda branca",
-    detalhe: `${fitaInteriorMl.toFixed(1)} m aplicados`,
-    valor: fitaInteriorMl * FITA_INTERIOR,
+    descricao: "Fita de borda",
+    detalhe: `${fitaMl.toFixed(1)} m aplicados`,
+    valor: fitaMl * FITA_ML,
   });
-  if (fitaFrenteMl > 0) {
-    linhas.push({
-      descricao: "Fita de borda na cor da frente",
-      detalhe: `${fitaFrenteMl.toFixed(1)} m aplicados`,
-      valor: fitaFrenteMl * FITA_FRENTE,
-    });
-  }
   if (dobradicas > 0) {
     linhas.push({
       descricao: "Dobradiças",
@@ -240,7 +239,7 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
     detalhe: `${parafusos} un`,
     valor: parafusos * PARAFUSO,
   });
-  if (acab.puxador && frentes > 0 && PUXADOR > 0) {
+  if (acab.puxador && frentes > 0) {
     linhas.push({
       descricao: "Puxador",
       detalhe: `${frentes} un`,

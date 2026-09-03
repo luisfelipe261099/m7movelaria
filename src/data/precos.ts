@@ -67,15 +67,12 @@ export const CORES: Cor[] = [
 // ————————————————————————————————————————————————————————————
 
 /**
- * Fita de borda por metro aplicado. A M7 passou dois valores; a leitura aqui é
- * que o mais barato é a fita branca dos interiores e o outro a fita de cor,
- * que acompanha a frente.
- *
- * A CONFIRMAR: se os dois valores forem outra coisa (largura de fita, por
- * exemplo), é só corrigir os dois números.
+ * Fita de borda: R$ 3,00 por metro aplicado, preço único. O 0,45 que veio
+ * junto na mensagem é a espessura da fita em milímetros, não um segundo preço
+ * — confirmado pela M7.
  */
-export const FITA_INTERIOR = 0.45;
-export const FITA_FRENTE = 3.0;
+export const FITA_ML = 3.0;
+export const FITA_ESPESSURA_MM = 0.45;
 
 /** Dobradiça, por unidade. */
 export const DOBRADICA = 3.26;
@@ -111,13 +108,15 @@ export const PARAFUSOS_POR_PRATELEIRA = 2;
  */
 export const INSUMOS_PCT = 0.03;
 
+/** Puxador, por peça. Base definida pela M7 — o modelo exato varia. */
+export const PUXADOR = 15;
+
 /**
- * A CONFIRMAR — nenhum dos dois foi orçado pela M7 ainda, então hoje entram
- * como zero. O cliente escolhe na tela e o valor não muda; assim que os preços
- * chegarem, é só preencher.
+ * Porta ripada não tem preço de usinagem à parte: segundo a M7, o ripado
+ * "dobra o material" — as ripas saem da mesma chapa e o consumo de frente vai
+ * a duas vezes a área. É assim que entra na conta.
  */
-export const PUXADOR = 0;
-export const RIPADO_M2 = 0;
+export const RIPADO_FATOR_MATERIAL = 2;
 
 /** Entrega + montagem em Curitiba e região. A CONFIRMAR com a M7. */
 export const ENTREGA_LOCAL = 180;

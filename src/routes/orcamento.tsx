@@ -736,13 +736,13 @@ function PassoAcabamento({
         <div className="p-5 rounded border border-border bg-white space-y-4">
           <Opcao
             titulo="Porta ripada"
-            apoio="Usinagem em ripas na frente da porta."
+            apoio="As ripas saem da mesma chapa, então a frente consome o dobro de material."
             ativo={valor.ripada}
             onToggle={() => onChange({ ...valor, ripada: !valor.ripada })}
           />
           <Opcao
             titulo="Puxador perfil"
-            apoio="Sem puxador, a abertura fica por cava usinada."
+            apoio="Sem puxador, a abertura fica por cava usinada na própria porta."
             ativo={valor.puxador}
             onToggle={() => onChange({ ...valor, puxador: !valor.puxador })}
           />
