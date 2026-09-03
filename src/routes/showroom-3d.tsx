@@ -15,6 +15,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { pageSeo, canonical } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
 import { FloorPlanChooser } from "@/components/FloorPlanChooser";
+import { Breadcrumbs } from "@/components/PageParts";
 import { rooms, type Hotspot, type Room } from "@/data/rooms";
 import { projects } from "@/data/projects";
 
@@ -34,6 +35,11 @@ function isIOSDevice() {
   );
 }
 
+const TRAIL = [
+  { name: "Início", path: "/" },
+  { name: "Showroom 3D", path: "/showroom-3d" },
+];
+
 export const Route = createFileRoute("/showroom-3d")({
   head: () => ({
     ...pageSeo({
@@ -49,10 +55,7 @@ export const Route = createFileRoute("/showroom-3d")({
           name: "Showroom 3D — tour 360° da M7 Movelaria",
           description:
             "Tour virtual 360° pelos ambientes do showroom da M7 Movelaria, com móveis planejados sob medida.",
-          breadcrumb: [
-            { name: "Início", path: "/" },
-            { name: "Showroom 3D", path: "/showroom-3d" },
-          ],
+          breadcrumb: TRAIL,
         }),
       ]),
     ],
@@ -147,10 +150,17 @@ function Showroom3DPage() {
       <SiteHeader />
       <main id="conteudo">
         <section className="pt-28 pb-6 max-w-7xl mx-auto px-6 text-center">
+          {/* O JSON-LD já declarava BreadcrumbList; faltava a trilha visível,
+              que é o que o visitante e o rastreador usam para se situar. */}
+          <div className="text-left mb-6 [&_a]:text-white/70 [&_a:hover]:text-bronze [&_li[aria-current]]:text-white">
+            <Breadcrumbs trail={TRAIL} />
+          </div>
           <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">
             Tour Virtual · Imersão 360°
           </p>
-          <h1 className="font-display text-4xl md:text-6xl leading-tight">Tour 360° Imersivo</h1>
+          <h1 className="font-display text-4xl md:text-6xl leading-tight">
+            Showroom 3D: ambientes planejados da M7 em tour 360°
+          </h1>
           <p className="text-white/60 mt-4 max-w-2xl mx-auto text-sm md:text-base">
             Escolha um ambiente na planta e entre em uma imersão 360° pelos ambientes M7 — hall,
             sala, cozinha, dormitório, closet, lavabo, escritório e adega. Clique nos pontos

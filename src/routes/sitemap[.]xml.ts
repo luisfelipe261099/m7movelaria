@@ -54,6 +54,13 @@ export const Route = createFileRoute("/sitemap.xml")({
             path: `/projetos/${p.slug}`,
             changefreq: "monthly" as const,
             priority: "0.7",
+            // Era a única entrada sem imagens: as quatro fotos de ambiente de
+            // cada projeto não apareciam em lugar nenhum para o Google Imagens.
+            // "Render de..." e nunca "executado" — são imagens de projeto.
+            images: p.ambientes.map((a) => ({
+              loc: `${SITE_URL}${images[a.image].src}`,
+              title: `Render de ${a.name.toLowerCase()} — ${p.name}`,
+            })),
           })),
           { path: "/perguntas-frequentes", changefreq: "monthly", priority: "0.7" },
           { path: "/sobre", changefreq: "yearly", priority: "0.6" },

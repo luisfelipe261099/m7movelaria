@@ -23,6 +23,12 @@ export type Ambiente = {
   image: ImageName;
   intro: string;
   hotspots: Hotspot[];
+  /**
+   * Página de serviço que aprofunda este tipo de ambiente. Existe para o
+   * projeto deixar de ser beco sem saída: quem chega no portfólio por uma
+   * imagem encontra o caminho para "como projetamos isso".
+   */
+  servicoSlug?: string;
 };
 
 export type Project = {
@@ -53,6 +59,7 @@ export const projects: Project[] = [
         image: "hero-living",
         intro:
           "Ambiente principal com painel de TV em MDF Nogueira, home rack basculante e prateleiras iluminadas.",
+        servicoSlug: "home-theater-e-painel-de-tv",
         hotspots: [
           {
             id: "painel-tv",
@@ -88,6 +95,7 @@ export const projects: Project[] = [
         image: "project-kitchen",
         intro:
           "Cozinha com armários em laca fosca, ilha em quartzo e iluminação técnica sob os aéreos.",
+        servicoSlug: "cozinhas-planejadas",
         hotspots: [
           {
             id: "aereos",
@@ -121,6 +129,7 @@ export const projects: Project[] = [
         image: "project-closet",
         intro:
           "Closet com cabideiros iluminados, gavetas internas e vitrines em vidro fumê com serralheria.",
+        servicoSlug: "closets-planejados",
         hotspots: [
           {
             id: "cabideiro",
@@ -155,6 +164,7 @@ export const projects: Project[] = [
         image: "project-office",
         intro:
           "Escritório com estante iluminada, mesa em MDF Nogueira e vitrines em serralheria preta.",
+        servicoSlug: "home-office-planejado",
         hotspots: [
           {
             id: "estante",

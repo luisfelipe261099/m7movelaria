@@ -137,7 +137,7 @@ export function FaqSection({
   heading = "Perguntas frequentes",
   tone = "cream",
 }: {
-  items: ReadonlyArray<{ q: string; a: string }>;
+  items: ReadonlyArray<{ q: string; a: string; link?: { to: string; label: string } }>;
   heading?: string;
   tone?: "light" | "cream";
 }) {
@@ -158,6 +158,16 @@ export function FaqSection({
                 </span>
               </summary>
               <p className="mt-3 text-muted-foreground leading-relaxed">{f.a}</p>
+              {/* Sublinhado, e não só colorido: cor sozinha não distingue link
+                  de texto corrido (WCAG 1.4.1). */}
+              {f.link && (
+                <Link
+                  to={f.link.to}
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                >
+                  {f.link.label} <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                </Link>
+              )}
             </details>
           ))}
         </div>
@@ -171,7 +181,12 @@ export function RelatedLinks({
   links,
 }: {
   heading: string;
-  links: Array<{ to: string; label: string; desc: string }>;
+  /**
+   * `desc` é opcional: a página de cidade passava aqui a própria meta
+   * description de cada vizinha, e o texto que deveria ser exclusivo da
+   * `<meta>` acabava reimpresso no corpo das outras cinco cidades.
+   */
+  links: Array<{ to: string; label: string; desc?: string }>;
 }) {
   return (
     <section className="py-16">
@@ -185,7 +200,9 @@ export function RelatedLinks({
               className="block border border-border rounded p-6 hover:border-bronze/60 hover:shadow-md transition-all"
             >
               <h3 className="font-semibold text-ink">{l.label}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{l.desc}</p>
+              {l.desc && (
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{l.desc}</p>
+              )}
               <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-bronze">
                 Ver página <ArrowRight className="w-3.5 h-3.5" aria-hidden />
               </span>

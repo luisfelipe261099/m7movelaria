@@ -32,7 +32,9 @@ import { images } from "@/assets/generated/images";
 const HERO_SIZES = "(min-width: 1024px) 46vw, 100vw";
 
 /** Perguntas na própria home: capturam a busca informacional sem obrigar o
- *  visitante a navegar, e habilitam o rich result de FAQ na SERP da marca. */
+ *  visitante a navegar. Não contam mais como rich result de FAQ na SERP — o
+ *  recurso ficou restrito a governo e saúde em agosto/2023 —, mas continuam
+ *  respondendo a busca informacional dentro da própria página. */
 const HOME_FAQ = [
   {
     q: "A M7 Movelaria atende Curitiba além de São José dos Pinhais?",

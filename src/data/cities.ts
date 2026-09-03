@@ -99,7 +99,7 @@ const content: Record<string, CityBody> = {
       },
       {
         q: "Trabalham junto com arquitetos em Curitiba?",
-        a: "Sim, é parte grande do que fazemos. Quando existe projeto de arquitetura, executamos conforme o detalhamento e devolvemos a compatibilização — apontando onde a medida real do local diverge do desenho e o que isso exige de ajuste antes do corte.",
+        a: "Sim, e em Curitiba isso é a maior parte do que chega até nós — a cidade concentra os escritórios de interiores da região. O que muda em relação a um atendimento direto: recebemos o detalhamento pronto, medimos o local antes do corte e devolvemos a compatibilização por escrito. Em apartamento de prédio antigo do Batel ou do Água Verde, a divergência entre o desenho e a parede real é regra, não exceção, e é melhor descobrir isso antes da chapa cortada.",
       },
       {
         q: "Dá para visitar o ateliê antes de fechar?",

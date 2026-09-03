@@ -1,9 +1,9 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { getProject, type Ambiente, type Hotspot } from "@/data/projects";
-import { X } from "lucide-react";
-import { pageSeo, canonical } from "@/lib/seo";
+import { ArrowRight, X } from "lucide-react";
+import { pageSeo, canonical, ID_BUSINESS } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
 import { Breadcrumbs, CtaBand } from "@/components/PageParts";
 import { Picture } from "@/components/Picture";
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/projetos/$projectId")({
             name: project.name,
             description: project.description,
             url: canonical(path),
-            creator: { "@id": `${canonical("/")}#business` },
+            creator: { "@id": ID_BUSINESS },
             about: project.ambientes.map((a) => a.name).join(", "),
           },
         ]),
@@ -162,6 +162,79 @@ function ProjectPage() {
               <p className="text-sm uppercase tracking-widest text-bronze mt-4">
                 Toque nos pontos dourados para explorar os detalhes
               </p>
+            </div>
+          </div>
+        </section>
+        {/*
+          A especificação em marcação, fora do estado do React.
+
+          Todo o painel técnico do projeto vivia dentro de `{hotspot && (...)}`,
+          com estado inicial `null`: o conteúdo existia só depois de um clique
+          que nenhum rastreador dá. Na prática a página tinha 317 palavras
+          visíveis e todo o material, ferragem e iluminação ficava invisível
+          para busca — e para quem usa leitor de tela.
+
+          `@/data/projects` já é importado no topo deste arquivo, então isto não
+          acrescenta um byte de JavaScript: é o mesmo módulo, agora renderizado.
+          O visualizador continua sendo o jeito bonito de navegar; esta seção é a
+          versão legível.
+        */}
+        <section className="border-t border-border bg-cream">
+          <div className="max-w-4xl mx-auto px-6 py-16">
+            <h2 className="text-2xl md:text-3xl font-bold text-ink">
+              Especificação de projeto de cada ambiente
+            </h2>
+            <p className="mt-3 text-muted-foreground leading-relaxed max-w-2xl">
+              O que está desenhado em cada ambiente deste projeto: material, ferragem especificada e
+              iluminação, peça por peça.
+            </p>
+
+            <div className="mt-10 space-y-12">
+              {project.ambientes.map((amb: Ambiente) => (
+                <article key={amb.id}>
+                  <h3 className="text-xl font-semibold text-ink">{amb.name}</h3>
+                  <p className="mt-2 text-muted-foreground leading-relaxed">{amb.intro}</p>
+
+                  <div className="mt-6 space-y-8">
+                    {amb.hotspots.map((h) => (
+                      <div key={h.id} className="border-l-2 border-bronze/30 pl-5">
+                        <h4 className="font-semibold text-ink">{h.name}</h4>
+                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                          {h.description}
+                        </p>
+                        <dl className="mt-3 space-y-1.5 text-sm">
+                          {[
+                            ["Materiais", h.materials],
+                            ["Ferragens", h.ferragens],
+                            ["Iluminação", h.iluminacao],
+                            ["Diferenciais", h.diferenciais],
+                          ]
+                            .filter(([, itens]) => (itens as string[]).length > 0)
+                            .map(([rotulo, itens]) => (
+                              <div key={rotulo as string} className="flex flex-wrap gap-x-2">
+                                <dt className="text-bronze">{rotulo as string}:</dt>
+                                <dd className="text-muted-foreground">
+                                  {(itens as string[]).join(" · ")}
+                                </dd>
+                              </div>
+                            ))}
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+
+                  {amb.servicoSlug && (
+                    <Link
+                      to="/moveis-planejados/$servico"
+                      params={{ servico: amb.servicoSlug }}
+                      className="mt-5 inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                    >
+                      Como projetamos {amb.name.toLowerCase()}{" "}
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                    </Link>
+                  )}
+                </article>
+              ))}
             </div>
           </div>
         </section>

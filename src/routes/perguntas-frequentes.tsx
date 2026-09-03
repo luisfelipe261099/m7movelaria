@@ -33,8 +33,9 @@ export const Route = createFileRoute("/perguntas-frequentes")({
             "Dúvidas comuns sobre preço, prazo, materiais, ferragens e instalação de marcenaria sob medida.",
           breadcrumb: TRAIL,
         }),
-        // FAQPage com todas as perguntas — é este nó que habilita o rich result
-        // de perguntas frequentes na SERP.
+        // FAQPage com todas as perguntas. Descreve o conteúdo para o Google; o
+        // resultado com sanfona na SERP não vale mais para este tipo de site
+        // desde agosto/2023 (ficou restrito a governo e saúde).
         faqPage(
           canonical(PATH),
           (loaderData?.faq ?? []).map((f) => ({ q: f.q, a: f.a })),

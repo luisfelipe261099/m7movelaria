@@ -54,10 +54,25 @@ function ProjectsList() {
         <h1 className="text-4xl md:text-5xl font-bold text-ink leading-[1.1] text-balance">
           Projetos de marcenaria sob medida da M7
         </h1>
-        <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
-          Cada projeto abaixo abre com seus ambientes e hotspots interativos que mostram material,
-          ferragem e iluminação usados em cada ponto.
-        </p>
+        {/* Conteúdo que só faz sentido num índice: sem isto a página era o card
+            do projeto e mais nada, e não respondia nada a quem chegava nela. */}
+        <div className="mt-5 max-w-2xl space-y-4 text-muted-foreground leading-relaxed">
+          <p>
+            Cada projeto abre com seus ambientes e pontos interativos: você clica em uma peça e vê o
+            que foi especificado ali — a chapa, a ferragem, o tipo de iluminação e o que o detalhe
+            resolve no uso do dia a dia.
+          </p>
+          <p>
+            A M7 documenta projeto peça por peça porque é assim que o móvel é produzido. A diferença
+            entre uma corrediça de 35 kg e uma reforçada, entre lâmina natural e laca fosca, entre
+            dobradiça comum e amortecida, aparece no orçamento e aparece no uso depois de instalado.
+            Mostrar essa escolha é mais honesto do que mostrar só a foto bonita do conjunto.
+          </p>
+          <p>
+            As imagens abaixo são renders dos projetos executivos — o desenho aprovado antes do
+            corte, não fotografia de obra entregue.
+          </p>
+        </div>
         <div className="mb-12" />
         <div className="grid md:grid-cols-2 gap-10">
           {projects.map((p) => (

@@ -16,6 +16,13 @@ export type FaqItem = {
   a: string;
   /** Agrupa as perguntas em blocos na página. */
   group: "Projeto e orçamento" | "Materiais e acabamentos" | "Prazos e instalação" | "Atendimento";
+  /**
+   * Link contextual no fim da resposta, quando existe uma página que aprofunda
+   * de verdade o que foi respondido. Fica FORA do campo `a` de propósito: `a`
+   * alimenta o FAQPage do JSON-LD, e HTML dentro de dado estruturado é sujeira.
+   * Poucos e escolhidos — link em toda resposta vira menu, não caminho.
+   */
+  link?: { to: string; label: string };
 };
 
 export const faq: FaqItem[] = [
@@ -23,6 +30,7 @@ export const faq: FaqItem[] = [
     group: "Projeto e orçamento",
     q: "Quanto custa um móvel planejado?",
     a: "Marcenaria sob medida não tem preço de tabela porque não tem produto de prateleira. O valor de cada projeto é formado por quatro variáveis: os metros lineares efetivamente projetados, o tipo de chapa e acabamento (MDF revestido, laca fosca ou lâmina natural), a ferragem especificada e a quantidade de gavetas e mecanismos. Duas cozinhas do mesmo tamanho podem ter valores bem diferentes só pela escolha de ferragem. O caminho é enviar a planta ou as medidas pelo WhatsApp e receber um orçamento fechado do seu projeto.",
+    link: { to: "/moveis-planejados", label: "Ver os tipos de móvel planejado que fazemos" },
   },
   {
     group: "Projeto e orçamento",
@@ -43,6 +51,10 @@ export const faq: FaqItem[] = [
     group: "Materiais e acabamentos",
     q: "Qual a diferença entre MDF, MDP e madeira maciça?",
     a: "MDF é fibra de madeira prensada em painel homogêneo: aceita usinagem, corte curvo e pintura, e é o material padrão da marcenaria planejada de qualidade. MDP tem partículas maiores, é mais barato e menos indicado onde há usinagem, furação repetida ou peso. Madeira maciça é mais nobre e mais viva — trabalha com a umidade, o que exige projeto pensado para essa movimentação e costuma limitá-la a peças específicas em vez do móvel inteiro. Na prática, um projeto bem feito combina os materiais por função em vez de escolher um só.",
+    link: {
+      to: "/moveis-planejados/cozinhas-planejadas",
+      label: "Ver como especificamos material na cozinha",
+    },
   },
   {
     group: "Materiais e acabamentos",
@@ -88,6 +100,10 @@ export const faq: FaqItem[] = [
     group: "Atendimento",
     q: "Posso visitar o ateliê antes de fechar?",
     a: "Pode, e recomendamos. O ateliê fica na R. Henrique Bortolam, 182, no bairro Costeira, em São José dos Pinhais. Combine o horário pelo WhatsApp para garantir que haja alguém disponível para te acompanhar — é a melhor forma de ver acabamento e ferragem de perto em vez de decidir por foto.",
+    link: {
+      to: "/moveis-planejados-em/sao-jose-dos-pinhais",
+      label: "Onde fica o ateliê em São José dos Pinhais",
+    },
   },
   {
     group: "Atendimento",

@@ -49,7 +49,13 @@ export const Route = createFileRoute("/moveis-planejados-em/$cidade")({
       }),
       scripts: [
         jsonLd([
-          ...webPage({ path, name: city.h1, description: city.description, breadcrumb: trail }),
+          ...webPage({
+            path,
+            name: city.h1,
+            description: city.description,
+            image: `${SITE_URL}${images[city.image].src}`,
+            breadcrumb: trail,
+          }),
           serviceSchema({
             path,
             name: `Móveis planejados em ${city.name}`,
@@ -143,7 +149,6 @@ function CityPage() {
           links={others.map((c) => ({
             to: `/moveis-planejados-em/${c.slug}`,
             label: `Móveis planejados em ${c.name}`,
-            desc: c.description,
           }))}
         />
 

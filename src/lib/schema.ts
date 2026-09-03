@@ -80,15 +80,19 @@ export function globalGraph(): Json[] {
       ],
       // sameAs fica vazio até existirem perfis reais (Instagram, Google, Facebook).
       // Declarar perfil inexistente quebra a validação de entidade no Google.
+      // O `itemOffered` referencia por `@id` o mesmo Service que a página do
+      // serviço declara. Sem isso, a página de cozinhas servia dois nós: um
+      // anônimo vindo daqui com serviceType "Cozinhas planejadas" e o da
+      // própria página com "cozinha planejada" — dois serviços diferentes para
+      // o Google. Merge de `@id` com propriedades parciais é JSON-LD válido, e
+      // o nome fica declarado para a home não listar seis ofertas sem rótulo.
       makesOffer: serviceCatalog.map((s) => ({
         "@type": "Offer",
         itemOffered: {
+          "@id": `${canonical(`/moveis-planejados/${s.slug}`)}#service`,
           "@type": "Service",
           name: s.name,
-          description: s.short,
           serviceType: s.name,
-          provider: { "@id": ID_BUSINESS },
-          areaServed: SERVED_CITIES.map((city) => ({ "@type": "City", name: city })),
         },
       })),
     },
@@ -152,7 +156,11 @@ export function breadcrumb(pageUrl: string, trail: Array<{ name: string; path: s
   };
 }
 
-/** FAQPage — habilita o rich result de perguntas frequentes na SERP. */
+/**
+ * FAQPage. Marcação válida do conteúdo — mas o resultado com sanfona na SERP
+ * saiu do ar para este tipo de site em agosto/2023 (restrito a governo e
+ * saúde). Serve para o Google entender a página, não para ganhar espaço.
+ */
 export function faqPage(pageUrl: string, faqs: Array<{ q: string; a: string }>): Json {
   return {
     "@type": "FAQPage",

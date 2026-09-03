@@ -59,6 +59,10 @@ export const Route = createFileRoute("/moveis-planejados/$servico")({
             path,
             name: svc.h1,
             description: svc.description,
+            // Sem isto o `primaryImageOfPage` apontava para a og-cover genérica
+            // enquanto o `og:image` da mesma página apontava para a foto do
+            // serviço — dois sinais de imagem principal contradizendo um ao outro.
+            image: `${SITE_URL}${images[svc.image].src}`,
             breadcrumb: trail,
           }),
           serviceSchema({
