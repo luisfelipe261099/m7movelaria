@@ -14,7 +14,7 @@ const TRAIL = [
 export const Route = createFileRoute("/projetos/")({
   head: () => ({
     ...pageSeo({
-      title: "Projetos de Marcenaria Executados | M7",
+      title: "Projetos de Marcenaria da M7 Movelaria",
       description:
         "Portfólio interativo da M7 Movelaria: projetos de marcenaria de alto padrão em São José dos Pinhais e Curitiba, com os materiais e ferragens de cada ambiente.",
       path: "/projetos",

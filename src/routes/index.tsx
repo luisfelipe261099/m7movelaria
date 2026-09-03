@@ -56,7 +56,7 @@ export const Route = createFileRoute("/")({
     const path = "/";
     return {
       ...pageSeo({
-        title: "Móveis Planejados em São José dos Pinhais | M7",
+        title: "Móveis Planejados em São José dos Pinhais | M7 Movelaria",
         description:
           "Marcenaria de alto padrão em São José dos Pinhais e Curitiba: cozinhas, dormitórios, closets e home office planejados sob medida. Peça seu orçamento.",
         path,

@@ -43,7 +43,7 @@ export const serviceCatalog: ServiceSummary[] = [
     image: "project-kitchen",
     imageAlt:
       "Cozinha planejada com bancada em quartzo, armários superiores e iluminação em LED embutida",
-    title: "Cozinhas Planejadas em São José dos Pinhais | M7",
+    title: "Cozinha Planejada em São José dos Pinhais | M7 Movelaria",
     description:
       "Cozinha planejada sob medida em São José dos Pinhais e Curitiba: torre quente, ilha, ferragens Blum e acabamento em laca ou lâmina natural. Peça o orçamento.",
     h1: "Cozinhas planejadas sob medida em São José dos Pinhais e Curitiba",
@@ -110,7 +110,7 @@ export const serviceCatalog: ServiceSummary[] = [
     image: "hero-living",
     imageAlt:
       "Sala de estar com painel de TV em marcenaria de madeira nogueira e prateleiras iluminadas",
-    title: "Painel de TV e Home Theater Planejado | M7",
+    title: "Painel de TV e Home Theater | M7 Movelaria",
     description:
       "Painel de TV e home theater sob medida em São José dos Pinhais e Curitiba: painel ripado, rack basculante, nichos e LED embutido. Peça o orçamento.",
     h1: "Home theater e painel de TV planejados sob medida",
@@ -134,7 +134,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "sao-jose-dos-pinhais",
     name: "São José dos Pinhais",
     h1: "Móveis planejados em São José dos Pinhais",
-    title: "Móveis Planejados em São José dos Pinhais | M7",
+    title: "Marcenaria em São José dos Pinhais | M7 Movelaria",
     description:
       "Marcenaria sob medida em São José dos Pinhais: cozinhas, dormitórios, closets e home office. Ateliê na R. Henrique Bortolam, 182. Peça seu orçamento.",
     image: "project-kitchen",
@@ -144,7 +144,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "curitiba",
     name: "Curitiba",
     h1: "Móveis planejados em Curitiba",
-    title: "Móveis Planejados em Curitiba sob Medida | M7",
+    title: "Móveis Planejados em Curitiba | M7 Movelaria",
     description:
       "Marcenaria de alto padrão sob medida em Curitiba: cozinhas, closets, home office e painel de TV. Atendemos Batel, Água Verde, Ecoville e região.",
     image: "hero-living",
@@ -154,7 +154,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "pinhais",
     name: "Pinhais",
     h1: "Móveis planejados em Pinhais",
-    title: "Móveis Planejados em Pinhais sob Medida | M7",
+    title: "Móveis Planejados em Pinhais | M7 Movelaria",
     description:
       "Marcenaria sob medida em Pinhais: cozinhas, guarda-roupas, closets e home office planejados. Atendemos Centro, Weissópolis e Alphaville Graciosa.",
     image: "project-closet",
@@ -164,7 +164,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "araucaria",
     name: "Araucária",
     h1: "Móveis planejados em Araucária",
-    title: "Móveis Planejados em Araucária sob Medida | M7",
+    title: "Móveis Planejados em Araucária | M7 Movelaria",
     description:
       "Marcenaria sob medida em Araucária: cozinhas planejadas, dormitórios, closets e móveis comerciais. Projeto, produção e instalação própria.",
     image: "project-office",
@@ -174,7 +174,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "colombo",
     name: "Colombo",
     h1: "Móveis planejados em Colombo",
-    title: "Móveis Planejados em Colombo sob Medida | M7",
+    title: "Móveis Planejados em Colombo | M7 Movelaria",
     description:
       "Marcenaria sob medida em Colombo: cozinha planejada, guarda-roupa, closet e painel de TV. Medição no local e instalação pela nossa equipe.",
     image: "finish-lamina-45",
@@ -184,7 +184,7 @@ export const cityCatalog: CitySummary[] = [
     slug: "fazenda-rio-grande",
     name: "Fazenda Rio Grande",
     h1: "Móveis planejados em Fazenda Rio Grande",
-    title: "Móveis Planejados em Fazenda Rio Grande | M7",
+    title: "Móveis Planejados em Fazenda Rio Grande | M7 Movelaria",
     description:
       "Marcenaria sob medida em Fazenda Rio Grande: cozinha planejada, guarda-roupa e home office. Projeto próprio, produção e instalação. Peça o orçamento.",
     image: "project-kitchen",

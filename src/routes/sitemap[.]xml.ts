@@ -11,7 +11,7 @@ import { SITE_URL } from "@/lib/seo";
  * todo — o Google detecta isso e passa a ignorar o campo no site inteiro.
  * Então: constante, atualizada à mão quando o conteúdo da rota mudar.
  */
-const LASTMOD = "2026-08-20";
+const LASTMOD = "2026-09-01";
 
 interface SitemapEntry {
   path: string;
