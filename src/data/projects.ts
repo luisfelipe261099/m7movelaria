@@ -39,8 +39,8 @@ export const projects: Project[] = [
   {
     slug: "residencia-aurora",
     name: "Residência Aurora",
-    client: "Família Almeida",
-    architect: "Studio Larissa Tortato",
+    client: "Projeto residencial",
+    architect: "Projeto M7",
     coverName: "hero-living",
     description:
       "Projeto residencial de alto padrão com marcenaria integrada em madeira nogueira e detalhes em dourado fosco.",
@@ -60,7 +60,7 @@ export const projects: Project[] = [
             x: 62,
             y: 42,
             description:
-              "Painel executado em MDF Nogueira 18mm com nichos ripados e iluminação embutida em perfil de LED.",
+              "Painel especificado em MDF Nogueira 18mm com nichos ripados e iluminação embutida em perfil de LED.",
             materials: ["MDF Nogueira Natural 18mm", "MDF Preto TX 18mm"],
             ferragens: ["Articuladores inversos FGV", "Fecho rolete Häfele"],
             iluminacao: ["Perfil de LED slim", "Fita de LED 3000K"],

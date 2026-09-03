@@ -55,7 +55,7 @@ const PROCESS = [
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     ...pageSeo({
-      title: "Sobre a M7 Movelaria — Marcenaria em SJP",
+      title: "Sobre a M7 Movelaria — Marcenaria em São José dos Pinhais",
       description:
         "Quem é a M7 Movelaria: marcenaria de alto padrão em São José dos Pinhais, com projeto executivo próprio, produção no ateliê e instalação com equipe própria.",
       path: PATH,

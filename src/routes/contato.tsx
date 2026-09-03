@@ -24,9 +24,9 @@ const TRAIL = [
 export const Route = createFileRoute("/contato")({
   head: () => ({
     ...pageSeo({
-      title: "Orçamento de Móveis Planejados | M7 Movelaria",
+      title: "Contato e Endereço em São José dos Pinhais | M7 Movelaria",
       description:
-        "Peça um orçamento de móveis planejados em São José dos Pinhais e Curitiba. WhatsApp (41) 98711-6308, e-mail e endereço do ateliê da M7 Movelaria.",
+        "Contato da M7 Movelaria: WhatsApp, e-mail e endereço do ateliê na R. Henrique Bortolam, 182, Costeira, São José dos Pinhais. Atendemos Curitiba e região.",
       path: PATH,
     }),
     scripts: [

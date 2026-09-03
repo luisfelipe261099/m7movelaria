@@ -13,12 +13,9 @@ import {
   Heart,
   MessageCircle,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Play,
   Phone,
 } from "lucide-react";
-import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Picture } from "@/components/Picture";
 import { HeroVideo } from "@/components/HeroVideo";
@@ -211,66 +208,7 @@ const portfolio = [
   { img: "hero-showroom-3d", alt: "Vista isométrica do showroom M7 em 3D" },
 ] as const;
 
-const testimonials = [
-  {
-    name: "Juliana Souza",
-    city: "São José dos Pinhais - PR",
-    text: "Excelente trabalho! A M7 superou nossas expectativas em todos os detalhes. Os acabamentos em laca ficaram impecáveis.",
-  },
-  {
-    name: "Carlos Mendes",
-    city: "Curitiba - PR",
-    text: "Profissionais atenciosos e comprometidos. Nosso projeto ficou perfeito e no prazo combinado!",
-  },
-  {
-    name: "Fernanda Lima",
-    city: "Pinhais - PR",
-    text: "Qualidade impecável. As ferragens Blum e Häfele fazem toda a diferença no dia a dia. Recomendo!",
-  },
-  {
-    name: "Rafael Oliveira",
-    city: "Curitiba - PR",
-    text: "Como arquiteto, valorizo a execução técnica. A M7 entrega exatamente o que projetamos, com precisão milimétrica.",
-  },
-  {
-    name: "Patrícia Almeida",
-    city: "São José dos Pinhais - PR",
-    text: "Do primeiro atendimento à instalação, foi tudo cuidadoso. A cozinha ficou dos meus sonhos!",
-  },
-  {
-    name: "Bruno Ferreira",
-    city: "Araucária - PR",
-    text: "Home office montado com perfeição. Iluminação LED 3000K, laca fosca e detalhes de serralheria — sofisticado.",
-  },
-];
-
-/** Círculo com as iniciais do cliente — evita fotos de banco de imagem nos depoimentos. */
-function AvatarInitials({ name }: { name: string }) {
-  const initials = name
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("");
-  return (
-    <span
-      aria-hidden
-      className="w-11 h-11 rounded-full bg-bronze/15 text-bronze-dark grid place-items-center text-sm font-semibold shrink-0"
-    >
-      {initials}
-    </span>
-  );
-}
-
 function Home() {
-  const [tIndex, setTIndex] = useState(0);
-  const prev = () => setTIndex((i) => (i - 1 + testimonials.length) % testimonials.length);
-  const next = () => setTIndex((i) => (i + 1) % testimonials.length);
-  const visible = [
-    testimonials[tIndex],
-    testimonials[(tIndex + 1) % testimonials.length],
-    testimonials[(tIndex + 2) % testimonials.length],
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -656,49 +594,51 @@ function Home() {
           </div>
         </section>
 
-        {/* DEPOIMENTOS */}
-        <section id="depoimentos" className="py-20 defer-render">
+        {/*
+          No lugar de depoimentos: o que dá para verificar.
+
+          Aqui havia seis depoimentos assinados por pessoas que não existem, com
+          cidade e elogio inventados. Além de ser propaganda enganosa (CDC art. 37),
+          é o tipo de prova social que qualquer visitante desconfia. Quando houver
+          avaliação real no Perfil da Empresa, o caminho é citar de lá com link — e
+          só então faz sentido discutir `Review` no schema.
+        */}
+        <section id="como-trabalhamos" className="py-20 defer-render">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center">
-              <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Depoimentos</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Por que a M7</p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink">
-                O que nossos clientes dizem
+                O que você contrata quando contrata a M7
               </h2>
             </div>
-            <div className="mt-12 flex items-center gap-4">
-              <button
-                onClick={prev}
-                aria-label="Depoimento anterior"
-                className="w-11 h-11 rounded-full border border-border bg-background grid place-items-center hover:border-bronze hover:text-bronze transition-colors shrink-0"
-              >
-                <ChevronLeft className="w-4 h-4" aria-hidden />
-              </button>
-              <div className="grid gap-5 md:grid-cols-3 flex-1">
-                {visible.map((t) => (
-                  <figure
-                    key={t.name}
-                    className="bg-background border border-border rounded p-6 text-left flex flex-col"
-                  >
-                    <figcaption className="flex items-center gap-3">
-                      <AvatarInitials name={t.name} />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-ink text-sm truncate">{t.name}</div>
-                        <div className="text-xs text-muted-foreground truncate">{t.city}</div>
-                      </div>
-                    </figcaption>
-                    <blockquote className="text-sm text-ink mt-4 leading-relaxed">
-                      {t.text}
-                    </blockquote>
-                  </figure>
-                ))}
-              </div>
-              <button
-                onClick={next}
-                aria-label="Próximo depoimento"
-                className="w-11 h-11 rounded-full border border-border bg-background grid place-items-center hover:border-bronze hover:text-bronze transition-colors shrink-0"
-              >
-                <ChevronRight className="w-4 h-4" aria-hidden />
-              </button>
+            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  titulo: "Marcenaria, não revenda",
+                  texto:
+                    "Projetamos, cortamos e montamos no nosso ateliê em São José dos Pinhais. Não adaptamos módulo de catálogo ao seu vão.",
+                },
+                {
+                  titulo: "Ferragem de linha alta",
+                  texto:
+                    "Blum, Häfele e Salice como padrão — corrediça com amortecimento, dobradiça regulável e sistema de abertura que dura.",
+                },
+                {
+                  titulo: "Projeto executivo antes do corte",
+                  texto:
+                    "Você aprova o desenho com medidas reais, cor e ferragem definidas. A chapa só é cortada depois disso.",
+                },
+                {
+                  titulo: "Equipe própria na instalação",
+                  texto:
+                    "Quem monta na sua casa é a nossa equipe, a mesma que produziu a peça — não uma montadora terceirizada.",
+                },
+              ].map((item) => (
+                <div key={item.titulo} className="bg-background border border-border rounded p-6">
+                  <h3 className="font-semibold text-ink">{item.titulo}</h3>
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{item.texto}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

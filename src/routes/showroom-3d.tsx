@@ -154,7 +154,7 @@ function Showroom3DPage() {
           <p className="text-white/60 mt-4 max-w-2xl mx-auto text-sm md:text-base">
             Escolha um ambiente na planta e entre em uma imersão 360° pelos ambientes M7 — hall,
             sala, cozinha, dormitório, closet, lavabo, escritório e adega. Clique nos pontos
-            dourados para se aproximar de cada móvel e ver marca, material e execução.
+            dourados para se aproximar de cada móvel e ver marca, material e especificação.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-6 text-[11px] uppercase tracking-widest text-white/50">

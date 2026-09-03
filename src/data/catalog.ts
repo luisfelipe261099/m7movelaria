@@ -57,10 +57,10 @@ export const serviceCatalog: ServiceSummary[] = [
     image: "finish-lamina-45",
     imageAlt:
       "Detalhe de marcenaria em lâmina natural com encaixe em 45 graus e continuidade de veio na quina",
-    title: "Dormitórios Planejados sob Medida | M7 Movelaria",
+    title: "Guarda-roupa e Dormitório Planejado | M7 Movelaria",
     description:
       "Guarda-roupa, cabeceira e criado-mudo planejados sob medida em São José dos Pinhais e Curitiba. Portas de correr, gavetas internas e LED. Peça o orçamento.",
-    h1: "Dormitórios e guarda-roupas planejados sob medida",
+    h1: "Dormitórios e guarda-roupas planejados sob medida em São José dos Pinhais",
     related: ["closets-planejados", "home-theater-e-painel-de-tv", "cozinhas-planejadas"],
   },
   {
@@ -70,7 +70,7 @@ export const serviceCatalog: ServiceSummary[] = [
     short: "Closet aberto ou fechado com araras iluminadas e gaveteiros.",
     image: "project-closet",
     imageAlt: "Closet planejado com araras iluminadas em LED, gaveteiros internos e prateleiras",
-    title: "Closets Planejados sob Medida | M7 Movelaria",
+    title: "Closet Planejado em São José dos Pinhais | M7 Movelaria",
     description:
       "Closet planejado em São José dos Pinhais e Curitiba: araras iluminadas, gaveteiros com puxador usinado e módulos com porta de vidro. Peça o orçamento.",
     h1: "Closets planejados sob medida, abertos ou fechados",
@@ -83,7 +83,7 @@ export const serviceCatalog: ServiceSummary[] = [
     short: "Escritório em casa com bancada, estante e passagem de cabos.",
     image: "project-office",
     imageAlt: "Home office planejado com bancada sob medida e estante iluminada em LED",
-    title: "Home Office Planejado sob Medida | M7 Movelaria",
+    title: "Home Office Planejado em São José dos Pinhais | M7 Movelaria",
     description:
       "Home office planejado em São José dos Pinhais e Curitiba: bancada sob medida, estante iluminada e passagem de cabos escondida. Peça seu orçamento.",
     h1: "Home office planejado sob medida para trabalhar em casa",
@@ -99,7 +99,7 @@ export const serviceCatalog: ServiceSummary[] = [
     title: "Móveis Planejados Comerciais | M7 Movelaria",
     description:
       "Marcenaria comercial sob medida em São José dos Pinhais e Curitiba: recepção, balcão, expositor e mobiliário de consultório e escritório. Fale conosco.",
-    h1: "Móveis planejados para lojas, escritórios e consultórios",
+    h1: "Móveis planejados para lojas, escritórios e consultórios em São José dos Pinhais e Curitiba",
     related: ["home-office-planejado", "cozinhas-planejadas", "home-theater-e-painel-de-tv"],
   },
   {
@@ -113,7 +113,7 @@ export const serviceCatalog: ServiceSummary[] = [
     title: "Painel de TV e Home Theater | M7 Movelaria",
     description:
       "Painel de TV e home theater sob medida em São José dos Pinhais e Curitiba: painel ripado, rack basculante, nichos e LED embutido. Peça o orçamento.",
-    h1: "Home theater e painel de TV planejados sob medida",
+    h1: "Home theater e painel de TV planejados sob medida em São José dos Pinhais e Curitiba",
     related: ["cozinhas-planejadas", "dormitorios-planejados", "moveis-comerciais"],
   },
 ];
@@ -133,7 +133,7 @@ export const cityCatalog: CitySummary[] = [
   {
     slug: "sao-jose-dos-pinhais",
     name: "São José dos Pinhais",
-    h1: "Móveis planejados em São José dos Pinhais",
+    h1: "Marcenaria em São José dos Pinhais: móveis planejados feitos no nosso ateliê",
     title: "Marcenaria em São José dos Pinhais | M7 Movelaria",
     description:
       "Marcenaria sob medida em São José dos Pinhais: cozinhas, dormitórios, closets e home office. Ateliê na R. Henrique Bortolam, 182. Peça seu orçamento.",

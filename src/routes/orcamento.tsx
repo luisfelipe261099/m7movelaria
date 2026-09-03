@@ -1123,7 +1123,7 @@ function FaleComArquiteto({
           to="/projetos"
           className="inline-flex items-center gap-2 px-6 py-3 border border-bronze text-bronze rounded text-sm font-medium hover:bg-bronze hover:text-primary-foreground transition-colors"
         >
-          Ver projetos executados
+          Ver projetos da M7
         </Link>
       </div>
     </div>

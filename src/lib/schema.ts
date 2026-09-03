@@ -59,7 +59,6 @@ export function globalGraph(): Json[] {
       address: POSTAL_ADDRESS,
       ...(GEO ? { geo: { "@type": "GeoCoordinates", ...GEO } } : {}),
       openingHoursSpecification: OPENING_HOURS,
-      priceRange: "$$$",
       currenciesAccepted: "BRL",
       description:
         "Marcenaria de alto padrão em São José dos Pinhais (PR). Móveis planejados sob medida — cozinhas, dormitórios, closets, home office e ambientes comerciais — com ferragens Blum, Häfele e Salice.",
