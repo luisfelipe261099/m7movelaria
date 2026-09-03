@@ -32,7 +32,6 @@ import { TABELA_CONFIRMADA } from "@/data/simulador";
 import {
   brl,
   calculaOrcamento,
-  corredicaPara,
   type Acabamento,
   type Entrega,
   type ItemConfig,
@@ -114,7 +113,6 @@ function Simulador() {
   const [itens, setItens] = useState<ItemConfig[]>([]);
   const [acabamento, setAcabamento] = useState<Acabamento>({
     corId: "branco",
-    lateral: 15,
     ripada: false,
     puxador: true,
   });
@@ -207,9 +205,9 @@ function Simulador() {
               <p className="mt-6 inline-flex items-start gap-2 rounded border border-bronze/40 bg-white px-4 py-3 text-sm text-muted-foreground">
                 <Info className="w-4 h-4 mt-0.5 text-bronze shrink-0" aria-hidden />
                 <span>
-                  <strong className="text-ink">Simulação de demonstração.</strong> Os valores desta
-                  página são ilustrativos, para validar o fluxo — a tabela de preço definitiva da M7
-                  entra antes de abrir ao público.
+                  <strong className="text-ink">Valores em conferência.</strong> O cálculo já usa a
+                  tabela de material da M7, mas alguns itens ainda estão sendo fechados — o preço
+                  final é confirmado pela equipe antes do pedido.
                 </span>
               </p>
             )}
@@ -723,32 +721,22 @@ function PassoAcabamento({
 
       <div className="mt-8 grid sm:grid-cols-2 gap-4">
         <div className="p-5 rounded border border-border bg-white">
-          <p className="text-sm font-medium text-ink">Espessura da lateral</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Fundo 6 mm e porta 18 mm são fixos da linha.
+          <p className="text-sm font-medium text-ink">Como o móvel é montado</p>
+          <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+            <li>Caixa, prateleiras e gavetas em MDF 15 mm branco</li>
+            <li>Fundo em MDF 6 mm</li>
+            <li>Frentes na cor escolhida, com fita de borda no mesmo tom</li>
+          </ul>
+          <p className="mt-3 text-sm text-muted-foreground">
+            A cor entra onde aparece. O interior é branco em todas as opções — é o que mantém o
+            preço da linha do site.
           </p>
-          <div className="mt-4 flex gap-2">
-            {([15, 18] as const).map((mm) => (
-              <button
-                key={mm}
-                type="button"
-                onClick={() => onChange({ ...valor, lateral: mm })}
-                className={`px-4 py-2 rounded text-sm border transition-colors ${
-                  valor.lateral === mm
-                    ? "bg-bronze text-primary-foreground border-bronze"
-                    : "border-border text-muted-foreground hover:border-bronze"
-                }`}
-              >
-                {mm} mm
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="p-5 rounded border border-border bg-white space-y-4">
           <Opcao
             titulo="Porta ripada"
-            apoio="Usinagem em ripas na frente, cobrada por m² de porta."
+            apoio="Usinagem em ripas na frente da porta."
             ativo={valor.ripada}
             onToggle={() => onChange({ ...valor, ripada: !valor.ripada })}
           />
@@ -766,21 +754,12 @@ function PassoAcabamento({
           <div className="flex items-start gap-2">
             <Info className="w-4 h-4 mt-0.5 text-bronze shrink-0" aria-hidden />
             <div>
-              <p className="text-sm font-medium text-ink">Corrediça escolhida pela carga</p>
-              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                {comGaveta.map((i) => {
-                  const c = corredicaPara(i.largura, i.profundidade);
-                  return (
-                    <li key={i.uid}>
-                      {MODULOS.find((m) => m.id === i.moduloId)!.nome} de {i.largura} mm →{" "}
-                      <strong className="text-ink">{c.nome}</strong>
-                    </li>
-                  );
-                })}
-              </ul>
+              <p className="text-sm font-medium text-ink">Gavetas com corrediça oculta</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Gaveta larga e funda pesa mais, então sobe de faixa automaticamente — o orçamento já
-                sai com a corrediça que aguenta.
+                Todas as gavetas saem com corrediça oculta e amortecimento, independente do tamanho
+                — {comGaveta.length}{" "}
+                {comGaveta.length === 1 ? "módulo com gaveta" : "módulos com gaveta"} neste
+                orçamento.
               </p>
             </div>
           </div>
@@ -833,7 +812,7 @@ function Opcao({
  * no PDF, depois do pedido fechado.
  */
 function descreve(calc: ReturnType<typeof calculaOrcamento>["itens"][number], acab: Acabamento) {
-  const { modulo, corredica } = calc;
+  const { modulo } = calc;
   const partes: string[] = [];
   if (modulo.eletros) partes.push("nichos para forno e micro-ondas nas suas medidas");
   if (modulo.portas > 0) {
@@ -841,13 +820,13 @@ function descreve(calc: ReturnType<typeof calculaOrcamento>["itens"][number], ac
       `${modulo.portas} ${modulo.portas === 1 ? "porta" : "portas"}${acab.ripada ? " ripadas" : ""}`,
     );
   }
-  if (modulo.gavetas > 0 && corredica) {
-    partes.push(`${modulo.gavetas} gavetas com corrediça ${corredica.nome.toLowerCase()}`);
+  if (modulo.gavetas > 0) {
+    partes.push(`${modulo.gavetas} gavetas com corrediça oculta`);
   }
   if (modulo.prateleiras > 0) {
     partes.push(`${modulo.prateleiras} ${modulo.prateleiras === 1 ? "prateleira" : "prateleiras"}`);
   }
-  partes.push(`lateral ${acab.lateral} mm`);
+  partes.push("interior em MDF 15 mm branco");
   const texto = partes.join(" · ");
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }

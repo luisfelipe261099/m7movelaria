@@ -9,7 +9,10 @@
  * home baixava a lista de cores de chapa junto. Uma constante isolada custa
  * alguns bytes; o catálogo custava ~6 KB em todas as páginas.
  *
- * Quando a tabela real da M7 entrar, virar `true`: a página sai do `noindex`,
- * o aviso de valores ilustrativos some e ela pode ser linkada na navegação.
+ * A tabela de material da M7 já entrou (01/09/2026). Continua `false` porque
+ * ainda faltam preços de puxador e de usinagem do ripado, o multiplicador
+ * definitivo da linha do site e a regra de frete — ver os `A CONFIRMAR` em
+ * `precos.ts`. Fechados esses pontos, virar `true`: a página sai do `noindex`,
+ * o aviso some e ela pode ser linkada na navegação.
  */
 export const TABELA_CONFIRMADA = false;

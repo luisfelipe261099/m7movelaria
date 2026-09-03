@@ -17,20 +17,28 @@
  */
 
 import {
+  CHAPAS,
   CORES,
-  CORREDICAS,
+  CORREDICA_PAR,
   DESCONTO_PIX,
   DOBRADICA,
   ENTREGA_LOCAL,
   FATOR_SITE,
-  FITA_ML,
+  FITA_FRENTE,
+  FITA_INTERIOR,
   FOLGA_ELETRO,
   INSUMOS_PCT,
   MODULOS,
+  PARAFUSO,
+  PARAFUSOS_CAIXA,
+  PARAFUSOS_POR_FRENTE,
+  PARAFUSOS_POR_PRATELEIRA,
   PARCELAS_MAX,
   PUXADOR,
   RIPADO_M2,
-  type Corredica,
+  UNIBLOCK,
+  UNIBLOCK_POR_PRATELEIRA,
+  porM2,
   type Modulo,
   type ModuloId,
 } from "@/data/precos";
@@ -51,10 +59,9 @@ export type ItemConfig = {
 };
 
 export type Acabamento = {
+  /** Cor da chapa das frentes. O interior é sempre branco. */
   corId: string;
-  /** Espessura da lateral: 15 mm (padrão) ou 18 mm (reforçada). */
-  lateral: 15 | 18;
-  /** Porta ripada tem usinagem por m² de frente. */
+  /** Porta ripada — usinagem ainda não orçada pela M7. */
   ripada: boolean;
   puxador: boolean;
 };
@@ -65,7 +72,6 @@ export type ItemCalculado = {
   item: ItemConfig;
   modulo: Modulo;
   linhas: LinhaCusto[];
-  corredica: Corredica | null;
   /** Custo de um módulo, sem multiplicador. */
   custoUnitario: number;
   /** Preço de venda já multiplicado e arredondado, vezes a quantidade. */
@@ -118,17 +124,6 @@ function alturaNichos(item: ItemConfig): { altura: number; avisos: string[] } {
   return { altura: alturaForno + alturaMicro, avisos };
 }
 
-/**
- * Escolhe a corrediça pela carga estimada da gaveta. A estimativa é grosseira
- * de propósito (largura × profundidade); o que importa é não orçar a gaveta de
- * 900 mm com a corrediça de 35 kg.
- */
-export function corredicaPara(larguraMm: number, profundidadeMm: number): Corredica {
-  const area = m(larguraMm) * m(profundidadeMm);
-  const cargaEstimada = area <= 0.25 ? 35 : area <= 0.42 ? 40 : 60;
-  return CORREDICAS.find((c) => c.cargaKg >= cargaEstimada) ?? CORREDICAS[CORREDICAS.length - 1];
-}
-
 function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const modulo = moduloPorId(item.moduloId);
   const cor = corPorId(acab.corId);
@@ -157,86 +152,97 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
     travessasExtras = 3; // divisórias horizontais que fecham os dois nichos
   }
 
-  // Chapa estrutural (laterais na espessura escolhida, restante em 18 mm).
-  const lateraisM2 = 2 * A * P;
-  const horizontaisM2 = (2 + modulo.prateleiras + travessasExtras) * L * P;
+  // ————— chapa —————
+  // O interior é sempre MDF 15 mm branco; a chapa de cor entra só nas frentes,
+  // que é como a M7 compra: uma chapa barata para a caixa e uma cara para o
+  // que aparece.
+  const interiorM2 =
+    2 * A * P + // laterais
+    (2 + modulo.prateleiras + travessasExtras) * L * P + // base, tampo, prateleiras e travessas
+    modulo.gavetas * (2 * 0.15 * P + 2 * 0.15 * L); // caixas de gaveta
   const frentesM2 = modulo.portas + modulo.gavetas > 0 ? L * alturaFrente : 0;
-  const caixasGavetaM2 = modulo.gavetas * (2 * 0.15 * P + 2 * 0.15 * L);
   const fundoM2 = L * A + modulo.gavetas * L * P;
 
-  const custoLateral = lateraisM2 * (acab.lateral === 18 ? cor.mm18 : cor.mm15);
-  const custoHorizontal = horizontaisM2 * cor.mm18;
-  const custoFrente = frentesM2 * cor.mm18;
-  const custoGaveta = caixasGavetaM2 * cor.mm15;
-  const custoFundo = fundoM2 * cor.mm6;
-
-  // Fita de borda: bordas aparentes das horizontais, das frentes e das gavetas.
+  // ————— fita de borda —————
+  // Bordas aparentes: as internas levam fita branca, as frentes levam fita da
+  // cor, que custa quase sete vezes mais.
   const larguraFrente = modulo.portas > 0 ? L / modulo.portas : L;
   const alturaGaveta = modulo.gavetas > 0 ? alturaFrente / modulo.gavetas : 0;
-  const fitaMl =
-    (2 + modulo.prateleiras + travessasExtras) * L +
-    2 * A +
-    modulo.portas * 2 * (larguraFrente + alturaFrente) +
-    modulo.gavetas * 2 * (L + alturaGaveta);
+  const fitaInteriorMl = (2 + modulo.prateleiras + travessasExtras) * L + 2 * A;
+  const fitaFrenteMl =
+    modulo.portas * 2 * (larguraFrente + alturaFrente) + modulo.gavetas * 2 * (L + alturaGaveta);
 
+  // ————— ferragem —————
   const dobradicas = modulo.portas * (alturaFrente > 1.2 ? 3 : 2);
-  const corredica = modulo.gavetas > 0 ? corredicaPara(item.largura, item.profundidade) : null;
   const frentes = modulo.portas + modulo.gavetas;
+  const uniblocks = modulo.prateleiras * UNIBLOCK_POR_PRATELEIRA;
+  const parafusos =
+    PARAFUSOS_CAIXA +
+    frentes * PARAFUSOS_POR_FRENTE +
+    modulo.prateleiras * PARAFUSOS_POR_PRATELEIRA;
 
   const linhas: LinhaCusto[] = [
     {
-      descricao: `Laterais em MDF ${acab.lateral} mm`,
-      detalhe: `${lateraisM2.toFixed(2)} m² · ${cor.nome}`,
-      valor: custoLateral,
-    },
-    {
-      descricao: "Base, tampo e prateleiras em MDF 18 mm",
-      detalhe: `${horizontaisM2.toFixed(2)} m²`,
-      valor: custoHorizontal,
+      descricao: "Caixa em MDF 15 mm branco",
+      detalhe: `${interiorM2.toFixed(2)} m² · laterais, prateleiras e gavetas`,
+      valor: interiorM2 * porM2(CHAPAS.interior),
     },
     {
       descricao: "Fundo em MDF 6 mm",
       detalhe: `${fundoM2.toFixed(2)} m²`,
-      valor: custoFundo,
+      valor: fundoM2 * porM2(CHAPAS.fundo),
     },
   ];
 
   if (frentesM2 > 0) {
     linhas.push({
-      descricao: `Frentes em MDF 18 mm${acab.ripada ? " com ripado" : ""}`,
+      descricao: `Frentes em chapa ${cor.nome}${acab.ripada ? " com ripado" : ""}`,
       detalhe: `${frentesM2.toFixed(2)} m² · ${frentes} ${frentes === 1 ? "frente" : "frentes"}`,
-      valor: custoFrente + (acab.ripada ? frentesM2 * RIPADO_M2 : 0),
+      valor: frentesM2 * (porM2(CHAPAS.frente) + (acab.ripada ? RIPADO_M2 : 0)),
     });
   }
-  if (caixasGavetaM2 > 0) {
-    linhas.push({
-      descricao: "Caixas de gaveta em MDF 15 mm",
-      detalhe: `${caixasGavetaM2.toFixed(2)} m²`,
-      valor: custoGaveta,
-    });
-  }
+
   linhas.push({
-    descricao: "Fita de borda",
-    detalhe: `${fitaMl.toFixed(1)} m aplicados`,
-    valor: fitaMl * FITA_ML,
+    descricao: "Fita de borda branca",
+    detalhe: `${fitaInteriorMl.toFixed(1)} m aplicados`,
+    valor: fitaInteriorMl * FITA_INTERIOR,
   });
+  if (fitaFrenteMl > 0) {
+    linhas.push({
+      descricao: "Fita de borda na cor da frente",
+      detalhe: `${fitaFrenteMl.toFixed(1)} m aplicados`,
+      valor: fitaFrenteMl * FITA_FRENTE,
+    });
+  }
   if (dobradicas > 0) {
     linhas.push({
-      descricao: "Dobradiças com amortecedor",
+      descricao: "Dobradiças",
       detalhe: `${dobradicas} un`,
       valor: dobradicas * DOBRADICA,
     });
   }
-  if (corredica) {
+  if (modulo.gavetas > 0) {
     linhas.push({
-      descricao: `Corrediça ${corredica.nome}`,
-      detalhe: `${modulo.gavetas} pares · escolhida pela carga da gaveta`,
-      valor: modulo.gavetas * corredica.custoPar,
+      descricao: "Corrediças ocultas",
+      detalhe: `${modulo.gavetas} ${modulo.gavetas === 1 ? "par" : "pares"}`,
+      valor: modulo.gavetas * CORREDICA_PAR,
     });
   }
-  if (acab.puxador && frentes > 0) {
+  if (uniblocks > 0) {
     linhas.push({
-      descricao: "Puxador perfil",
+      descricao: "Suportes de prateleira Uniblock",
+      detalhe: `${uniblocks} un · ${UNIBLOCK_POR_PRATELEIRA} por prateleira`,
+      valor: uniblocks * UNIBLOCK,
+    });
+  }
+  linhas.push({
+    descricao: "Parafusos",
+    detalhe: `${parafusos} un`,
+    valor: parafusos * PARAFUSO,
+  });
+  if (acab.puxador && frentes > 0 && PUXADOR > 0) {
+    linhas.push({
+      descricao: "Puxador",
       detalhe: `${frentes} un`,
       valor: frentes * PUXADOR,
     });
@@ -245,7 +251,7 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const material = linhas.reduce((s, l) => s + l.valor, 0);
   const insumos = material * INSUMOS_PCT;
   linhas.push({
-    descricao: "Cola, parafuso, tarugo e fita crepe",
+    descricao: "Cola, tarugo e fita crepe",
     detalhe: `${Math.round(INSUMOS_PCT * 100)}% sobre o material`,
     valor: insumos,
   });
@@ -253,7 +259,7 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const custoUnitario = material + insumos;
   const preco = arredonda(custoUnitario * FATOR_SITE) * item.quantidade;
 
-  return { item, modulo, linhas, corredica, custoUnitario, preco, avisos };
+  return { item, modulo, linhas, custoUnitario, preco, avisos };
 }
 
 export function calculaOrcamento(
