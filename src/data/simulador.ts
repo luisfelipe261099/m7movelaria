@@ -10,10 +10,9 @@
  * alguns bytes; o catálogo custava ~6 KB em todas as páginas.
  *
  * A tabela de material, o puxador, o ripado e o multiplicador de 2,4 já foram
- * fechados com a M7 (01/09/2026). Continua `false` por dois pontos: as cores
- * de chapa que entram nesta linha ainda não foram definidas, e o frete para
- * fora de Curitiba é cotado caso a caso — o pedido sai da tela sem valor de
- * frete fechado. Resolvidos os dois, virar `true`: a página sai do `noindex`,
- * o aviso some e ela pode ser linkada na navegação.
+ * fechados com a M7 (01/09/2026), e a venda ficou limitada a Curitiba e região
+ * — frete para fora ficou para uma etapa seguinte. Falta só definir as cores
+ * de chapa que entram nesta linha; feito isso, virar `true`: a página sai do
+ * `noindex`, o aviso some e ela pode ser linkada na navegação.
  */
 export const TABELA_CONFIRMADA = false;

@@ -6,6 +6,7 @@ import {
   Check,
   CreditCard,
   Info,
+  MapPin,
   MessageCircle,
   Minus,
   Plus,
@@ -116,7 +117,12 @@ function Simulador() {
     ripada: false,
     puxador: true,
   });
-  const [entrega, setEntrega] = useState<Entrega>("local");
+  /**
+   * Enquanto a cotação de frete para fora não estiver definida, o simulador
+   * vende só para Curitiba e região. O motor de cálculo já sabe lidar com
+   * `"distante"` — quando o frete entrar, isto volta a ser estado.
+   */
+  const entrega: Entrega = "local";
   const [pagamento, setPagamento] = useState<"pix" | "credito">("pix");
   const [identificacao, setIdentificacao] = useState({ numero: "", validade: "" });
   const [lead, setLead] = useState<Lead | null>(null);
@@ -243,8 +249,6 @@ function Simulador() {
               {etapa === 4 && (
                 <PassoResumo
                   orcamento={orcamento}
-                  entrega={entrega}
-                  onEntrega={setEntrega}
                   acabamento={acabamento}
                   identificacao={carimbo}
                   lead={lead}
@@ -951,16 +955,12 @@ function PortaoDeContato({
 
 function PassoResumo({
   orcamento,
-  entrega,
-  onEntrega,
   acabamento,
   identificacao,
   lead,
   onIdentificar,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
-  entrega: Entrega;
-  onEntrega: (e: Entrega) => void;
   acabamento: Acabamento;
   identificacao: Identificacao;
   lead: Lead | null;
@@ -1030,39 +1030,50 @@ function PassoResumo({
         </p>
       )}
 
+      {/*
+        O simulador atende só Curitiba e região por enquanto. Fora dali o frete
+        depende de cubagem e transportadora — peça de armário passa de dois
+        metros e não cabe em encomenda dos Correios —, então em vez de vender
+        sem saber o custo do envio, o pedido vira conversa com a equipe. O
+        motor de cálculo continua sabendo lidar com `entrega: "distante"`; é só
+        reativar o botão quando a cotação estiver definida.
+      */}
       <div className="mt-8">
         <p className="text-sm font-medium text-ink mb-3">Entrega e montagem</p>
         <div className="grid sm:grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => onEntrega("local")}
-            className={`p-5 rounded border text-left transition-colors ${
-              entrega === "local" ? "border-bronze bg-bronze/5" : "border-border bg-white"
-            }`}
-          >
+          <div className="p-5 rounded border border-bronze bg-bronze/5">
             <span className="flex items-center gap-2 font-medium text-ink">
-              <Truck className="w-4 h-4 text-bronze" aria-hidden /> Curitiba e região
+              <Truck className="w-4 h-4 text-bronze" aria-hidden /> Curitiba e região metropolitana
             </span>
             <span className="mt-1.5 block text-sm text-muted-foreground">
               Entrega e montagem pela nossa equipe, já inclusas no valor.
             </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => onEntrega("distante")}
-            className={`p-5 rounded border text-left transition-colors ${
-              entrega === "distante" ? "border-bronze bg-bronze/5" : "border-border bg-white"
-            }`}
-          >
+          </div>
+          <div className="p-5 rounded border border-border bg-white">
             <span className="flex items-center gap-2 font-medium text-ink">
-              <Truck className="w-4 h-4 text-bronze" aria-hidden /> Outras cidades e estados
+              <MapPin className="w-4 h-4 text-bronze" aria-hidden /> Mora em outra cidade?
             </span>
             <span className="mt-1.5 block text-sm text-muted-foreground">
-              O frete fica por conta do cliente: cotamos com a transportadora e confirmamos o valor
-              antes do envio. A montagem também é por conta do cliente — indicamos montadores
-              parceiros da região.
+              Fora da região atendemos sob consulta: o frete depende do tamanho das peças e da
+              transportadora, então a equipe cota antes de fechar o pedido.
             </span>
-          </button>
+            <a
+              href={whatsappLink(
+                [
+                  "Olá M7 Movelaria, montei um orçamento no site mas moro fora de Curitiba.",
+                  "Gostaria de saber como fica a entrega.",
+                  identificacao.numero ? `Orçamento ${identificacao.numero}.` : "",
+                ]
+                  .filter(Boolean)
+                  .join(" "),
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-bronze underline hover:text-bronze-dark"
+            >
+              <MessageCircle className="w-4 h-4" aria-hidden /> Falar sobre a entrega
+            </a>
+          </div>
         </div>
       </div>
 
