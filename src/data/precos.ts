@@ -13,10 +13,13 @@ export { TABELA_CONFIRMADA } from "./simulador";
 
 /**
  * Multiplicador sobre o custo. Na marcenaria sob medida a M7 trabalha com 3,0;
- * a linha vendida pelo site usa um fator menor porque o material é de padrão
- * mais simples e o projeto não passa por arquiteto.
+ * a linha do site fica em 2,4.
  *
- * A CONFIRMAR: número definido pela M7. 2,4 é o provisório.
+ * Aprovado pela M7 em 01/09/2026, com a justificativa dela: o pedido do site
+ * entra como plano de corte direto na seccionadora, a produção sai quase sem
+ * intervenção e o volume compensa a margem menor por peça. Ou seja, a conta
+ * fecha por escala, não por peça — mexer neste número sem mexer no modelo de
+ * produção quebra a premissa.
  */
 export const FATOR_SITE = 2.4;
 
@@ -118,7 +121,15 @@ export const PUXADOR = 15;
  */
 export const RIPADO_FATOR_MATERIAL = 2;
 
-/** Entrega + montagem em Curitiba e região. A CONFIRMAR com a M7. */
+/**
+ * Entrega + montagem em Curitiba e região. A CONFIRMAR o valor com a M7.
+ *
+ * Fora dessa área o frete é por conta do cliente, cotado com a transportadora
+ * antes do envio — decisão da M7. Não há valor fixo aqui de propósito: peça de
+ * armário passa de dois metros, o que descarta encomenda dos Correios (limite
+ * de 1 m de comprimento e 30 kg por volume) e joga a cotação para transporte
+ * rodoviário, que depende de cubagem e destino.
+ */
 export const ENTREGA_LOCAL = 180;
 
 /** Desconto para pagamento à vista no Pix. A CONFIRMAR com a M7. */

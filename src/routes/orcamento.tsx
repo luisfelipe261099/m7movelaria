@@ -1058,8 +1058,9 @@ function PassoResumo({
               <Truck className="w-4 h-4 text-bronze" aria-hidden /> Outras cidades e estados
             </span>
             <span className="mt-1.5 block text-sm text-muted-foreground">
-              Frete cotado por transportadora. A montagem fica por conta do cliente — indicamos
-              montadores parceiros da região.
+              O frete fica por conta do cliente: cotamos com a transportadora e confirmamos o valor
+              antes do envio. A montagem também é por conta do cliente — indicamos montadores
+              parceiros da região.
             </span>
           </button>
         </div>
