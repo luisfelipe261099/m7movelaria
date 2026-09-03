@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs, ContentSection, CtaBand } from "@/components/PageParts";
 import { Picture } from "@/components/Picture";
@@ -155,10 +156,27 @@ function About() {
           ]}
         />
 
-        <ContentSection
-          h2="Trabalhamos com arquitetos"
-          body="Quando existe projeto de arquitetura, executamos conforme o detalhamento e devolvemos a compatibilização — apontando onde a medida real do local diverge do desenho e o que isso exige de ajuste antes do corte. É o tipo de retorno que evita a surpresa no dia da instalação. Escritórios que quiserem conhecer o padrão de execução podem agendar uma visita ao ateliê."
-        />
+        <section className="py-14">
+          <div className="max-w-3xl mx-auto px-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-ink text-balance">
+              Trabalhamos com arquitetos
+            </h2>
+            <p className="mt-5 text-muted-foreground leading-relaxed">
+              Quando existe projeto de arquitetura, executamos conforme o detalhamento e devolvemos
+              a compatibilização — apontando onde a medida real do local diverge do desenho e o que
+              isso exige de ajuste antes do corte. É o tipo de retorno que evita a surpresa no dia
+              da instalação. Escritórios que quiserem conhecer o padrão de execução podem agendar
+              uma visita ao ateliê.
+            </p>
+            <Link
+              to="/marcenaria-para-arquitetos"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+            >
+              Como funciona a parceria com escritórios de arquitetura
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+            </Link>
+          </div>
+        </section>
 
         <section className="bg-cream py-14">
           <div className="max-w-3xl mx-auto px-6">

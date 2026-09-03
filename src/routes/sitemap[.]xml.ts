@@ -11,7 +11,7 @@ import { SITE_URL } from "@/lib/seo";
  * todo — o Google detecta isso e passa a ignorar o campo no site inteiro.
  * Então: constante, atualizada à mão quando o conteúdo da rota mudar.
  */
-const LASTMOD = "2026-09-01";
+const LASTMOD = "2026-09-03";
 
 interface SitemapEntry {
   path: string;
@@ -48,6 +48,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.8",
             images: [{ loc: `${SITE_URL}${images[c.image].src}`, title: c.imageAlt }],
           })),
+          { path: "/marcenaria-para-arquitetos", changefreq: "monthly", priority: "0.8" },
           { path: "/showroom-3d", changefreq: "monthly", priority: "0.8" },
           { path: "/projetos", changefreq: "monthly", priority: "0.8" },
           ...projects.map((p) => ({

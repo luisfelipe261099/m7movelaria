@@ -192,6 +192,11 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link to="/marcenaria-para-arquitetos" className="block py-1.5 hover:text-bronze">
+                Marcenaria para arquitetos
+              </Link>
+            </li>
           </ul>
         </nav>
 

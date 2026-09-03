@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as LinksRouteImport } from './routes/links'
+import { Route as MarcenariaParaArquitetosRouteImport } from './routes/marcenaria-para-arquitetos'
 import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
@@ -41,6 +42,12 @@ const LinksRoute = LinksRouteImport.update({
   path: '/links',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarcenariaParaArquitetosRoute =
+  MarcenariaParaArquitetosRouteImport.update({
+    id: '/marcenaria-para-arquitetos',
+    path: '/marcenaria-para-arquitetos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const OrcamentoRoute = OrcamentoRouteImport.update({
   id: '/orcamento',
   path: '/orcamento',
@@ -112,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
   '/links': typeof LinksRoute
+  '/marcenaria-para-arquitetos': typeof MarcenariaParaArquitetosRoute
   '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
   '/links': typeof LinksRoute
+  '/marcenaria-para-arquitetos': typeof MarcenariaParaArquitetosRoute
   '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/contato': typeof ContatoRoute
   '/links': typeof LinksRoute
+  '/marcenaria-para-arquitetos': typeof MarcenariaParaArquitetosRoute
   '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contato'
     | '/links'
+    | '/marcenaria-para-arquitetos'
     | '/orcamento'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contato'
     | '/links'
+    | '/marcenaria-para-arquitetos'
     | '/orcamento'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
@@ -205,6 +217,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contato'
     | '/links'
+    | '/marcenaria-para-arquitetos'
     | '/orcamento'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
@@ -224,6 +237,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContatoRoute: typeof ContatoRoute
   LinksRoute: typeof LinksRoute
+  MarcenariaParaArquitetosRoute: typeof MarcenariaParaArquitetosRoute
   OrcamentoRoute: typeof OrcamentoRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
@@ -260,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/links'
       fullPath: '/links'
       preLoaderRoute: typeof LinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marcenaria-para-arquitetos': {
+      id: '/marcenaria-para-arquitetos'
+      path: '/marcenaria-para-arquitetos'
+      fullPath: '/marcenaria-para-arquitetos'
+      preLoaderRoute: typeof MarcenariaParaArquitetosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orcamento': {
@@ -360,6 +381,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContatoRoute: ContatoRoute,
   LinksRoute: LinksRoute,
+  MarcenariaParaArquitetosRoute: MarcenariaParaArquitetosRoute,
   OrcamentoRoute: OrcamentoRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
