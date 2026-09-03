@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import floorplan from "@/assets/floorplan-iso.jpg";
 import type { Room } from "@/data/rooms";
+import { Picture } from "@/components/Picture";
 
 type ProjectOption = { slug: string; name: string; client: string };
 
@@ -28,11 +28,19 @@ export function FloorPlanChooser({
 
   return (
     <div className="relative h-full w-full bg-black overflow-hidden">
-      <img
-        src={floorplan}
-        alt="Planta isométrica do showroom M7"
-        className="absolute inset-0 h-full w-full object-cover opacity-90"
-      />
+      {/*
+        Era um <img> cru apontando para o JPEG de 182 KB, ignorando as variantes
+        AVIF/WebP que o build já gera (a de 960 tem 28 KB). É a maior imagem do
+        showroom e provável LCP da página. `priority` porque está acima da dobra.
+      */}
+      <div className="absolute inset-0 h-full w-full opacity-90 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
+        <Picture
+          name="floorplan-iso"
+          alt="Planta isométrica do showroom M7"
+          priority
+          sizes="(min-width: 1280px) 1256px, 100vw"
+        />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/10 to-black/70" />
 
       {/*

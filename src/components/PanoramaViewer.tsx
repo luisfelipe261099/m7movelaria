@@ -71,6 +71,26 @@ function lerpAngleDeg(a: number, b: number, t: number) {
   return a + diff * t;
 }
 
+/**
+ * Sobre a ausência de `texture.dispose()` aqui — é decisão, não esquecimento.
+ *
+ * O panorama é 3840x1920, o que dá ~30 MB de textura na GPU. Essa memória já é
+ * devolvida sozinha: o viewer é montado com `key={room.id}`, então trocar de
+ * ambiente desmonta o <Canvas> inteiro, e o react-three-fiber chama
+ * `forceContextLoss()` no unmount — o contexto WebGL morre levando todas as
+ * texturas junto. Não há nada acumulando na GPU entre salas.
+ *
+ * O que sobrevive é a entrada no cache do `useLoader`: um HTMLImageElement com
+ * o JPEG (centenas de KB, e o bitmap decodificado o próprio navegador descarta
+ * quando precisa). É justamente esse cache que faz voltar a uma sala já vista
+ * ser instantâneo, sem passar de novo pelo "Carregando ambiente em 360°".
+ *
+ * Descartar a textura aqui só seria correto em par com
+ * `useLoader.clear(THREE.TextureLoader, src)` — sem isso, voltar a uma sala
+ * visitada devolve do cache o mesmo objeto já descartado. E com o clear a conta
+ * fica ruim: troca-se um flash de recarga a cada volta por uma memória que o
+ * unmount já estava liberando.
+ */
 function PanoramaSphere({ src }: { src: string }) {
   const texture = useLoader(THREE.TextureLoader, src);
   const { gl } = useThree();

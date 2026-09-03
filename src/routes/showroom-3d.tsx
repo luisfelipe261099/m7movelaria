@@ -110,12 +110,38 @@ function Showroom3DPage() {
     };
   }, [cssFullscreen]);
 
-  // Warm up the heavy three.js/panorama chunk while the person is still looking at
-  // the floor plan, so clicking a room doesn't sit on a cold load. The panorama
-  // images themselves (~1MB each) are NOT preloaded in bulk — baixar as 8 de uma vez
-  // custava ~7MB de dados antes de qualquer interação; cada uma carrega ao entrar.
+  // Aquece o chunk do three.js enquanto a pessoa ainda olha a planta, para o
+  // clique numa sala não esperar carregamento frio. São 248 KB na rede — o maior
+  // JavaScript do site, quase três vezes o entry —, então o preload segue a
+  // mesma disciplina que o vídeo do hero já usa: só depois do `load`, dentro de
+  // tempo ocioso, e nunca em economia de dados ou rede 2G. Sem isso, todo mundo
+  // que abre a página paga o download mesmo sem entrar em sala nenhuma.
+  //
+  // As panorâmicas (~1 MB cada) continuam fora do preload em bloco: baixar as
+  // oito custava ~7 MB antes de qualquer interação.
   useEffect(() => {
-    void import("@/components/PanoramaViewer");
+    type NetworkInformation = { saveData?: boolean; effectiveType?: string };
+    const conn = (navigator as Navigator & { connection?: NetworkInformation }).connection;
+    if (conn?.saveData) return;
+    if (conn?.effectiveType && /(^|-)2g$/.test(conn.effectiveType)) return;
+
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+
+    const aquecer = () => {
+      const ric = window.requestIdleCallback;
+      if (ric) idleId = ric(() => void import("@/components/PanoramaViewer"), { timeout: 3000 });
+      else timeoutId = window.setTimeout(() => void import("@/components/PanoramaViewer"), 1200);
+    };
+
+    if (document.readyState === "complete") aquecer();
+    else window.addEventListener("load", aquecer, { once: true });
+
+    return () => {
+      window.removeEventListener("load", aquecer);
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
   }, []);
 
   // Pré-carrega apenas a panorâmica do ambiente selecionado e a do vizinho seguinte,
