@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, MessageCircle, MapPin, Phone } from "lucide-react";
-import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
-import { PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
+import { whatsappLink } from "@/lib/whatsapp";
+import { PHONE_E164, PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
 import { Picture } from "@/components/Picture";
 import type { ImageName } from "@/assets/generated/images";
 
@@ -241,7 +241,7 @@ export function CtaBand({ context }: { context: string }) {
               <MessageCircle className="w-4 h-4" aria-hidden /> Falar no WhatsApp
             </a>
             <a
-              href={`tel:+${WHATSAPP_NUMBER}`}
+              href={`tel:${PHONE_E164}`}
               className="inline-flex items-center gap-2 px-6 py-3 border border-white/60 rounded hover:bg-white/10 transition-colors"
             >
               <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}

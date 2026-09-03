@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
-import { pageSeo, EMAIL, PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
+import { pageSeo, EMAIL, PHONE_E164, PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
 
 const PATH = "/politica-de-privacidade";
@@ -120,7 +120,7 @@ function Privacy() {
                 </a>
                 <br />
                 WhatsApp:{" "}
-                <a href="tel:+5541987116308" className="text-bronze underline underline-offset-2">
+                <a href={`tel:${PHONE_E164}`} className="text-bronze underline underline-offset-2">
                   {PHONE_LOCAL}
                 </a>
               </address>

@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MapPin, Phone, Mail, Clock, Menu, X, MessageCircle } from "lucide-react";
-import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
-import { EMAIL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
+import { whatsappLink } from "@/lib/whatsapp";
+import { EMAIL, PHONE_E164, PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
 import { serviceCatalog, cityCatalog } from "@/data/catalog";
 
 /**
@@ -20,18 +20,7 @@ const nav = [
   { label: "Contato", to: "/contato" },
 ];
 
-function formatPhone(raw: string) {
-  // 5541999999999 -> (41) 99999-9999
-  const n = raw.replace(/\D/g, "");
-  const local = n.startsWith("55") ? n.slice(2) : n;
-  const ddd = local.slice(0, 2);
-  const rest = local.slice(2);
-  if (rest.length === 9) return `(${ddd}) ${rest.slice(0, 5)}-${rest.slice(5)}`;
-  return `(${ddd}) ${rest.slice(0, 4)}-${rest.slice(4)}`;
-}
-
 export function SiteHeader() {
-  const phone = formatPhone(WHATSAPP_NUMBER);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -56,11 +45,11 @@ export function SiteHeader() {
               </span>
             </span>
             <a
-              href={`tel:+${WHATSAPP_NUMBER}`}
+              href={`tel:${PHONE_E164}`}
               className="hidden md:flex items-center gap-2 hover:text-bronze"
             >
               <Phone className="w-3.5 h-3.5 text-bronze" aria-hidden />
-              {phone}
+              {PHONE_LOCAL}
             </a>
           </div>
         </div>
@@ -152,10 +141,10 @@ export function SiteHeader() {
                 <MessageCircle className="w-4 h-4" aria-hidden /> Solicitar Orçamento
               </a>
               <a
-                href={`tel:+${WHATSAPP_NUMBER}`}
+                href={`tel:${PHONE_E164}`}
                 className="inline-flex items-center gap-2 px-5 py-3 border border-bronze text-bronze text-sm font-medium rounded hover:bg-bronze hover:text-primary-foreground transition-colors"
               >
-                <Phone className="w-4 h-4" aria-hidden /> {phone}
+                <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}
               </a>
             </li>
           </ul>
@@ -166,7 +155,6 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
-  const phone = formatPhone(WHATSAPP_NUMBER);
   return (
     <footer className="bg-ink text-white/80 defer-render">
       <div className="max-w-7xl mx-auto px-6 py-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4 text-sm">
@@ -237,8 +225,8 @@ export function SiteFooter() {
             </p>
             <p className="flex gap-2">
               <Phone className="w-4 h-4 text-bronze shrink-0 mt-0.5" aria-hidden />
-              <a href={`tel:+${WHATSAPP_NUMBER}`} className="hover:text-bronze">
-                {phone}
+              <a href={`tel:${PHONE_E164}`} className="hover:text-bronze">
+                {PHONE_LOCAL}
               </a>
             </p>
             <p className="flex gap-2">

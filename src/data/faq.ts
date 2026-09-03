@@ -11,6 +11,8 @@
  * melhor do que um número inventado — a página responde a intenção da busca.
  */
 
+import { EMAIL, PHONE_LOCAL } from "@/lib/seo";
+
 export type FaqItem = {
   q: string;
   a: string;
@@ -108,7 +110,7 @@ export const faq: FaqItem[] = [
   {
     group: "Atendimento",
     q: "Como falo com a M7?",
-    a: "O caminho mais rápido é o WhatsApp (41) 98711-6308. Também atendemos por e-mail em m7movelaria@outlook.com.br. O horário de atendimento é de segunda a sexta, das 8h às 18h, e aos sábados das 8h às 12h.",
+    a: `O caminho mais rápido é o WhatsApp ${PHONE_LOCAL}. Também atendemos por e-mail em ${EMAIL}. O horário de atendimento é de segunda a sexta, das 8h às 18h, e aos sábados das 8h às 12h.`,
   },
 ];
 

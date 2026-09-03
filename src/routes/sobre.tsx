@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs, ContentSection, CtaBand } from "@/components/PageParts";
 import { Picture } from "@/components/Picture";
-import { pageSeo, STREET_ADDRESS, CITY, REGION, PHONE_LOCAL, EMAIL } from "@/lib/seo";
+import { pageSeo, STREET_ADDRESS, CITY, REGION, PHONE_E164, PHONE_LOCAL, EMAIL } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
 
 const PATH = "/sobre";
@@ -172,7 +172,7 @@ function About() {
               </p>
               <p className="mt-3">
                 WhatsApp e telefone:{" "}
-                <a href="tel:+5541987116308" className="text-bronze underline underline-offset-2">
+                <a href={`tel:${PHONE_E164}`} className="text-bronze underline underline-offset-2">
                   {PHONE_LOCAL}
                 </a>
                 <br />

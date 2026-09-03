@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MessageCircle, Mail, MapPin, Clock, Phone } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
-import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
+import { whatsappLink } from "@/lib/whatsapp";
 import {
   pageSeo,
   canonical,
   EMAIL,
+  PHONE_E164,
   PHONE_LOCAL,
   STREET_ADDRESS,
   CITY,
@@ -111,10 +112,7 @@ function Contact() {
               <Phone className="w-5 h-5 text-bronze" aria-hidden />
               <h2 className="mt-4 font-semibold text-ink">Telefone e WhatsApp</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                <a
-                  href={`tel:+${WHATSAPP_NUMBER}`}
-                  className="text-bronze underline underline-offset-2"
-                >
+                <a href={`tel:${PHONE_E164}`} className="text-bronze underline underline-offset-2">
                   {PHONE_LOCAL}
                 </a>
               </p>

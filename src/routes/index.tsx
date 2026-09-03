@@ -20,8 +20,8 @@ import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Picture } from "@/components/Picture";
 import { HeroVideo } from "@/components/HeroVideo";
 import { FaqSection } from "@/components/PageParts";
-import { whatsappLink, WHATSAPP_NUMBER } from "@/lib/whatsapp";
-import { pageSeo, canonical, PHONE_LOCAL } from "@/lib/seo";
+import { whatsappLink } from "@/lib/whatsapp";
+import { pageSeo, canonical, PHONE_E164, PHONE_LOCAL } from "@/lib/seo";
 import { jsonLd, webPage, faqPage } from "@/lib/schema";
 import { serviceCatalog, cityCatalog } from "@/data/catalog";
 import { images } from "@/assets/generated/images";
@@ -343,7 +343,7 @@ function Home() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a
-                    href={`tel:+${WHATSAPP_NUMBER}`}
+                    href={`tel:${PHONE_E164}`}
                     className="inline-flex items-center gap-2 text-bronze hover:underline"
                   >
                     <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}
@@ -676,7 +676,7 @@ function Home() {
             </div>
             <div className="flex flex-wrap gap-3">
               <a
-                href={`tel:+${WHATSAPP_NUMBER}`}
+                href={`tel:${PHONE_E164}`}
                 className="inline-flex items-center gap-2 px-5 py-3 bg-white text-bronze rounded font-medium hover:bg-white/90 transition-colors text-sm"
               >
                 <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}

@@ -19,6 +19,12 @@ export const LOGO_URL = `${SITE_URL}/logo-512.png`;
  * NAP (Name, Address, Phone) — precisa bater *caractere por caractere* com o
  * Perfil da Empresa no Google. Inconsistência de NAP é um dos fatores que mais
  * derruba ranking no pacote local.
+ *
+ * Estas constantes são a única fonte do telefone no site: o link do WhatsApp,
+ * todo `href="tel:"`, o schema.org e o número exibido saem daqui, inclusive o
+ * `WHATSAPP_NUMBER` de `src/lib/whatsapp.ts`, que é derivado do `PHONE_E164`.
+ * A única cópia manual que sobra é `public/llms.txt`, que é arquivo estático e
+ * não passa pelo bundler — ao trocar o número, edite os dois.
  */
 /** Formato de máquina (E.164) — schema.org e href="tel:". */
 export const PHONE_E164 = "+5541987116308";

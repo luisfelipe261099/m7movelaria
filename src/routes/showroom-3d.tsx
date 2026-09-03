@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { whatsappLink } from "@/lib/whatsapp";
-import { pageSeo, canonical } from "@/lib/seo";
+import { pageSeo, canonical, EMAIL, PHONE_LOCAL } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
 import { FloorPlanChooser } from "@/components/FloorPlanChooser";
 import { Breadcrumbs } from "@/components/PageParts";
@@ -339,7 +339,7 @@ function Showroom3DPage() {
                   <MessageCircle className="w-4 h-4" /> Solicitar orçamento
                 </a>
                 <p className="text-[10px] text-white/70 text-center mt-3 uppercase tracking-widest">
-                  (41) 98711-6308 · m7movelaria@outlook.com.br
+                  {PHONE_LOCAL} · {EMAIL}
                 </p>
               </div>
             )}
