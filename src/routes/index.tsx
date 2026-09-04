@@ -528,7 +528,7 @@ function Home() {
               Obras entregues
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground leading-relaxed">
-              Móveis já instalados, fotografados no lugar. As legendas e os projetos interativos
+              Móveis entregues pela M7, fotografados prontos. As legendas e os projetos interativos
               estão no portfólio.
             </p>
             {/* Antes eram cinco renders. Foto de obra entregue é o sinal de
@@ -546,7 +546,10 @@ function Home() {
                     name={o.image}
                     alt={o.alt}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(min-width: 1024px) 18vw, (min-width: 768px) 30vw, 46vw"
+                    // Largura real da célula, não fração do viewport: com 18vw o
+                    // desktop 2x pulava a variante de 480 e baixava a de 960
+                    // para pintar 230 px (+98 KB na página).
+                    sizes="(min-width: 1280px) 230px, (min-width: 1024px) calc((100vw - 128px) / 5), (min-width: 768px) calc((100vw - 88px) / 3), calc((100vw - 68px) / 2)"
                   />
                 </Link>
               ))}

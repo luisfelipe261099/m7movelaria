@@ -12,7 +12,15 @@ import { SITE_URL } from "@/lib/seo";
  * todo — o Google detecta isso e passa a ignorar o campo no site inteiro.
  * Então: constante, atualizada à mão quando o conteúdo da rota mudar.
  */
-const LASTMOD = "2026-09-04";
+const LASTMOD = "2026-09-01";
+/** Datas das rotas que mudaram depois do lastmod global. Mudou a rota, data aqui. */
+const MUDOU = {
+  "/": "2026-09-04",
+  "/projetos": "2026-09-04",
+  "/projetos/*": "2026-09-04",
+  "/marcenaria-para-arquitetos": "2026-09-03",
+  "/sobre": "2026-09-03",
+} as const;
 
 interface SitemapEntry {
   path: string;
@@ -35,7 +43,7 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const entries: SitemapEntry[] = [
-          { path: "/", changefreq: "weekly", priority: "1.0" },
+          { path: "/", lastmod: MUDOU["/"], changefreq: "weekly", priority: "1.0" },
           { path: "/moveis-planejados", changefreq: "monthly", priority: "0.9" },
           ...serviceCatalog.map((s) => ({
             path: `/moveis-planejados/${s.slug}`,
@@ -49,10 +57,16 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.8",
             images: [{ loc: `${SITE_URL}${images[c.image].src}`, title: c.imageAlt }],
           })),
-          { path: "/marcenaria-para-arquitetos", changefreq: "monthly", priority: "0.8" },
+          {
+            path: "/marcenaria-para-arquitetos",
+            lastmod: MUDOU["/marcenaria-para-arquitetos"],
+            changefreq: "monthly",
+            priority: "0.8",
+          },
           { path: "/showroom-3d", changefreq: "monthly", priority: "0.8" },
           {
             path: "/projetos",
+            lastmod: MUDOU["/projetos"],
             changefreq: "monthly",
             priority: "0.8",
             // As fotos de obra vivem nesta página; o título é o alt, que já
@@ -64,6 +78,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           },
           ...projects.map((p) => ({
             path: `/projetos/${p.slug}`,
+            lastmod: MUDOU["/projetos/*"],
             changefreq: "monthly" as const,
             priority: "0.7",
             // Era a única entrada sem imagens: as quatro fotos de ambiente de
@@ -75,7 +90,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             })),
           })),
           { path: "/perguntas-frequentes", changefreq: "monthly", priority: "0.7" },
-          { path: "/sobre", changefreq: "yearly", priority: "0.6" },
+          { path: "/sobre", lastmod: MUDOU["/sobre"], changefreq: "yearly", priority: "0.6" },
           { path: "/contato", changefreq: "yearly", priority: "0.7" },
           { path: "/politica-de-privacidade", changefreq: "yearly", priority: "0.2" },
         ];

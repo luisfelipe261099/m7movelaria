@@ -66,6 +66,16 @@ type PageSeoOptions = {
   path: string;
   /** Sobrescreve a imagem de compartilhamento padrão. */
   image?: string;
+  /**
+   * Dimensões e alt da imagem de compartilhamento. Só fazem sentido junto
+   * com `image`: o padrão (og-cover.jpg) é 1200x630 com alt genérico, e é
+   * isso que vale quando nada é passado. WhatsApp e Facebook montam o card
+   * com width/height declarados antes de baixar a imagem — declarar 630 para
+   * uma foto de 896 de altura entrega o primeiro card com proporção errada.
+   */
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
   /** og:type — "website" (padrão) ou "article" em conteúdos editoriais. */
   type?: "website" | "article";
   /** Tira a página do índice (ex.: rota de erro). */
@@ -88,6 +98,9 @@ export function pageSeo({
   description,
   path,
   image = OG_IMAGE,
+  imageWidth = 1200,
+  imageHeight = 630,
+  imageAlt = `${SITE_NAME} — móveis planejados sob medida`,
   type = "website",
   noindex = false,
 }: PageSeoOptions) {
@@ -102,15 +115,16 @@ export function pageSeo({
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:image", content: image },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: `${SITE_NAME} — móveis planejados sob medida` },
+      { property: "og:image:width", content: String(imageWidth) },
+      { property: "og:image:height", content: String(imageHeight) },
+      { property: "og:image:alt", content: imageAlt },
       { property: "og:site_name", content: SITE_NAME },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
       { name: "twitter:image", content: image },
+      { name: "twitter:image:alt", content: imageAlt },
     ],
     links: [{ rel: "canonical", href: url }],
   };

@@ -25,8 +25,9 @@
   `Review`/`AggregateRating` sobre os placeholders atuais (risco jurídico —
   CDC art. 37 — e violação de diretriz de dados estruturados do Google).
 - **Dois tipos de imagem no portfólio, e não se misturam.** `obra-*.jpg`
-  (`src/data/obras.ts`) são fotos de móvel instalado enviadas pela M7 — podem
-  ser chamadas de "obra entregue". `project-*`, `hero-*` e as panorâmicas são
+  (`src/data/obras.ts`) são fotos de móvel entregue enviadas pela M7 — instalado
+  na casa do cliente ou peça solta fotografada pronta — e podem ser chamadas de
+  "obra entregue", nunca de "fotografado no lugar" (a mesa é foto de estúdio). `project-*`, `hero-*` e as panorâmicas são
   renders de projeto executivo: nenhum texto ou alt pode afirmar execução sobre
   elas ("projeto executado em...", "fotos reais"). A legenda de uma foto de
   obra descreve só o que está visível; não recebe cidade, nome de cliente ou

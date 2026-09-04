@@ -36,7 +36,13 @@ type Json = Record<string, unknown>;
 export function jsonLd(nodes: Json[]) {
   return {
     type: "application/ld+json",
-    children: JSON.stringify({ "@context": "https://schema.org", "@graph": nodes }),
+    // O JSON vai para o HTML sem escape (dangerouslySetInnerHTML). Um "</script"
+    // dentro de qualquer legenda encerraria a tag; "\u003c" é JSON válido e o
+    // Google lê igual.
+    children: JSON.stringify({ "@context": "https://schema.org", "@graph": nodes }).replace(
+      /</g,
+      "\\u003c",
+    ),
   };
 }
 
@@ -122,6 +128,13 @@ export function webPage(opts: {
   name: string;
   description: string;
   image?: string;
+  /**
+   * `@id` de um ImageObject já declarado no mesmo grafo. Quando a página
+   * descreve a imagem principal como nó completo (legenda, dimensões), o
+   * WebPage referencia esse nó em vez de criar um segundo ImageObject
+   * anônimo para o mesmo arquivo — uma entidade, um `@id`.
+   */
+  imageId?: string;
   breadcrumb?: Array<{ name: string; path: string }>;
 }): Json[] {
   const url = canonical(opts.path);
@@ -135,7 +148,9 @@ export function webPage(opts: {
       inLanguage: "pt-BR",
       isPartOf: { "@id": ID_WEBSITE },
       about: { "@id": ID_BUSINESS },
-      primaryImageOfPage: { "@type": "ImageObject", url: opts.image ?? OG_IMAGE },
+      primaryImageOfPage: opts.imageId
+        ? { "@id": opts.imageId }
+        : { "@type": "ImageObject", url: opts.image ?? OG_IMAGE },
       ...(opts.breadcrumb?.length ? { breadcrumb: { "@id": `${url}#breadcrumb` } } : {}),
     },
   ];

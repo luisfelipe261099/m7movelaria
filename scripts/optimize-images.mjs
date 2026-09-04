@@ -25,6 +25,7 @@ import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { format } from "prettier";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ASSETS = path.join(ROOT, "src/assets");
@@ -146,7 +147,10 @@ async function main() {
     "",
   ];
 
-  await writeFile(path.join(GENERATED, "images.ts"), lines.join("\n"), "utf8");
+  // Passa pelo prettier antes de gravar: senão a próxima execução do script
+  // produz um diff só de quebras de linha e o `prettier --check` falha.
+  const manifesto = path.join(GENERATED, "images.ts");
+  await writeFile(manifesto, await format(lines.join("\n"), { filepath: manifesto }), "utf8");
 
   console.log(`${images.length} imagens (avif+webp+jpg) e ${panos.length} panorâmicas (webp).`);
 }

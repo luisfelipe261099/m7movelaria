@@ -106,6 +106,13 @@
   * {
     border-color: var(--color-border);
   }
+  /* O cabeçalho é sticky e mede 118 px (faixa NAP + nav + bordas). Sem isto
+     toda âncora (#obras, #obra-*, #conteudo) pousa com o topo escondido
+     atrás dele. Aqui, e não em scroll-mt por elemento: qualquer âncora
+     futura herda o deslocamento certo. */
+  html {
+    scroll-padding-top: 9rem;
+  }
   html,
   body {
     background-color: var(--color-background);
