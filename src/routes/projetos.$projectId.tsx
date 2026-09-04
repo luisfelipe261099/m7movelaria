@@ -2,6 +2,7 @@ import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { getProject, type Ambiente, type Hotspot } from "@/data/projects";
+import { obras } from "@/data/obras";
 import { ArrowRight, X } from "lucide-react";
 import { pageSeo, canonical, ID_BUSINESS } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
@@ -236,6 +237,52 @@ function ProjectPage() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Fotos de obra entregue: o projeto acima é render, e quem chega até
+            aqui merece ver como o móvel fica de verdade. Um link por foto
+            para a galeria, âncora na própria foto. */}
+        <section className="border-t border-border" aria-labelledby="obras-do-projeto">
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Fotos</p>
+                <h2 id="obras-do-projeto" className="text-2xl md:text-3xl font-bold text-ink">
+                  Obras entregues pela M7
+                </h2>
+                <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
+                  As imagens deste projeto são renders. Estas são fotos de móveis já instalados.
+                </p>
+              </div>
+              <Link
+                to="/projetos"
+                hash="obras"
+                className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+              >
+                Ver todas com legenda <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+              </Link>
+            </div>
+            <ul className="mt-8 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+              {obras.map((o) => (
+                <li key={o.slug}>
+                  <Link
+                    to="/projetos"
+                    hash={`obra-${o.slug}`}
+                    aria-label={`${o.name} — ver a foto com legenda`}
+                    className="group block aspect-square overflow-hidden rounded bg-ink"
+                  >
+                    <Picture
+                      name={o.image}
+                      alt={o.alt}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(min-width: 1024px) 18vw, (min-width: 768px) 30vw, 46vw"
+                    />
+                  </Link>
+                  <p className="mt-2 text-sm text-ink">{o.name}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </main>

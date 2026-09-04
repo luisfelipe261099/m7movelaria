@@ -38,7 +38,7 @@
 
 - [Sobre a M7](/sobre): como funciona um projeto, da conversa à instalação.
 - [Perguntas frequentes](/perguntas-frequentes): preço, prazo, materiais, ferragens e instalação.
-- [Projetos](/projetos): portfólio com hotspots interativos de materiais e ferragens.
+- [Projetos](/projetos): fotos de obras entregues com legenda e projetos interativos com hotspots de materiais e ferragens.
 - [Showroom 3D](/showroom-3d): tour 360° por ambientes executados.
 - [Contato](/contato): canais e o que enviar para acelerar o orçamento.
 - [Política de privacidade](/politica-de-privacidade)

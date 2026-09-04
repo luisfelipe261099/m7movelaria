@@ -100,6 +100,48 @@ import hwSiforma480Jpg from "./hw-siforma-480.jpg";
 import hwSiforma800Avif from "./hw-siforma-800.avif";
 import hwSiforma800Webp from "./hw-siforma-800.webp";
 import hwSiforma800Jpg from "./hw-siforma-800.jpg";
+import obraBarAdega480Avif from "./obra-bar-adega-480.avif";
+import obraBarAdega480Webp from "./obra-bar-adega-480.webp";
+import obraBarAdega480Jpg from "./obra-bar-adega-480.jpg";
+import obraBarAdega960Avif from "./obra-bar-adega-960.avif";
+import obraBarAdega960Webp from "./obra-bar-adega-960.webp";
+import obraBarAdega960Jpg from "./obra-bar-adega-960.jpg";
+import obraBarAdega1200Avif from "./obra-bar-adega-1200.avif";
+import obraBarAdega1200Webp from "./obra-bar-adega-1200.webp";
+import obraBarAdega1200Jpg from "./obra-bar-adega-1200.jpg";
+import obraGuardaRoupaVidro480Avif from "./obra-guarda-roupa-vidro-480.avif";
+import obraGuardaRoupaVidro480Webp from "./obra-guarda-roupa-vidro-480.webp";
+import obraGuardaRoupaVidro480Jpg from "./obra-guarda-roupa-vidro-480.jpg";
+import obraGuardaRoupaVidro960Avif from "./obra-guarda-roupa-vidro-960.avif";
+import obraGuardaRoupaVidro960Webp from "./obra-guarda-roupa-vidro-960.webp";
+import obraGuardaRoupaVidro960Jpg from "./obra-guarda-roupa-vidro-960.jpg";
+import obraGuardaRoupaVidro1200Avif from "./obra-guarda-roupa-vidro-1200.avif";
+import obraGuardaRoupaVidro1200Webp from "./obra-guarda-roupa-vidro-1200.webp";
+import obraGuardaRoupaVidro1200Jpg from "./obra-guarda-roupa-vidro-1200.jpg";
+import obraMesaMadeira480Avif from "./obra-mesa-madeira-480.avif";
+import obraMesaMadeira480Webp from "./obra-mesa-madeira-480.webp";
+import obraMesaMadeira480Jpg from "./obra-mesa-madeira-480.jpg";
+import obraMesaMadeira896Avif from "./obra-mesa-madeira-896.avif";
+import obraMesaMadeira896Webp from "./obra-mesa-madeira-896.webp";
+import obraMesaMadeira896Jpg from "./obra-mesa-madeira-896.jpg";
+import obraPainelTv480Avif from "./obra-painel-tv-480.avif";
+import obraPainelTv480Webp from "./obra-painel-tv-480.webp";
+import obraPainelTv480Jpg from "./obra-painel-tv-480.jpg";
+import obraPainelTv960Avif from "./obra-painel-tv-960.avif";
+import obraPainelTv960Webp from "./obra-painel-tv-960.webp";
+import obraPainelTv960Jpg from "./obra-painel-tv-960.jpg";
+import obraPainelTv1200Avif from "./obra-painel-tv-1200.avif";
+import obraPainelTv1200Webp from "./obra-painel-tv-1200.webp";
+import obraPainelTv1200Jpg from "./obra-painel-tv-1200.jpg";
+import obraSalaJantar480Avif from "./obra-sala-jantar-480.avif";
+import obraSalaJantar480Webp from "./obra-sala-jantar-480.webp";
+import obraSalaJantar480Jpg from "./obra-sala-jantar-480.jpg";
+import obraSalaJantar960Avif from "./obra-sala-jantar-960.avif";
+import obraSalaJantar960Webp from "./obra-sala-jantar-960.webp";
+import obraSalaJantar960Jpg from "./obra-sala-jantar-960.jpg";
+import obraSalaJantar1200Avif from "./obra-sala-jantar-1200.avif";
+import obraSalaJantar1200Webp from "./obra-sala-jantar-1200.webp";
+import obraSalaJantar1200Jpg from "./obra-sala-jantar-1200.jpg";
 import projectCloset480Avif from "./project-closet-480.avif";
 import projectCloset480Webp from "./project-closet-480.webp";
 import projectCloset480Jpg from "./project-closet-480.jpg";
@@ -252,6 +294,46 @@ export const images = {
     src: hwSiforma800Jpg,
     width: 800,
     height: 800,
+  },
+  "obra-bar-adega": {
+    avif: `${obraBarAdega480Avif} 480w, ${obraBarAdega960Avif} 960w, ${obraBarAdega1200Avif} 1200w`,
+    webp: `${obraBarAdega480Webp} 480w, ${obraBarAdega960Webp} 960w, ${obraBarAdega1200Webp} 1200w`,
+    jpg: `${obraBarAdega480Jpg} 480w, ${obraBarAdega960Jpg} 960w, ${obraBarAdega1200Jpg} 1200w`,
+    src: obraBarAdega1200Jpg,
+    width: 1200,
+    height: 896,
+  },
+  "obra-guarda-roupa-vidro": {
+    avif: `${obraGuardaRoupaVidro480Avif} 480w, ${obraGuardaRoupaVidro960Avif} 960w, ${obraGuardaRoupaVidro1200Avif} 1200w`,
+    webp: `${obraGuardaRoupaVidro480Webp} 480w, ${obraGuardaRoupaVidro960Webp} 960w, ${obraGuardaRoupaVidro1200Webp} 1200w`,
+    jpg: `${obraGuardaRoupaVidro480Jpg} 480w, ${obraGuardaRoupaVidro960Jpg} 960w, ${obraGuardaRoupaVidro1200Jpg} 1200w`,
+    src: obraGuardaRoupaVidro1200Jpg,
+    width: 1200,
+    height: 896,
+  },
+  "obra-mesa-madeira": {
+    avif: `${obraMesaMadeira480Avif} 480w, ${obraMesaMadeira896Avif} 896w`,
+    webp: `${obraMesaMadeira480Webp} 480w, ${obraMesaMadeira896Webp} 896w`,
+    jpg: `${obraMesaMadeira480Jpg} 480w, ${obraMesaMadeira896Jpg} 896w`,
+    src: obraMesaMadeira896Jpg,
+    width: 896,
+    height: 1200,
+  },
+  "obra-painel-tv": {
+    avif: `${obraPainelTv480Avif} 480w, ${obraPainelTv960Avif} 960w, ${obraPainelTv1200Avif} 1200w`,
+    webp: `${obraPainelTv480Webp} 480w, ${obraPainelTv960Webp} 960w, ${obraPainelTv1200Webp} 1200w`,
+    jpg: `${obraPainelTv480Jpg} 480w, ${obraPainelTv960Jpg} 960w, ${obraPainelTv1200Jpg} 1200w`,
+    src: obraPainelTv1200Jpg,
+    width: 1200,
+    height: 896,
+  },
+  "obra-sala-jantar": {
+    avif: `${obraSalaJantar480Avif} 480w, ${obraSalaJantar960Avif} 960w, ${obraSalaJantar1200Avif} 1200w`,
+    webp: `${obraSalaJantar480Webp} 480w, ${obraSalaJantar960Webp} 960w, ${obraSalaJantar1200Webp} 1200w`,
+    jpg: `${obraSalaJantar480Jpg} 480w, ${obraSalaJantar960Jpg} 960w, ${obraSalaJantar1200Jpg} 1200w`,
+    src: obraSalaJantar1200Jpg,
+    width: 1200,
+    height: 896,
   },
   "project-closet": {
     avif: `${projectCloset480Avif} 480w, ${projectCloset960Avif} 960w, ${projectCloset1600Avif} 1600w`,

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Picture } from "@/components/Picture";
+import { obras } from "@/data/obras";
 import { HeroVideo } from "@/components/HeroVideo";
 import { FaqSection } from "@/components/PageParts";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -194,20 +195,6 @@ const finishes = [
     desc: "Luz branca neutra — funcional para closets, bancadas e áreas de trabalho.",
     alt: "Iluminação em LED 5000K, luz branca neutra, sobre bancada de trabalho",
   },
-] as const;
-
-const portfolio = [
-  {
-    img: "hero-living",
-    alt: "Sala de estar com painel de TV e marcenaria em madeira nogueira",
-  },
-  { img: "project-closet", alt: "Closet planejado com araras iluminadas e gaveteiros" },
-  {
-    img: "project-kitchen",
-    alt: "Cozinha planejada com bancada em quartzo e iluminação em LED",
-  },
-  { img: "project-office", alt: "Home office com estante iluminada sob medida" },
-  { img: "hero-showroom-3d", alt: "Vista isométrica do showroom M7 em 3D" },
 ] as const;
 
 function Home() {
@@ -538,19 +525,26 @@ function Home() {
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Portfólio</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink text-balance">
-              Projetos de marcenaria sob medida
+              Obras entregues
             </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-muted-foreground leading-relaxed">
+              Móveis já instalados, fotografados no lugar. As legendas e os projetos interativos
+              estão no portfólio.
+            </p>
+            {/* Antes eram cinco renders. Foto de obra entregue é o sinal de
+                confiança que render não dá — e cada uma leva à sua legenda. */}
             <div className="mt-12 grid gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-              {portfolio.map((p) => (
+              {obras.map((o) => (
                 <Link
-                  key={p.img}
+                  key={o.slug}
                   to="/projetos"
-                  aria-label={`${p.alt} — ver o portfólio completo`}
-                  className="block aspect-square overflow-hidden rounded group"
+                  hash={`obra-${o.slug}`}
+                  aria-label={`${o.name} — ver a foto com legenda no portfólio`}
+                  className="block aspect-square overflow-hidden rounded group bg-ink"
                 >
                   <Picture
-                    name={p.img}
-                    alt={p.alt}
+                    name={o.image}
+                    alt={o.alt}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(min-width: 1024px) 18vw, (min-width: 768px) 30vw, 46vw"
                   />

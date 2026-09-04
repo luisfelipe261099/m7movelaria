@@ -19,14 +19,19 @@
   dois nós sem `@id` viram duas empresas diferentes para o Google.
 - **Nunca inventar dado de negócio** em texto, alt ou schema: preço, prazo em
   dias, CNPJ, CEP, coordenadas, anos de mercado, número de obras, nota de
-  avaliação. O que dá para escrever é *como* o preço/prazo se formam.
+  avaliação. O que dá para escrever é _como_ o preço/prazo se formam.
 - **Depoimentos**: não reintroduzir logo do Google, notas ou datas em avaliações
   que não vieram do Perfil Google real do cliente, e não adicionar
   `Review`/`AggregateRating` sobre os placeholders atuais (risco jurídico —
   CDC art. 37 — e violação de diretriz de dados estruturados do Google).
-- **As imagens do portfólio são renders**, não obras entregues. Nenhum texto ou
-  alt pode afirmar execução ("projeto executado em...", "fotos reais"). Se o
-  cliente fornecer fotos de obra, aí sim.
+- **Dois tipos de imagem no portfólio, e não se misturam.** `obra-*.jpg`
+  (`src/data/obras.ts`) são fotos de móvel instalado enviadas pela M7 — podem
+  ser chamadas de "obra entregue". `project-*`, `hero-*` e as panorâmicas são
+  renders de projeto executivo: nenhum texto ou alt pode afirmar execução sobre
+  elas ("projeto executado em...", "fotos reais"). A legenda de uma foto de
+  obra descreve só o que está visível; não recebe cidade, nome de cliente ou
+  de arquiteto, data, nem marca de ferragem que não apareça na imagem — a M7
+  não informou nada disso.
 - **Páginas de cidade não podem virar doorway pages**: cada uma tem conteúdo
   próprio (contexto urbano, bairros, o que muda no projeto ali). Cidade nova
   precisa de texto novo — copiar de outra é pior do que não ter a página.
@@ -43,7 +48,7 @@
 
 - **O caminho crítico é sagrado.** `routeTree.gen.ts` importa todas as rotas
   estaticamente, então tudo que um arquivo de rota importar no topo entra no
-  chunk que *toda* página baixa. Conteúdo longo (`services.ts`, `cities.ts`,
+  chunk que _toda_ página baixa. Conteúdo longo (`services.ts`, `cities.ts`,
   `faq.ts`) entra por `import()` dinâmico dentro do `loader`. Os campos curtos
   ficam em `src/data/catalog.ts`, que é leve e pode ser importado direto.
 - **Imagens**: sempre `<Picture>` (`src/components/Picture.tsx`), nunca `<img>`

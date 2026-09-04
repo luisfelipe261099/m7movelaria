@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { projects } from "@/data/projects";
+import { obras } from "@/data/obras";
 import { serviceCatalog, cityCatalog } from "@/data/catalog";
 import { images } from "@/assets/generated/images";
 import { SITE_URL } from "@/lib/seo";
@@ -11,7 +12,7 @@ import { SITE_URL } from "@/lib/seo";
  * todo — o Google detecta isso e passa a ignorar o campo no site inteiro.
  * Então: constante, atualizada à mão quando o conteúdo da rota mudar.
  */
-const LASTMOD = "2026-09-03";
+const LASTMOD = "2026-09-04";
 
 interface SitemapEntry {
   path: string;
@@ -50,7 +51,17 @@ export const Route = createFileRoute("/sitemap.xml")({
           })),
           { path: "/marcenaria-para-arquitetos", changefreq: "monthly", priority: "0.8" },
           { path: "/showroom-3d", changefreq: "monthly", priority: "0.8" },
-          { path: "/projetos", changefreq: "monthly", priority: "0.8" },
+          {
+            path: "/projetos",
+            changefreq: "monthly",
+            priority: "0.8",
+            // As fotos de obra vivem nesta página; o título é o alt, que já
+            // descreve a imagem sem afirmar cidade, cliente ou data.
+            images: obras.map((o) => ({
+              loc: `${SITE_URL}${images[o.image].src}`,
+              title: o.alt,
+            })),
+          },
           ...projects.map((p) => ({
             path: `/projetos/${p.slug}`,
             changefreq: "monthly" as const,
