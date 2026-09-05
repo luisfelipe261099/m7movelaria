@@ -86,7 +86,10 @@ export const Route = createFileRoute("/sitemap.xml")({
             // "Render de..." e nunca "executado" — são imagens de projeto.
             images: p.ambientes.map((a) => ({
               loc: `${SITE_URL}${images[a.image].src}`,
-              title: `Render de ${a.name.toLowerCase()} — ${p.name}`,
+              title:
+                p.tipo === "foto"
+                  ? `${a.name} — ${p.name}`
+                  : `Render de ${a.name.toLowerCase()} — ${p.name}`,
             })),
           })),
           { path: "/perguntas-frequentes", changefreq: "monthly", priority: "0.7" },

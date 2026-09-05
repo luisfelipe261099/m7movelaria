@@ -18,6 +18,8 @@ type PictureProps = {
    * variante certa do srcset — sem isso ele assume 100vw e baixa a maior.
    */
   sizes?: string;
+  /** Só para `object-position` calculado a partir de dados (ex.: foto em retrato). */
+  style?: React.CSSProperties;
 };
 
 /**
@@ -31,7 +33,14 @@ type PictureProps = {
  * espaço no layout antes do download e mantém o CLS em zero. O CSS continua
  * mandando no tamanho renderizado; width/height só informam a proporção.
  */
-export function Picture({ name, alt, className, priority = false, sizes = "100vw" }: PictureProps) {
+export function Picture({
+  name,
+  alt,
+  className,
+  priority = false,
+  sizes = "100vw",
+  style,
+}: PictureProps) {
   const img = images[name];
   return (
     // `display: contents` no <picture>: sem isso ele entra no layout como um
@@ -49,6 +58,7 @@ export function Picture({ name, alt, className, priority = false, sizes = "100vw
         width={img.width}
         height={img.height}
         className={className}
+        style={style}
         // Sempre `async`: `decoding="sync"` na imagem prioritária bloqueia a
         // main thread justamente no frame em que o LCP é pintado.
         decoding="async"

@@ -9,7 +9,17 @@ import { jsonLd, webPage } from "@/lib/schema";
 import { Breadcrumbs, CtaBand } from "@/components/PageParts";
 import { Picture } from "@/components/Picture";
 
+/** "Bar com adega climatizada" → "bar com adega climatizada"; a sigla de
+ *  "painel de TV" sobrevive. `toLowerCase()` inteiro rebaixava "TV". */
+const minusculaInicial = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
 export const Route = createFileRoute("/projetos/$projectId")({
+  // `?foto=<id>` abre o projeto já naquela foto — é como a galeria de
+  // /projetos manda para o "ponto a ponto" de cada obra. Parâmetro de busca,
+  // e não hash, para o SSR já renderizar a foto certa. O canonical continua
+  // sendo o caminho sem parâmetro (pageSeo usa só `path`).
+  validateSearch: (s: Record<string, unknown>): { foto?: string } =>
+    typeof s.foto === "string" ? { foto: s.foto } : {},
   loader: ({ params }) => {
     const project = getProject(params.projectId);
     if (!project) throw notFound();
@@ -71,7 +81,11 @@ function ProjectPage() {
     { name: "Projetos", path: "/projetos" },
     { name: project.name, path: `/projetos/${project.slug}` },
   ];
-  const [selected, setSelected] = useState<Ambiente>(project.ambientes[0]);
+  const { foto } = Route.useSearch();
+  const ehFoto = project.tipo === "foto";
+  const [selected, setSelected] = useState<Ambiente>(
+    () => project.ambientes.find((a) => a.id === foto) ?? project.ambientes[0],
+  );
   const [hotspot, setHotspot] = useState<Hotspot | null>(null);
 
   useEffect(() => {
@@ -95,7 +109,9 @@ function ProjectPage() {
               <h1 className="text-3xl md:text-5xl font-bold text-ink mt-2 text-balance">
                 {project.name}
               </h1>
-              <p className="text-sm text-muted-foreground mt-2">Cliente: {project.client}</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                {ehFoto ? project.client : `Cliente: ${project.client}`}
+              </p>
             </div>
             <p className="text-sm text-muted-foreground max-w-md">{project.description}</p>
           </div>
@@ -105,7 +121,7 @@ function ProjectPage() {
           {/* Ambientes list */}
           <aside className="space-y-2 lg:sticky lg:top-24 self-start">
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">
-              Ambientes
+              {ehFoto ? "Fotos" : "Ambientes"}
             </p>
             {project.ambientes.map((amb: Ambiente) => (
               <button
@@ -130,13 +146,23 @@ function ProjectPage() {
 
           {/* Interactive room */}
           <div>
-            <div className="relative w-full aspect-[16/10] overflow-hidden border border-border/50">
+            {/* Foto é 4:3 (as de obra são 1200x896); render é 16:10. As
+                coordenadas dos hotspots são do recorte exibido, então a
+                proporção do visualizador faz parte do dado. */}
+            <div
+              className={`relative w-full overflow-hidden border border-border/50 ${
+                ehFoto ? "aspect-[4/3]" : "aspect-[16/10]"
+              }`}
+            >
               <Picture
                 name={selected.image}
                 alt={`${selected.name} — ${selected.intro}`}
                 priority
                 className="absolute inset-0 w-full h-full object-cover"
-                sizes="(min-width: 1024px) 68vw, 100vw"
+                style={
+                  selected.objectPosition ? { objectPosition: selected.objectPosition } : undefined
+                }
+                sizes="(min-width: 1280px) 944px, (min-width: 1024px) calc(100vw - 368px), calc(100vw - 48px)"
               />
               <div className="absolute inset-0 bg-black/10" />
               {selected.hotspots.map((h) => (
@@ -183,11 +209,14 @@ function ProjectPage() {
         <section className="border-t border-border bg-cream">
           <div className="max-w-4xl mx-auto px-6 py-16">
             <h2 className="text-2xl md:text-3xl font-bold text-ink">
-              Especificação de projeto de cada ambiente
+              {ehFoto
+                ? "O que cada foto mostra, ponto a ponto"
+                : "Especificação de projeto de cada ambiente"}
             </h2>
             <p className="mt-3 text-muted-foreground leading-relaxed max-w-2xl">
-              O que está desenhado em cada ambiente deste projeto: material, ferragem especificada e
-              iluminação, peça por peça.
+              {ehFoto
+                ? "Os pontos descrevem o que está visível na foto: acabamento, vidro, iluminação, puxador. Chapa, dobradiça e corrediça não aparecem em fotografia, e por isso não estão aqui — quando a M7 informar a especificação de cada peça, ela entra neste mesmo lugar."
+                : "O que está desenhado em cada ambiente deste projeto: material, ferragem especificada e iluminação, peça por peça."}
             </p>
 
             <div className="mt-10 space-y-12">
@@ -224,16 +253,28 @@ function ProjectPage() {
                     ))}
                   </div>
 
-                  {amb.servicoSlug && (
-                    <Link
-                      to="/moveis-planejados/$servico"
-                      params={{ servico: amb.servicoSlug }}
-                      className="mt-5 inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
-                    >
-                      Como projetamos {amb.name.toLowerCase()}{" "}
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden />
-                    </Link>
-                  )}
+                  <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+                    {amb.servicoSlug && (
+                      <Link
+                        to="/moveis-planejados/$servico"
+                        params={{ servico: amb.servicoSlug }}
+                        className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                      >
+                        Como projetamos {minusculaInicial(amb.name)}{" "}
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                      </Link>
+                    )}
+                    {ehFoto && (
+                      <Link
+                        to="/projetos"
+                        hash={`obra-${amb.id}`}
+                        className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                      >
+                        Ver a foto com legenda na galeria{" "}
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                      </Link>
+                    )}
+                  </div>
                 </article>
               ))}
             </div>
@@ -243,58 +284,60 @@ function ProjectPage() {
         {/* Fotos de obra entregue: o projeto acima é render, e quem chega até
             aqui merece ver como o móvel fica de verdade. Um link por foto
             para a galeria, âncora na própria foto. */}
-        <section className="border-t border-border" aria-labelledby="obras-do-projeto">
-          <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Fotos</p>
-                <h2 id="obras-do-projeto" className="text-2xl md:text-3xl font-bold text-ink">
-                  Obras entregues pela M7
-                </h2>
-                <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
-                  As imagens deste projeto são renders. Estas são fotos de móveis entregues.
-                </p>
+        {!ehFoto && (
+          <section className="border-t border-border" aria-labelledby="obras-do-projeto">
+            <div className="max-w-7xl mx-auto px-6 py-16">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Fotos</p>
+                  <h2 id="obras-do-projeto" className="text-2xl md:text-3xl font-bold text-ink">
+                    Obras entregues pela M7
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
+                    As imagens deste projeto são renders. Estas são fotos de móveis entregues.
+                  </p>
+                </div>
+                <Link
+                  to="/projetos"
+                  hash="obras"
+                  className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                >
+                  Ver todas com legenda <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                </Link>
               </div>
-              <Link
-                to="/projetos"
-                hash="obras"
-                className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
-              >
-                Ver todas com legenda <ArrowRight className="w-3.5 h-3.5" aria-hidden />
-              </Link>
-            </div>
-            {/* No celular é uma faixa rolável (cinco quadrados em grade ocupavam
+              {/* No celular é uma faixa rolável (cinco quadrados em grade ocupavam
                 uma tela inteira, com célula órfã); de md para cima vira grade.
                 O nome fica DENTRO do link: é o rótulo visível do card e o
                 leitor de tela anuncia o nome uma vez só. */}
-            <ul className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-5 md:overflow-visible">
-              {obras.map((o) => (
-                <li key={o.slug} className="w-40 shrink-0 snap-start md:w-auto">
-                  <Link
-                    to="/projetos"
-                    hash={`obra-${o.slug}`}
-                    aria-label={`${o.name} — ver a foto com legenda`}
-                    className="group block"
-                  >
-                    <div className="aspect-square overflow-hidden rounded bg-ink">
-                      <Picture
-                        name={o.image}
-                        alt={o.alt}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(min-width: 1280px) 234px, (min-width: 1024px) calc((100vw - 112px) / 5), (min-width: 768px) calc((100vw - 80px) / 3), 160px"
-                      />
-                    </div>
-                    <p className="mt-2 text-sm text-ink group-hover:text-bronze transition-colors">
-                      {o.name}
-                    </p>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+              <ul className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-5 md:overflow-visible">
+                {obras.map((o) => (
+                  <li key={o.slug} className="w-40 shrink-0 snap-start md:w-auto">
+                    <Link
+                      to="/projetos"
+                      hash={`obra-${o.slug}`}
+                      aria-label={`${o.name} — ver a foto com legenda`}
+                      className="group block"
+                    >
+                      <div className="aspect-square overflow-hidden rounded bg-ink">
+                        <Picture
+                          name={o.image}
+                          alt={o.alt}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(min-width: 1280px) 234px, (min-width: 1024px) calc((100vw - 112px) / 5), (min-width: 768px) calc((100vw - 80px) / 3), 160px"
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-ink group-hover:text-bronze transition-colors">
+                        {o.name}
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
       </main>
-      <CtaBand context="um projeto como este" />
+      <CtaBand context={ehFoto ? "um móvel como estes" : "um projeto como este"} />
       <SiteFooter />
 
       {/* Hotspot drawer */}

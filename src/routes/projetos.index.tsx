@@ -150,16 +150,26 @@ function ProjectsList() {
                       legenda, e o link não faz parte dela. `mt-auto` alinha os
                       links da fileira pelo rodapé, mesmo com legendas de
                       tamanhos diferentes. */}
-                  {servico && (
+                  <div className="mt-auto pt-3 flex flex-wrap gap-x-5 gap-y-1.5">
                     <Link
-                      to="/moveis-planejados/$servico"
-                      params={{ servico: servico.slug }}
-                      className="mt-auto pt-3 inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark self-start"
+                      to="/projetos/$projectId"
+                      params={{ projectId: "obras-entregues" }}
+                      search={{ foto: o.slug }}
+                      className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
                     >
-                      Como projetamos {minusculaInicial(servico.name)}{" "}
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                      Ver ponto a ponto <ArrowRight className="w-3.5 h-3.5" aria-hidden />
                     </Link>
-                  )}
+                    {servico && (
+                      <Link
+                        to="/moveis-planejados/$servico"
+                        params={{ servico: servico.slug }}
+                        className="inline-flex items-center gap-1.5 text-sm text-bronze underline hover:text-bronze-dark"
+                      >
+                        Como projetamos {minusculaInicial(servico.name)}{" "}
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden />
+                      </Link>
+                    )}
+                  </div>
                 </figure>
               );
             })}
@@ -197,10 +207,10 @@ function ProjectsList() {
           </h2>
           <div className="mt-3 max-w-2xl space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              Renders de projeto executivo, não fotografia: o desenho detalhado peça a peça, como
-              vai para a produção. Cada projeto abre com seus ambientes e pontos interativos — você
-              clica em uma peça e vê o que foi especificado ali: a chapa, a ferragem, o tipo de
-              iluminação e o que o detalhe resolve no uso do dia a dia.
+              Cada projeto abre com seus ambientes e pontos interativos — você clica em uma peça e
+              vê o que há ali. Na Residência Aurora, que é render de projeto executivo, o ponto traz
+              a especificação: chapa, ferragem, tipo de iluminação. Nas obras entregues, que são
+              fotografia, o ponto descreve o que está visível no móvel pronto.
             </p>
             <p>
               A M7 documenta projeto peça por peça porque é assim que o móvel é produzido. A
@@ -221,7 +231,11 @@ function ProjectsList() {
                 <div className="relative aspect-[4/3] overflow-hidden rounded">
                   <Picture
                     name={p.coverName}
-                    alt={`Render de ${p.name} — ${p.description}`}
+                    alt={
+                      p.tipo === "foto"
+                        ? `${p.name} — ${p.description}`
+                        : `Render de ${p.name} — ${p.description}`
+                    }
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(min-width: 1280px) 604px, (min-width: 768px) calc((100vw - 88px) / 2), calc(100vw - 48px)"
                   />
