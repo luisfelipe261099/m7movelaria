@@ -136,6 +136,7 @@ function ArchitectsPage() {
           image="finish-lamina-45"
           imageAlt="Detalhe de marcenaria em lâmina natural com encaixe em 45 graus e continuidade de veio na quina"
           trail={TRAIL}
+          orcamento="whatsapp"
         />
 
         <ContentSection
@@ -246,7 +247,7 @@ function ArchitectsPage() {
         </section>
 
         <FaqSection items={FAQ} heading="Perguntas de quem especifica marcenaria" />
-        <CtaBand context="marcenaria executada a partir do seu projeto" />
+        <CtaBand context="marcenaria executada a partir do seu projeto" orcamento="whatsapp" />
       </main>
       <SiteFooter />
     </div>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MessageCircle, Mail, MapPin, Clock, Phone } from "lucide-react";
+import { MessageCircle, Mail, MapPin, Clock, Phone, Calculator } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -89,6 +89,12 @@ function Contact() {
               >
                 <Mail className="w-4 h-4" aria-hidden /> Enviar e-mail
               </a>
+              <Link
+                to="/orcamento"
+                className="inline-flex items-center gap-2 px-8 py-3.5 border border-bronze text-bronze rounded text-sm font-medium hover:bg-bronze hover:text-primary-foreground transition-colors"
+              >
+                <Calculator className="w-4 h-4" aria-hidden /> Simular orçamento online
+              </Link>
             </div>
           </div>
         </section>

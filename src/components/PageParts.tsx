@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, MessageCircle, MapPin, Phone } from "lucide-react";
+import { ArrowRight, MessageCircle, MapPin, Phone, Calculator } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { PHONE_E164, PHONE_LOCAL, STREET_ADDRESS, CITY, REGION } from "@/lib/seo";
 import { Picture } from "@/components/Picture";
@@ -38,6 +38,14 @@ export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: stri
   );
 }
 
+/**
+ * Para onde o botão de orçamento leva. "simulador" (padrão) é /orcamento —
+ * o cliente pediu que "orçamento" abra a página de orçamento, não o WhatsApp.
+ * "whatsapp" fica para as páginas em que o simulador não se aplica: móveis
+ * comerciais e a parceria com arquitetos, que são conversa, não módulo.
+ */
+export type DestinoOrcamento = "simulador" | "whatsapp";
+
 export function PageHero({
   eyebrow,
   h1,
@@ -45,6 +53,7 @@ export function PageHero({
   image,
   imageAlt,
   trail,
+  orcamento = "simulador",
 }: {
   eyebrow: string;
   h1: string;
@@ -52,6 +61,7 @@ export function PageHero({
   image: ImageName;
   imageAlt: string;
   trail: Array<{ name: string; path: string }>;
+  orcamento?: DestinoOrcamento;
 }) {
   return (
     <section className="bg-cream">
@@ -69,14 +79,23 @@ export function PageHero({
               </p>
             ))}
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={whatsappLink(`Olá M7 Movelaria, gostaria de um orçamento de ${h1}.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" aria-hidden /> Pedir orçamento no WhatsApp
-              </a>
+              {orcamento === "simulador" ? (
+                <Link
+                  to="/orcamento"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
+                >
+                  <Calculator className="w-4 h-4" aria-hidden /> Simular orçamento online
+                </Link>
+              ) : (
+                <a
+                  href={whatsappLink(`Olá M7 Movelaria, gostaria de um orçamento de ${h1}.`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" aria-hidden /> Pedir orçamento no WhatsApp
+                </a>
+              )}
               <Link
                 to="/projetos"
                 className="inline-flex items-center gap-2 px-6 py-3 border border-bronze text-bronze rounded hover:bg-bronze hover:text-primary-foreground transition-colors"
@@ -219,7 +238,13 @@ export function RelatedLinks({
  * rodapé) é sinal local — e o formato tem que bater com o Perfil da Empresa no
  * Google, caractere por caractere.
  */
-export function CtaBand({ context }: { context: string }) {
+export function CtaBand({
+  context,
+  orcamento = "simulador",
+}: {
+  context: string;
+  orcamento?: DestinoOrcamento;
+}) {
   return (
     <section className="bg-ink text-white">
       <div className="max-w-7xl mx-auto px-6 py-14 grid gap-8 md:grid-cols-2 items-center">
@@ -232,11 +257,23 @@ export function CtaBand({ context }: { context: string }) {
             e agenda a visita técnica.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
+            {orcamento === "simulador" && (
+              <Link
+                to="/orcamento"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
+              >
+                <Calculator className="w-4 h-4" aria-hidden /> Simular orçamento online
+              </Link>
+            )}
             <a
               href={whatsappLink(`Olá M7 Movelaria, gostaria de um orçamento de ${context}.`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
+              className={`inline-flex items-center gap-2 px-6 py-3 rounded transition-colors ${
+                orcamento === "simulador"
+                  ? "border border-white/60 hover:bg-white/10"
+                  : "bg-bronze text-primary-foreground hover:bg-bronze-dark"
+              }`}
             >
               <MessageCircle className="w-4 h-4" aria-hidden /> Falar no WhatsApp
             </a>

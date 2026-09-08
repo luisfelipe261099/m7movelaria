@@ -336,7 +336,7 @@ function Showroom3DPage() {
                   rel="noopener noreferrer"
                   className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-bronze text-white text-xs uppercase tracking-[0.25em] px-5 py-4 hover:bg-bronze/90 transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" /> Solicitar orçamento
+                  <MessageCircle className="w-4 h-4" /> Falar no WhatsApp sobre este detalhe
                 </a>
                 <p className="text-[10px] text-white/70 text-center mt-3 uppercase tracking-widest">
                   {PHONE_LOCAL} · {EMAIL}

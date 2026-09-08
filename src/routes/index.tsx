@@ -11,7 +11,7 @@ import {
   Palette,
   Users,
   Heart,
-  MessageCircle,
+  Calculator,
   Calendar,
   Play,
   Phone,
@@ -21,7 +21,6 @@ import { Picture } from "@/components/Picture";
 import { obras } from "@/data/obras";
 import { HeroVideo } from "@/components/HeroVideo";
 import { FaqSection } from "@/components/PageParts";
-import { whatsappLink } from "@/lib/whatsapp";
 import { pageSeo, canonical, PHONE_E164, PHONE_LOCAL } from "@/lib/seo";
 import { jsonLd, webPage, faqPage } from "@/lib/schema";
 import { serviceCatalog, cityCatalog } from "@/data/catalog";
@@ -220,14 +219,12 @@ function Home() {
                 produção no ateliê e instalação com equipe própria.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href={whatsappLink("Olá M7 Movelaria, gostaria de solicitar um orçamento.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/orcamento"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors"
                 >
-                  Pedir orçamento no WhatsApp <MessageCircle className="w-4 h-4" aria-hidden />
-                </a>
+                  Simular orçamento online <Calculator className="w-4 h-4" aria-hidden />
+                </Link>
                 <Link
                   to="/moveis-planejados"
                   className="inline-flex items-center gap-2 px-6 py-3 border border-bronze text-bronze rounded hover:bg-bronze hover:text-primary-foreground transition-colors"
@@ -678,14 +675,12 @@ function Home() {
               >
                 <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}
               </a>
-              <a
-                href={whatsappLink("Olá M7 Movelaria, gostaria de solicitar um orçamento.")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/orcamento"
                 className="inline-flex items-center gap-2 px-5 py-3 border border-white/60 rounded font-medium hover:bg-white/10 transition-colors text-sm"
               >
-                <MessageCircle className="w-4 h-4" aria-hidden /> Solicitar orçamento
-              </a>
+                <Calculator className="w-4 h-4" aria-hidden /> Simular orçamento online
+              </Link>
             </div>
           </div>
         </section>

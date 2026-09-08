@@ -86,6 +86,8 @@ function ServicePage() {
     { name: "Móveis planejados", path: "/moveis-planejados" },
     { name: svc.name, path: `/moveis-planejados/${svc.slug}` },
   ];
+  // O simulador monta módulos residenciais; móvel comercial é conversa.
+  const orcamento = svc.slug === "moveis-comerciais" ? "whatsapp" : "simulador";
   const related = svc.related
     .map((slug) => serviceCatalog.find((s) => s.slug === slug))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
@@ -106,6 +108,7 @@ function ServicePage() {
           image={svc.image}
           imageAlt={svc.imageAlt}
           trail={trail}
+          orcamento={orcamento}
         />
 
         {svc.sections.map((s, i) => (
@@ -147,7 +150,7 @@ function ServicePage() {
 
         <FaqSection items={svc.faq} heading={`Perguntas frequentes sobre ${svc.keyword}`} />
         <RelatedLinks heading="Outros ambientes que executamos" links={related} />
-        <CtaBand context={svc.name.toLowerCase()} />
+        <CtaBand context={svc.name.toLowerCase()} orcamento={orcamento} />
       </main>
       <SiteFooter />
     </div>
