@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "icons": "python3 scripts/gerar-icones.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -354,8 +354,9 @@ function render() {
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${SITE_URL}/og-cover.jpg">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="apple-touch-icon" href="/logo-512.png">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <!-- O destino do botão principal é outra origem: abrir a conexão agora tira o
      DNS + TLS do caminho entre o toque e o WhatsApp. -->
 <link rel="dns-prefetch" href="https://wa.me">

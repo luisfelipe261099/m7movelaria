@@ -111,8 +111,12 @@ export const Route = createRootRoute({
         : []),
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
-      { rel: "apple-touch-icon", href: "/logo-512.png" },
+      // Ícones gerados de src/brand/logo-m7.jpg por scripts/gerar-icones.py.
+      // O .ico carrega 16/32/48 para a aba; o PNG de 32 é o que Chrome e
+      // Firefox preferem quando existe; o Apple é 180 com fundo branco.
+      { rel: "icon", href: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
       // Só a Inter é pré-carregada: é a fonte do corpo e dos títulos, ou seja,
       // de praticamente todo o texto da página. A Cormorant aparece só no
