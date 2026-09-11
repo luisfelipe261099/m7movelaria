@@ -31,13 +31,21 @@ export const PHONE_E164 = "+5541987116308";
 /** Formato de exibição, igual ao do Perfil da Empresa no Google. */
 export const PHONE_LOCAL = "(41) 98711-6308";
 export const EMAIL = "m7movelaria@outlook.com.br";
-export const STREET_ADDRESS = "R. Henrique Bortolam, 182 - Costeira";
+export const STREET_ADDRESS = "R. Henrique Bortolan, 182 - Costeira";
 export const CITY = "São José dos Pinhais";
 export const REGION = "PR";
 export const COUNTRY = "BR";
-/** CEP e coordenadas ainda não confirmados pelo cliente — ver README. */
-export const POSTAL_CODE = "";
-export const GEO: { latitude: number; longitude: number } | null = null;
+/**
+ * CEP conferido nos Correios (ViaCEP) e no Perfil da Empresa no Google; a
+ * grafia oficial da rua é "Bortolan", com N. As coordenadas são as do pino do
+ * próprio perfil no Google Maps (place /g/11vjy5fnnp), para o `geo` do schema
+ * casar com o que o Google já tem.
+ */
+export const POSTAL_CODE = "83015-470";
+export const GEO: { latitude: number; longitude: number } | null = {
+  latitude: -25.5714056,
+  longitude: -49.1538786,
+};
 
 /** Cidades atendidas — usado em schema (areaServed) e nas landing pages locais. */
 export const SERVED_CITIES = [

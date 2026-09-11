@@ -101,7 +101,7 @@ export const faq: FaqItem[] = [
   {
     group: "Atendimento",
     q: "Posso visitar o ateliê antes de fechar?",
-    a: "Pode, e recomendamos. O ateliê fica na R. Henrique Bortolam, 182, no bairro Costeira, em São José dos Pinhais. Combine o horário pelo WhatsApp para garantir que haja alguém disponível para te acompanhar — é a melhor forma de ver acabamento e ferragem de perto em vez de decidir por foto.",
+    a: "Pode, e recomendamos. O ateliê fica na R. Henrique Bortolan, 182, no bairro Costeira, em São José dos Pinhais. Combine o horário pelo WhatsApp para garantir que haja alguém disponível para te acompanhar — é a melhor forma de ver acabamento e ferragem de perto em vez de decidir por foto.",
     link: {
       to: "/moveis-planejados-em/sao-jose-dos-pinhais",
       label: "Onde fica o ateliê em São José dos Pinhais",

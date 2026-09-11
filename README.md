@@ -105,12 +105,13 @@ Regenerar com `python3 scripts/gerar-relatorio.py` (requer `pip install reportla
 
 Bloqueadas em dados que só o cliente tem:
 
-- **CEP e coordenadas do ateliê** — `POSTAL_CODE` e `GEO` em `src/lib/seo.ts`
-  estão vazios. Preenchê-los completa o `LocalBusiness` no schema (`postalCode`,
-  `geo`, `hasMap`), que é o que casa o site com o Perfil da Empresa no Google.
-- **Perfil da Empresa no Google (antigo Google Meu Negócio)** — sem ele o site
-  não aparece no mapa nem no pacote local, que é onde está a maior parte dos
-  cliques desse nicho. O NAP do site já está no formato certo para casar.
+- **Perfil da Empresa no Google** — existe (16 avaliações, nota 5,0) e o NAP do
+  site já casa com ele: rua `Henrique Bortolan` (com N, conferido nos Correios),
+  CEP `83015-470` e `geo` com o pino do próprio perfil, em `src/lib/seo.ts`.
+  O que ainda depende do cliente: a categoria principal está como "Fabricante",
+  que não casa com "móveis planejados" e deixa o perfil fora do pacote local
+  (trocar para Loja de móveis planejados / Moveleiro), e o horário diverge
+  (perfil 7h–16h sem sábado; site 8h–18h e sábado 8h–12h).
 - **Redes sociais** — `sameAs` no schema está vazio de propósito; declarar
   perfil inexistente atrapalha a validação da entidade.
 - **Avaliações reais** — os depoimentos em `src/routes/index.tsx` são

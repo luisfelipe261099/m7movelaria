@@ -38,7 +38,7 @@ const HERO_SIZES = "(min-width: 1024px) 46vw, 100vw";
 const HOME_FAQ = [
   {
     q: "A M7 Movelaria atende Curitiba além de São José dos Pinhais?",
-    a: "Sim. O ateliê fica em São José dos Pinhais, na R. Henrique Bortolam, 182, bairro Costeira, e atendemos Curitiba e toda a região metropolitana — Pinhais, Araucária, Colombo, Fazenda Rio Grande, Piraquara e Quatro Barras — com medição no local, entrega e instalação pela nossa própria equipe.",
+    a: "Sim. O ateliê fica em São José dos Pinhais, na R. Henrique Bortolan, 182, bairro Costeira, e atendemos Curitiba e toda a região metropolitana — Pinhais, Araucária, Colombo, Fazenda Rio Grande, Piraquara e Quatro Barras — com medição no local, entrega e instalação pela nossa própria equipe.",
   },
   {
     q: "Qual a diferença entre a M7 e uma loja de móveis planejados?",
@@ -320,7 +320,7 @@ function Home() {
                   Marcenaria em São José dos Pinhais, Curitiba e região metropolitana
                 </h2>
                 <p className="mt-5 text-muted-foreground leading-relaxed">
-                  Nosso ateliê fica na R. Henrique Bortolam, 182, bairro Costeira, em São José dos
+                  Nosso ateliê fica na R. Henrique Bortolan, 182, bairro Costeira, em São José dos
                   Pinhais — a poucos minutos da divisa com Curitiba. Isso encurta o caminho entre um
                   ajuste no projeto e a peça pronta, e mantém medição, entrega e instalação com a
                   nossa própria equipe.

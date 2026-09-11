@@ -136,7 +136,7 @@ export const cityCatalog: CitySummary[] = [
     h1: "Marcenaria em São José dos Pinhais: móveis planejados feitos no nosso ateliê",
     title: "Marcenaria em São José dos Pinhais | M7 Movelaria",
     description:
-      "Marcenaria sob medida em São José dos Pinhais: cozinhas, dormitórios, closets e home office. Ateliê na R. Henrique Bortolam, 182. Peça seu orçamento.",
+      "Marcenaria sob medida em São José dos Pinhais: cozinhas, dormitórios, closets e home office. Ateliê na R. Henrique Bortolan, 182. Peça seu orçamento.",
     image: "project-kitchen",
     imageAlt: "Cozinha planejada sob medida com bancada em quartzo e armários até o teto",
   },
