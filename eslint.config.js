@@ -6,7 +6,10 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi", ".vercel"] },
+  // `lovable/` é a cópia da versão original gerada no Lovable, mantida só para
+  // consulta local. Sem esta linha ela responde por 117 dos 130 problemas do
+  // `npm run lint` — o ruído esconde o que é do código que está no ar.
+  { ignores: ["dist", ".output", ".vinxi", ".vercel", "lovable"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

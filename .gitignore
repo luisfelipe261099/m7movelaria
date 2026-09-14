@@ -35,3 +35,10 @@ dist-ssr
 *.sw?
 .vercel
 .env*
+
+# Cópia da versão original gerada no Lovable e o zip do projeto antigo: ficam
+# na máquina para consulta, fora do git (o zip sozinho tem 8,9 MB). Quem tira
+# essa pasta do `npm run lint` é o `ignores` do eslint.config.js, não este
+# arquivo — .gitignore não é lido pelo eslint.
+lovable/
+*.zip
