@@ -47,6 +47,28 @@
 
 ## Performance
 
+- **As páginas indexáveis são HTML estático, não SSR por requisição.**
+  `scripts/prerender.mjs` roda como `postbuild` (o `npm run build` já dispara,
+  inclusive no CI) e grava o HTML de cada rota do sitemap em
+  `.vercel/output/static/`. A Vercel serve esses arquivos do CDN sem tocar a
+  função, porque o `config.json` do nitro tem `{"handle":"filesystem"}` antes do
+  catch-all para `/__server`. É aditivo: rota sem arquivo continua sendo servida
+  pela função, então falta de HTML degrada, não quebra.
+  - A lista de rotas **não** é escrita no script: sai do próprio `/sitemap.xml`,
+    pedido ao handler recém-construído. Página nova no sitemap é
+    pré-renderizada sozinha; `/links` fica de fora porque já está fora do
+    sitemap, e é isso que ela precisa (o selo "aberto agora" é por requisição).
+  - Arquivo estático **não passa pelo middleware** de `src/start.ts`, então os
+    cabeçalhos dele (preload da fonte, segurança, noindex em `*.vercel.app`)
+    são repostos como rotas de `headers` no `config.json`. Isso é duplicação, e
+    o script falha o build nomeando qualquer cabeçalho que você acrescentar no
+    middleware e esquecer lá — não confie na memória, confie no erro.
+  - O prerender do TanStack (`tanstackStart.pages[].prerender`) **não funciona
+    aqui**: ele sobe o próprio servidor importando `dist/server/server.js`, que
+    o nitro não gera (a saída é `.output`/`.vercel/output`), e devolve 500 em
+    tudo. O do nitro (`prerender` no `nitro.config.ts`) é lido mas roda **antes**
+    de o ambiente `nitro` ser construído, então responde 404 em tudo e grava
+    zero rotas. Daí o script próprio, depois do build.
 - **O caminho crítico é sagrado.** `routeTree.gen.ts` importa todas as rotas
   estaticamente, então tudo que um arquivo de rota importar no topo entra no
   chunk que _toda_ página baixa. Conteúdo longo (`services.ts`, `cities.ts`,
