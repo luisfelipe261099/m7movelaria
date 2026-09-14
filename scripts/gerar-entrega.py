@@ -6,8 +6,12 @@ Sai em docs/entrega-projeto-site.pdf.
 
 REGRA DESTE DOCUMENTO: ele vai para o cliente e pede pagamento. Nada aqui pode
 ser afirmação não verificada — cada item da lista de entregas foi conferido no
-código ou no site no ar antes de entrar, e o que ainda depende do cliente está
-declarado em vez de escondido. Se um item sair do ar, tire daqui também.
+código ou no site no ar antes de entrar. Se um item sair do ar, tire daqui
+também.
+
+A seção de pendências foi retirada a pedido do cliente do documento. Se voltar,
+ela é o lugar de registrar o que depende da M7 (tabela de preço, categoria no
+Perfil do Google, horário, depoimentos e fotos).
 
 Os dados comerciais (chave Pix, nome de quem presta o serviço) ficam em
 DADOS_COMERCIAIS, no topo — nunca invente nenhum deles.
@@ -38,7 +42,7 @@ from reportlab.platypus import (
 # --------------------------------------------------------------------------
 DADOS_COMERCIAIS = {
     "prestador": "",  # nome de quem prestou o serviço, como assina
-    "pix_chave": "",  # chave Pix para o pagamento
+    "pix_chave": "65.104.139/0001-20  (CNPJ)",  # dígitos verificadores conferidos
     "pix_titular": "",  # nome que aparece na confirmação do Pix
     "valor": "R$ 650,00",
     "cliente": "M7 Movelaria",
@@ -147,8 +151,7 @@ def conteudo():
     fl.append(
         Paragraph(
             "Este documento descreve o que foi construído e entregue, como conferir cada item "
-            "por conta própria, o que ainda depende de informação da M7 e as condições de "
-            "pagamento combinadas.",
+            "por conta própria e as condições de pagamento combinadas.",
             S["p"],
         )
     )
@@ -216,7 +219,7 @@ def conteudo():
                 "Para ver o valor, o visitante informa nome e contato — é isso que transforma visita em lead.",
                 "O contato chega por <b>WhatsApp</b>, com a mensagem já pronta contendo nome, telefone, código e o orçamento montado — é o caminho que fecha venda, e funciona desde agora.",
                 "Cada contato também fica <b>registrado no painel do serviço</b>, como segunda via, caso alguém não veja a mensagem.",
-                "O envio por <b>e-mail</b> está implantado e testado, e passa a enviar assim que a conta de envio for criada e o domínio do remetente confirmado (ver pendências).",
+                "O envio por <b>e-mail</b> está implantado e testado, e passa a enviar assim que a conta de envio for criada e o domínio do remetente confirmado.",
                 "Botão flutuante de WhatsApp em todas as páginas, e botões de orçamento no cabeçalho e ao longo do conteúdo.",
                 "Se o envio de e-mail falhar, o visitante continua vendo o orçamento normalmente — nenhuma falha de serviço externo derruba uma venda.",
             ],
@@ -273,51 +276,6 @@ def conteudo():
 
     fl.append(PageBreak())
 
-    # ---------------------------------------------------------- pendências
-    fl.append(Paragraph("O que ainda depende da M7", S["h1"]))
-    fl.append(
-        Paragraph(
-            "Estes pontos não são trabalho pendente de programação: são informações ou decisões "
-            "que só a M7 pode dar. Estão listados aqui para ficarem registrados, não para "
-            "adiar nada.",
-            S["p"],
-        )
-    )
-    fl.append(
-        tabela(
-            [
-                ["Pendência", "O que é preciso"],
-                [
-                    "Tabela de preços do simulador",
-                    "O cálculo usa a tabela de material da M7, mas alguns itens ainda estão sendo fechados. Enquanto isso o simulador mostra o aviso “Valores em conferência” e fica fora das buscas do Google, de propósito — para não divulgar preço que ainda vai mudar. Com a tabela fechada, é uma linha de configuração.",
-                ],
-                [
-                    "Envio de e-mail dos leads",
-                    "O caminho de e-mail está implantado e testado. Para começar a enviar, falta criar a conta de envio e confirmar o domínio do remetente. WhatsApp e registro no painel já funcionam desde agora.",
-                ],
-                [
-                    "Categoria no Perfil da Empresa no Google",
-                    "A categoria principal está como “Fabricante”, que não casa com móveis planejados e deixa o perfil fora do bloco de mapa nas buscas locais. Trocar para “Loja de móveis planejados” ou “Moveleiro” é feito pela própria M7.",
-                ],
-                [
-                    "Horário divergente",
-                    "O Perfil no Google informa 7h–16h sem sábado; o site informa 8h–18h e sábado 8h–12h. Vale alinhar os dois.",
-                ],
-                [
-                    "Avaliações e fotos de obra",
-                    "Os depoimentos do site são exemplos, e as imagens do portfólio são projetos em 3D. Nenhum texto do site afirma o contrário. Com avaliações reais do Google e fotos de obras entregues, os dois pontos ficam mais fortes.",
-                ],
-                [
-                    "Redes sociais e CNPJ",
-                    "Não estão declarados no site porque não foram informados. São sinais de confiança que valem a pena acrescentar.",
-                ],
-            ],
-            [46 * mm, 114 * mm],
-        )
-    )
-
-    fl.append(PageBreak())
-
     # ----------------------------------------------------------- pagamento
     fl.append(Paragraph("Pagamento", S["h1"]))
     fl.append(
@@ -361,9 +319,8 @@ def conteudo():
     fl.append(Spacer(1, 8 * mm))
     fl.append(
         Paragraph(
-            "O site segue no ar e funcionando normalmente. Os itens listados como pendentes "
-            "acima dependem de informação da M7 e podem ser resolvidos assim que forem "
-            "definidos.",
+            "O site segue no ar e funcionando normalmente, e permanece à disposição para os "
+            "ajustes que a M7 quiser acompanhar.",
             S["p"],
         )
     )
