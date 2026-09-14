@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "images": "node scripts/optimize-images.mjs",
-    "icons": "python3 scripts/gerar-icones.py"
+    "icons": "python3 scripts/gerar-icones.py",
+    "check:ssr": "node scripts/verificar-bundle-ssr.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

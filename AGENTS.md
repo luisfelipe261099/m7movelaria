@@ -68,6 +68,19 @@
   no celular o LCP é o parágrafo, não a imagem.
 - **Showroom 3D**: não pré-carregar todas as panorâmicas em bloco; o padrão atual
   carrega a selecionada + a vizinha. As texturas são WebP em `src/assets/generated/`.
+- **O Three.js não pode entrar no bundle do servidor.** `lazy()` sozinho não
+  segura: o empacotador segue o `import()` estático e põe três + drei + fiber
+  (2,6 MB) no chunk `_libs/` da função da Vercel, junto com os wrappers de
+  interop do React — e aí TODO chunk de rota importa de lá só para ter JSX,
+  inclusive /contato e /sobre. A função ia a 4,0 MB e o cold start a 5–10s;
+  resposta lenta é o que faz o Google cortar taxa de rastreio. O corte é na
+  origem, com `import.meta.env.SSR` em volta do `import()` (veja
+  `src/routes/showroom-3d.tsx`, que tem três desses guards). Depois do build,
+  `npm run check:ssr` falha se a fuga voltar. **Não tente resolver no
+  `vite.config.ts`**: são três ambientes (`client`, `ssr` e `nitro`), quem
+  empacota as rotas é o `nitro`, e lá o `codeSplitting.groups` do próprio Nitro
+  entra como primeiro argumento do `defu` — `manualChunks` do projeto é aceito,
+  o hook roda, e a saída não muda um byte.
 - **`assetsInlineLimit: 0`** em `vite.config.ts` (e repetido em `environments.client`
   e `environments.ssr`, porque o `build` do topo não chega sozinho nos ambientes).
   Com o padrão do Vite (4 KB) as variantes de 480px viravam `data:` URI em base64
@@ -99,6 +112,13 @@
 - Vercel via Build Output API (autodetectada no CI). Build local padrão gera
   worker Cloudflare (`defaultPreset` do config Lovable) — é normal. Para testar
   o SSR localmente: `NITRO_PRESET=node_server npm run build && node .output/server/index.mjs`.
+  Use `PORT=4321` se a 3000 estiver ocupada — o servidor do faciencia_erp vive
+  nela, e aí as respostas 404 vêm dele, não deste build. `npx vite preview` não
+  serve para isto: procura `dist/server/server.js`, layout que o nitro não gera.
+- Para conferir o que a Vercel vai executar de verdade (e não o worker
+  Cloudflare): `NITRO_PRESET=vercel npm run build`, que escreve
+  `.vercel/output/functions/__server.func`. É o caminho que o `npm run check:ssr`
+  prefere quando existe.
 - **`vercel.json` não adianta** para `headers`/`redirects`: com `.vercel/output`
   presente a Vercel ignora essas chaves. Headers e redirects ficam no
   middleware de `src/start.ts`.

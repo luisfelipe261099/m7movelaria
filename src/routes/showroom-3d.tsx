@@ -19,8 +19,27 @@ import { Breadcrumbs } from "@/components/PageParts";
 import { rooms, type Hotspot, type Room } from "@/data/rooms";
 import { projects } from "@/data/projects";
 
+// O visualizador 3D é só-cliente: ele só entra em tela quando `selectedRoom`
+// existe, e esse estado começa nulo — no servidor nunca renderiza.
+//
+// O guard `import.meta.env.SSR` não é defensivo, é o que mantém o Three.js FORA
+// do grafo do servidor. Sem ele o empacotador segue o `import()` estático e põe
+// os 2,6 MB de three + drei + fiber no bundle da função serverless, que passa a
+// carregá-los no boot de TODA requisição — inclusive /contato e /sobre. Medido:
+// cold start de 5–10s, e resposta lenta é o que faz o Google cortar rastreio.
+//
+// Não dá para resolver isso no vite.config: com Vite 8 + rolldown quem agrupa os
+// chunks do servidor é o `codeSplitting.groups` do Nitro, que tem precedência
+// sobre qualquer config do projeto. O corte tem que ser aqui, na origem.
+//
+// `npm run check:ssr` falha o build se o Three.js voltar ao bundle do servidor.
+type PanoramaViewerComponent = (typeof import("@/components/PanoramaViewer"))["PanoramaViewer"];
+
 const PanoramaViewer = lazy(() =>
-  import("@/components/PanoramaViewer").then((m) => ({ default: m.PanoramaViewer })),
+  import.meta.env.SSR
+    ? // Inalcançável: existe só para o build do servidor poder descartar o import.
+      Promise.resolve({ default: (() => null) as unknown as PanoramaViewerComponent })
+    : import("@/components/PanoramaViewer").then((m) => ({ default: m.PanoramaViewer })),
 );
 
 // iOS Safari (iPhone/iPad) is the one platform where the native Fullscreen API is
@@ -120,6 +139,11 @@ function Showroom3DPage() {
   // As panorâmicas (~1 MB cada) continuam fora do preload em bloco: baixar as
   // oito custava ~7 MB antes de qualquer interação.
   useEffect(() => {
+    // Mesmo motivo do guard lá em cima: efeito não roda no servidor, mas o
+    // `import()` aqui dentro seria seguido pelo empacotador assim mesmo e
+    // traria o Three.js de volta para o bundle da função.
+    if (import.meta.env.SSR) return;
+
     type NetworkInformation = { saveData?: boolean; effectiveType?: string };
     const conn = (navigator as Navigator & { connection?: NetworkInformation }).connection;
     if (conn?.saveData) return;

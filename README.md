@@ -26,6 +26,7 @@ npm run lint       # eslint
 npm run format     # prettier
 npm run images     # regenera AVIF/WebP e o manifesto (só ao trocar imagens)
 npm run icons      # regenera favicon/ícones em public/ a partir de src/brand/logo-m7.jpg
+npm run check:ssr  # (após build) falha se o Three.js vazar para o bundle do servidor
 ```
 
 ## Deploy (Vercel)

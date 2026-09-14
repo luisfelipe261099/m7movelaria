@@ -22,6 +22,19 @@ export default defineConfig({
       client: { build: { assetsInlineLimit: 0 } },
       ssr: { build: { assetsInlineLimit: 0 } },
     },
+    // Não tente controlar o chunking do servidor daqui — não funciona.
+    //
+    // São TRÊS ambientes de build, não dois: `client`, `ssr` e `nitro`. O `ssr`
+    // é só a entrada do servidor (~290 módulos); quem empacota as rotas (os
+    // `_ssr/*.mjs` e as `_libs/*` que a função da Vercel carrega) é o `nitro`.
+    // E dentro dele, com Vite 8 + rolldown, o agrupamento sai do
+    // `output.codeSplitting.groups` do próprio Nitro, que entra como PRIMEIRO
+    // argumento do `defu` — ou seja, ganha de `rollupConfig`, de `rolldownConfig`
+    // e do que vier do projeto. `manualChunks` posto aqui é aceito, o hook até
+    // roda, e a saída não muda um byte (verificado: hashes idênticos).
+    //
+    // Para manter algo fora do bundle do servidor, corte na origem com
+    // `import.meta.env.SSR` em volta do `import()` — veja showroom-3d.tsx.
     build: {
       // Nada de asset embutido como data: URI.
       //
