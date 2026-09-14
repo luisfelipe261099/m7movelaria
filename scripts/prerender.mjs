@@ -102,6 +102,10 @@ const rotas = [...sitemap.corpo.matchAll(/<loc>([^<]+)<\/loc>/g)]
 
 let gravadas = 0;
 const falhas = [];
+/** `arquivo.html` → caminho em que a Vercel deve servi-lo (sem a extensão). */
+const overrides = {};
+/** As rotas que passaram a ser estáticas, para mirar os cabeçalhos só nelas. */
+const estaticas = [];
 /** Cabeçalhos que o middleware realmente pôs, para conferir contra os estáticos. */
 let doMiddleware = null;
 for (const rota of rotas) {
@@ -111,11 +115,19 @@ for (const rota of rotas) {
     continue;
   }
   doMiddleware ??= cabecalhos;
-  // `/` vira index.html; `/sobre` vira sobre.html. É o que o handler de
-  // filesystem da Vercel procura para um path sem extensão.
-  const destino = join(ESTATICO, rota === "/" ? "index.html" : `${rota.replace(/^\//, "")}.html`);
+  const arquivo = rota === "/" ? "index.html" : `${rota.replace(/^\//, "")}.html`;
+  const destino = join(ESTATICO, arquivo);
   mkdirSync(dirname(destino), { recursive: true });
   writeFileSync(destino, corpo, "utf8");
+  // O `{"handle":"filesystem"}` casa o caminho literal: com o arquivo em
+  // `sobre.html`, `/sobre` passava direto para a função (sem ganho nenhum) e
+  // `/sobre.html` respondia 200 — uma segunda URL para cada página, que é
+  // exatamente o conteúdo duplicado que o resto do site evita. `overrides` diz
+  // à Vercel em que caminho servir o arquivo: `/sobre`, e só ele.
+  if (rota !== "/") {
+    overrides[arquivo] = { path: rota.replace(/^\//, ""), contentType: "text/html; charset=utf-8" };
+  }
+  estaticas.push(rota);
   gravadas++;
 }
 
@@ -134,14 +146,19 @@ const SEGURANCA = {
   link: '</fonts/inter-latin.woff2>; rel=preload; as=font; type="font/woff2"; crossorigin',
   "cache-control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400",
 };
+// A regex casa SÓ as rotas que viraram estáticas. Um catch-all `/(.*)` também
+// funcionaria, mas aí as rotas que continuam na função receberiam cada
+// cabeçalho duas vezes (uma do middleware, outra daqui) — observado em produção
+// com o `link` do preload saindo duplicado.
+const SO_ESTATICAS = `^(${estaticas.map((r) => r.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})$`;
 const novas = [
-  { src: "/(.*)", headers: SEGURANCA, continue: true },
+  { src: SO_ESTATICAS, headers: SEGURANCA, continue: true },
   // Mesmo motivo do middleware: `*.vercel.app` serve o site inteiro com 200 e
   // sem isto o Google indexaria uma segunda cópia. Casa `.vercel.app` explícito,
   // nunca "host diferente do canônico" — a segunda forma marca o site todo como
   // noindex quando o host chega diferente do esperado.
   {
-    src: "/(.*)",
+    src: SO_ESTATICAS,
     has: [{ type: "host", value: "(.*)\\.vercel\\.app" }],
     headers: { "x-robots-tag": "noindex, nofollow" },
     continue: true,
@@ -164,6 +181,10 @@ if (esquecidos.length > 0) {
 
 const jaTem = config.routes?.some((r) => r.headers?.link === SEGURANCA.link);
 if (!jaTem) config.routes = [...novas, ...(config.routes ?? [])];
+config.overrides = { ...(config.overrides ?? {}), ...overrides };
 writeFileSync(CONFIG, JSON.stringify(config, null, 2), "utf8");
 
-console.log(`✓ prerender: ${gravadas} páginas estáticas; a função só atende o que sobrou.`);
+console.log(
+  `✓ prerender: ${gravadas} páginas estáticas (${Object.keys(overrides).length} overrides); ` +
+    `a função só atende o que sobrou.`,
+);
