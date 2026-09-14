@@ -17,6 +17,7 @@ import {
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
 import { PreviewMovel } from "@/components/PreviewMovel";
+import { AreaProtegida } from "@/components/AreaProtegida";
 import { whatsappLink } from "@/lib/whatsapp";
 import {
   carregaLead,
@@ -989,7 +990,10 @@ function PassoResumo({
         </div>
       )}
 
-      <div className="space-y-4">
+      {/* Lista de peças com valor: mesma proteção do resumo lateral. O texto de
+          apoio e os links de contato ficam FORA, porque telefone e WhatsApp
+          existem justamente para serem copiados. */}
+      <AreaProtegida className="space-y-4">
         {orcamento.itens.map((calc) => (
           <div
             key={calc.item.uid}
@@ -1021,7 +1025,7 @@ function PassoResumo({
             />
           </div>
         ))}
-      </div>
+      </AreaProtegida>
 
       {identificacao.numero && (
         <p className="mt-4 text-xs text-muted-foreground">
@@ -1289,7 +1293,10 @@ function ResumoLateral({
 }) {
   const liberado = lead !== null;
   return (
-    <aside className="lg:sticky lg:top-24 p-6 rounded border border-border bg-white">
+    <AreaProtegida
+      as="aside"
+      className="lg:sticky lg:top-24 p-6 rounded border border-border bg-white"
+    >
       <h2 className="text-sm uppercase tracking-[0.2em] text-bronze">Seu orçamento</h2>
       {orcamento.itens.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
@@ -1354,6 +1361,6 @@ function ResumoLateral({
           O valor se ajusta sozinho a cada medida e acabamento que você muda.
         </p>
       )}
-    </aside>
+    </AreaProtegida>
   );
 }
