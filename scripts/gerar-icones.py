@@ -21,6 +21,10 @@ O que sai, e por quê cada um é diferente:
   apple-touch-icon.png (180x180)
       Fundo branco (iOS não aceita transparência: viraria preto) e o logotipo
       completo; o próprio iOS arredonda os cantos.
+  logo-lockup.png e logo-lockup-white.png
+      Marca + "movelaria" sem o círculo, fundo transparente, para o cabeçalho
+      (traço escuro) e o rodapé (traço branco). O cinza do nome vira alpha
+      parcial, então ele continua cinza sobre qualquer fundo.
   favicon.ico (16/32/48) e favicon-32.png
       Só a marca M7, sem o nome, dentro do círculo branco. Em 16 px o
       "movelaria" vira ruído, e o traço original (~20 px em 1072) sumiria ao
@@ -43,6 +47,8 @@ CIRCLE_CENTER = (529.5, 501.5)
 CIRCLE_RADIUS = 501.5
 MARK_BOX = (169, 307, 898, 589)  # bbox do traço preto
 STROKE_PX = 20  # espessura aproximada do traço no arquivo-fonte
+LOCKUP_BOX = (159, 307, 902, 701)  # bbox da marca + "movelaria"
+LOCKUP_HEIGHT = 200  # px; no site aparece com ~56 px, então dá 3,5x para telas 3x
 
 SS = 4  # fator de supersampling
 
@@ -109,6 +115,22 @@ def mark_only(size: int, stroke_target_px: float) -> Image.Image:
     return rgba.resize((size, size), Image.LANCZOS)
 
 
+def lockup(color: tuple[int, int, int]) -> Image.Image:
+    """Marca + nome em `color`, alpha derivado do quão escuro é o pixel."""
+    im = Image.open(SRC).convert("L")
+    pad = 8
+    x0, y0, x1, y1 = LOCKUP_BOX
+    crop = im.crop((x0 - pad, y0 - pad, x1 + pad, y1 + pad))
+    # Quase branco (>= 240) é fundo: alpha 0. O resto: quanto mais escuro,
+    # mais opaco — o traço (~30) fica sólido, o nome cinza fica translúcido.
+    alpha = crop.point(lambda v: 0 if v >= 240 else 255 - v)
+    solid = Image.new("RGB", crop.size, color)
+    solid.putalpha(alpha)
+    h = LOCKUP_HEIGHT
+    w = round(crop.size[0] * h / crop.size[1])
+    return solid.resize((w, h), Image.LANCZOS)
+
+
 def main() -> None:
     OUT.mkdir(exist_ok=True)
     logo = circle_rgba()
@@ -116,6 +138,9 @@ def main() -> None:
     logo.resize((192, 192), Image.LANCZOS).save(OUT / "logo-192.png", optimize=True)
     on_white(logo, 512, 0.80).save(OUT / "logo-maskable-512.png", optimize=True)
     on_white(logo, 180, 0.92).convert("RGB").save(OUT / "apple-touch-icon.png", optimize=True)
+
+    lockup((30, 30, 32)).save(OUT / "logo-lockup.png", optimize=True)
+    lockup((255, 255, 255)).save(OUT / "logo-lockup-white.png", optimize=True)
 
     fav = {s: mark_only(s, stroke) for s, stroke in ((16, 1.4), (32, 1.8), (48, 2.4))}
     fav[32].save(OUT / "favicon-32.png", optimize=True)
@@ -126,7 +151,8 @@ def main() -> None:
         append_images=[fav[32], fav[16]],
     )
     for name in ("logo-512.png", "logo-192.png", "logo-maskable-512.png",
-                 "apple-touch-icon.png", "favicon-32.png", "favicon.ico"):
+                 "apple-touch-icon.png", "logo-lockup.png", "logo-lockup-white.png",
+                 "favicon-32.png", "favicon.ico"):
         print(f"{name:24s} {(OUT / name).stat().st_size:7d} bytes")
 
 

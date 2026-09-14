@@ -55,6 +55,8 @@
 - **Imagens**: sempre `<Picture>` (`src/components/Picture.tsx`), nunca `<img>`
   cru. Ele resolve AVIF/WebP/JPEG, srcset por largura e width/height (CLS).
   Ao trocar imagem, rodar `npm run images` e commitar `src/assets/generated/`.
+  Exceção: o logotipo (`public/logo-lockup*.png`, gerado por `npm run icons`)
+  é `<img>` com width/height fixos — PNG com alpha, fora do manifesto, 15–21 KB.
   O `<picture>` usa `display: contents` de propósito — sem isso o `h-full` do
   `<img>` resolve contra o `<picture>` e a imagem renderiza no tamanho natural.
 - **Vídeo do hero**: só carrega quando o bloco entra na tela E a página terminou

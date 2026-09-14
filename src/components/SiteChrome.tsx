@@ -57,11 +57,18 @@ export function SiteHeader() {
       {/* Main nav */}
       <div className="border-b border-border/60">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
-          <Link to="/" className="flex flex-col justify-center leading-none py-2">
-            <span className="font-display text-3xl text-bronze tracking-widest">M7</span>
-            <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground mt-1">
-              Movelaria
-            </span>
+          {/* Logotipo oficial (public/logo-lockup.png, gerado por scripts/
+              gerar-icones.py). É <img> e não <Picture> de propósito: PNG com
+              alpha fora do manifesto, ~10 KB, e width/height fixos — sem CLS. */}
+          <Link to="/" className="flex items-center shrink-0 py-2">
+            <img
+              src="/logo-lockup.png"
+              alt="M7 Movelaria"
+              width={104}
+              height={56}
+              className="h-14 w-auto"
+              decoding="async"
+            />
           </Link>
           <nav aria-label="Menu principal" className="hidden lg:flex items-center gap-7 text-sm">
             {nav.map((n) => (
@@ -190,10 +197,15 @@ export function SiteFooter() {
       <footer className="bg-ink text-white/80 defer-render">
         <div className="max-w-7xl mx-auto px-6 py-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4 text-sm">
           <div>
-            <div className="font-display text-3xl text-bronze tracking-widest">M7</div>
-            <div className="text-xs uppercase tracking-[0.3em] text-white/60 mt-1 mb-4">
-              Movelaria
-            </div>
+            <img
+              src="/logo-lockup-white.png"
+              alt="M7 Movelaria"
+              width={104}
+              height={56}
+              className="h-14 w-auto mb-4"
+              loading="lazy"
+              decoding="async"
+            />
             <p className="text-white/70 max-w-xs leading-relaxed">
               Marcenaria de alto padrão em São José dos Pinhais. Projeto executivo, produção no
               ateliê e instalação com equipe própria.
