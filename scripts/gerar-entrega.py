@@ -41,9 +41,9 @@ from reportlab.platypus import (
 # Dados comerciais. Preencher antes de enviar — o script avisa se faltar.
 # --------------------------------------------------------------------------
 DADOS_COMERCIAIS = {
-    "prestador": "",  # nome de quem prestou o serviço, como assina
+    "prestador": "Luis Felipe da Silva Machado",  # nome de quem prestou o serviço, como assina
     "pix_chave": "65.104.139/0001-20  (CNPJ)",  # dígitos verificadores conferidos
-    "pix_titular": "",  # nome que aparece na confirmação do Pix
+    "pix_titular": "Luis Felipe da Silva Machado",  # nome que aparece na confirmação do Pix
     "valor": "R$ 650,00",
     "cliente": "M7 Movelaria",
 }
