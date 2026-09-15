@@ -3,6 +3,7 @@ import { MessageCircle, Mail, MapPin, Clock, Phone, Calculator } from "lucide-re
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
 import { whatsappLink } from "@/lib/whatsapp";
+import { FormularioContato } from "@/components/FormularioContato";
 import {
   pageSeo,
   canonical,
@@ -141,6 +142,12 @@ function Contact() {
                 </a>
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="pb-16">
+          <div className="max-w-3xl mx-auto px-6">
+            <FormularioContato />
           </div>
         </section>
 

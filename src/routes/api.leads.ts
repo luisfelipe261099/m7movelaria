@@ -16,11 +16,13 @@ import { enviaEmailLead } from "@/lib/email-lead.server";
  *  3. **Log da função** (Vercel → Deployments → Functions → Logs) — segunda via,
  *     sempre gravada.
  *
- * O mesmo endpoint atende os três momentos em que vale avisar a equipe, no
- * campo `etapa`: `contato` (acabou de deixar nome e telefone, pode sumir no
- * segundo seguinte), `retorno` (voltou já identificado, sem passar pelo
- * portão) e `pedido` (fechou, e aí vem a lista de itens junto). A deduplicação
- * é do lado do navegador, em `src/lib/lead.ts`.
+ * O mesmo endpoint atende os momentos em que vale avisar a equipe, no campo
+ * `etapa`: `contato` (acabou de deixar nome e telefone, pode sumir no segundo
+ * seguinte), `retorno` (voltou já identificado, sem passar pelo portão),
+ * `pedido` (fechou, e aí vem a lista de itens junto) e `mensagem` (formulário
+ * da página de contato, fora do simulador). A deduplicação é do lado do
+ * navegador, em `src/lib/lead.ts`, e a `mensagem` não passa por ela: duas
+ * mensagens da mesma pessoa são duas coisas para responder.
  *
  * Continua sem banco e sem CRM: isso entra na fase que depende da tabela de
  * preço fechada e da conta de pagamento da M7.
@@ -38,7 +40,7 @@ import { enviaEmailLead } from "@/lib/email-lead.server";
 const LIMITE_BYTES = 8192;
 
 /** Etapas aceitas. Qualquer outra coisa vira "contato", o caso mais comum. */
-const ETAPAS = ["contato", "retorno", "pedido"] as const;
+const ETAPAS = ["contato", "retorno", "pedido", "mensagem"] as const;
 
 /**
  * A lista de itens vem do navegador, então é entrada de terceiro: corta em 30
@@ -74,6 +76,7 @@ function valida(dados: unknown): Lead | null {
     total: typeof d.total === "number" && Number.isFinite(d.total) ? d.total : 0,
     etapa,
     itens: listaDeItens(d.itens),
+    mensagem: texto(d.mensagem, 1200) ?? "",
   };
 }
 

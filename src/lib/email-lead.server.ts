@@ -23,7 +23,7 @@
  */
 import nodemailer from "nodemailer";
 
-export type EtapaLead = "contato" | "retorno" | "pedido";
+export type EtapaLead = "contato" | "retorno" | "pedido" | "mensagem";
 
 export type Lead = {
   nome: string;
@@ -32,6 +32,7 @@ export type Lead = {
   total: number;
   etapa?: EtapaLead;
   itens?: string[];
+  mensagem?: string;
 };
 
 /**
@@ -44,6 +45,7 @@ const ASSUNTO: Record<EtapaLead, string> = {
   contato: "Contato novo",
   retorno: "Voltou ao simulador",
   pedido: "Pedido fechado",
+  mensagem: "Mensagem pelo site",
 };
 
 const CABECALHO: Record<EtapaLead, { titulo: string; nota: string }> = {
@@ -58,6 +60,10 @@ const CABECALHO: Record<EtapaLead, { titulo: string; nota: string }> = {
   pedido: {
     titulo: "Pedido fechado pelo site",
     nota: "A pessoa concluiu o simulador e foi levada ao WhatsApp com o pedido montado. Se a mensagem não chegou por lá, o contato abaixo é o caminho.",
+  },
+  mensagem: {
+    titulo: "Mensagem pelo site",
+    nota: "Veio pelo formulário da página de contato. A pessoa escolheu esperar o retorno em vez de puxar conversa no WhatsApp — responder pelo canal que ela deixou é o que ela espera.",
   },
 };
 
@@ -118,6 +124,20 @@ function linha(rotulo: string, valor: string): string {
     </tr>`;
 }
 
+/** O que a pessoa escreveu, quando veio (só no formulário de contato). */
+function blocoMensagem(texto: string | undefined): { html: string; texto: string[] } {
+  const limpo = (texto ?? "").trim();
+  if (!limpo) return { html: "", texto: [] };
+  // `white-space: pre-wrap` preserva as quebras de linha que a pessoa digitou
+  // no textarea; sem isso o recado vira um parágrafo único e ilegível.
+  return {
+    html: `
+      <p style="margin:24px 0 8px;color:${CINZA};font-size:13px;">O que ela escreveu</p>
+      <div style="border-left:3px solid ${BRONZE};background:${CREME};padding:12px 14px;color:${INK};font-size:14px;line-height:1.6;white-space:pre-wrap;">${esc(limpo)}</div>`,
+    texto: ["", "O que ela escreveu:", limpo],
+  };
+}
+
 /** A lista do que a pessoa montou, quando veio (só no pedido fechado). */
 function blocoItens(itens: string[] | undefined): { html: string; texto: string[] } {
   if (!itens || itens.length === 0) return { html: "", texto: [] };
@@ -146,6 +166,10 @@ export function montaEmail(lead: Lead) {
       ? lead.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
       : "não informado";
 
+  // O formulário de contato não tem código de orçamento; o simulador sempre
+  // tem. Mostrar "sem-codigo" numa linha rotulada só suja a leitura.
+  const temCodigo = Boolean(lead.codigo) && lead.codigo !== "sem-codigo";
+
   const nome = esc(lead.nome);
   const contato = esc(lead.contato);
   const codigo = esc(lead.codigo);
@@ -153,6 +177,7 @@ export function montaEmail(lead: Lead) {
   const etapa: EtapaLead = lead.etapa ?? "contato";
   const { titulo, nota } = CABECALHO[etapa];
   const itens = blocoItens(lead.itens);
+  const recado = blocoMensagem(lead.mensagem);
 
   const zap = telefoneWhats(lead.contato);
   const botao = zap
@@ -185,11 +210,11 @@ export function montaEmail(lead: Lead) {
           <p style="margin:0 0 20px;color:${INK};font-size:24px;font-weight:bold;line-height:1.25;">${nome}</p>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             ${linha("Contato", contato)}
-            ${linha("Código do orçamento", codigo)}
-            ${linha("Total simulado", valor)}
+            ${temCodigo ? linha("Código do orçamento", codigo) : ""}
+            ${etapa === "mensagem" ? "" : linha("Total simulado", valor)}
             ${linha("Recebido em", agora)}
           </table>
-          ${itens.html}
+          ${recado.html}${itens.html}
           <table role="presentation" cellpadding="0" cellspacing="0">${botao}</table>
           <p style="margin:24px 0 0;color:${INK};font-size:13px;line-height:1.6;">${nota}</p>
           <p style="margin:12px 0 0;color:${CINZA};font-size:12px;line-height:1.6;">
@@ -212,9 +237,10 @@ export function montaEmail(lead: Lead) {
     ``,
     `Nome: ${lead.nome}`,
     `Contato: ${lead.contato}`,
-    `Código do orçamento: ${lead.codigo}`,
-    `Total simulado: ${valor}`,
+    ...(temCodigo ? [`Código do orçamento: ${lead.codigo}`] : []),
+    ...(etapa === "mensagem" ? [] : [`Total simulado: ${valor}`]),
     `Recebido em: ${agora}`,
+    ...recado.texto,
     ...itens.texto,
     ``,
     nota,
@@ -222,7 +248,11 @@ export function montaEmail(lead: Lead) {
   ].join("\n");
 
   return {
-    subject: limpaCabecalho(`${ASSUNTO[etapa]} — ${lead.nome} · ${valor}`),
+    subject: limpaCabecalho(
+      etapa === "mensagem"
+        ? `${ASSUNTO[etapa]} — ${lead.nome}`
+        : `${ASSUNTO[etapa]} — ${lead.nome} · ${valor}`,
+    ),
     html,
     text,
   };

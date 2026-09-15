@@ -75,8 +75,9 @@ export function salvaLead(lead: Lead): void {
  *            orçamento. Não vê o portão de novo, então sem isto a volta dela
  *            seria invisível para a M7.
  *   pedido   fechou o pedido no fim do simulador. Chega com a lista de itens.
+ *   mensagem veio pelo formulário da página de contato, fora do simulador.
  */
-export type EtapaLead = "contato" | "retorno" | "pedido";
+export type EtapaLead = "contato" | "retorno" | "pedido" | "mensagem";
 
 /**
  * Cada etapa manda **um** e-mail por sessão, não um por clique.
@@ -132,5 +133,30 @@ export function enviaLead(
     }).catch(() => {});
   } catch {
     // idem
+  }
+}
+
+/**
+ * O formulário da página de contato, que é outro bicho: aqui a pessoa fica
+ * parada olhando o botão esperando resposta, então o envio **espera** o
+ * servidor e devolve se deu certo — nada de `keepalive` e disparo no escuro.
+ *
+ * Também não passa pela deduplicação: duas mensagens diferentes da mesma
+ * pessoa são duas coisas para responder, não uma repetição a filtrar.
+ */
+export async function enviaMensagem(dados: {
+  nome: string;
+  contato: string;
+  mensagem: string;
+}): Promise<boolean> {
+  try {
+    const r = await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...dados, etapa: "mensagem" }),
+    });
+    return r.ok;
+  } catch {
+    return false;
   }
 }
