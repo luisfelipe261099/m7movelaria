@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { enviaEmailLead } from "@/lib/email-lead.server";
 
 /**
  * Recebe o contato de quem monta um orçamento no simulador.
@@ -9,9 +10,9 @@ import type {} from "@tanstack/react-start";
  *  1. **WhatsApp** — o link que a própria tela monta com nome, telefone, código
  *     e o orçamento montado. É o caminho que fecha venda, e não depende deste
  *     endpoint.
- *  2. **E-mail** (`enviaEmail`, logo abaixo) — chega sem ninguém precisar abrir
- *     painel nenhum. Só envia com `RESEND_API_KEY`, `LEADS_EMAIL_TO` e
- *     `LEADS_EMAIL_FROM` configuradas na Vercel.
+ *  2. **E-mail** (`src/lib/email-lead.server.ts`) — chega sem ninguém precisar abrir
+ *     painel nenhum. Sai pelo Gmail e só envia com `GMAIL_USER`,
+ *     `GMAIL_APP_PASSWORD` e `LEADS_EMAIL_TO` configuradas na Vercel.
  *  3. **Log da função** (Vercel → Deployments → Functions → Logs) — segunda via,
  *     sempre gravada.
  *
@@ -26,7 +27,7 @@ import type {} from "@tanstack/react-start";
 /** Limite de tamanho do corpo — nada aqui precisa de mais que isso. */
 const LIMITE_BYTES = 2048;
 
-type Lead = { nome: string; contato: string; codigo: string; total: number };
+import type { Lead } from "@/lib/email-lead.server";
 
 function valida(dados: unknown): Lead | null {
   if (typeof dados !== "object" || dados === null) return null;
@@ -44,62 +45,6 @@ function valida(dados: unknown): Lead | null {
     codigo: texto(d.codigo, 40) ?? "sem-codigo",
     total: typeof d.total === "number" && Number.isFinite(d.total) ? d.total : 0,
   };
-}
-
-/**
- * Manda o lead por e-mail via Resend (HTTP puro, sem SDK e sem SMTP — é o que
- * funciona dentro de uma função serverless sem dependência nativa).
- *
- * As três variáveis ficam no painel da Vercel, nunca no repositório:
- *   RESEND_API_KEY   chave da conta Resend
- *   LEADS_EMAIL_TO   para quem o lead vai (aceita vários, separados por vírgula)
- *   LEADS_EMAIL_FROM remetente; precisa ser de domínio verificado na Resend
- *
- * Sem as variáveis a função simplesmente não envia e diz isso no log. É de
- * propósito: o site tem que continuar funcionando em preview, no build local e
- * enquanto o domínio de envio não estiver verificado.
- */
-async function enviaEmail(lead: Lead): Promise<void> {
-  const chave = process.env.RESEND_API_KEY;
-  const para = process.env.LEADS_EMAIL_TO;
-  const de = process.env.LEADS_EMAIL_FROM;
-  if (!chave || !para || !de) {
-    console.log("[lead-orcamento] e-mail não configurado (RESEND_API_KEY/TO/FROM); só log.");
-    return;
-  }
-
-  const valor =
-    lead.total > 0
-      ? lead.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-      : "não informado";
-  const linhas = [
-    `Nome: ${lead.nome}`,
-    `Contato: ${lead.contato}`,
-    `Orçamento: ${lead.codigo}`,
-    `Total simulado: ${valor}`,
-    `Em: ${new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}`,
-  ];
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { authorization: `Bearer ${chave}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      from: de,
-      to: para
-        .split(",")
-        .map((e) => e.trim())
-        .filter(Boolean),
-      subject: `Novo orçamento no site — ${lead.nome} (${lead.codigo})`,
-      text: linhas.join("\n"),
-      // `reply_to` faz o "responder" do cliente de e-mail ir para o lead quando
-      // o contato informado é um endereço; se for telefone, a Resend ignora.
-      reply_to: lead.contato.includes("@") ? lead.contato : undefined,
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Resend respondeu ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  }
 }
 
 export const Route = createFileRoute("/api/leads")({
@@ -135,7 +80,7 @@ export const Route = createFileRoute("/api/leads")({
         // Falha dele NUNCA derruba a resposta: quem está montando o orçamento
         // não pode perder a venda porque um serviço de terceiro caiu — o log
         // acima e o link de WhatsApp da tela continuam valendo como caminho.
-        await enviaEmail(lead).catch((e) => {
+        await enviaEmailLead(lead).catch((e) => {
           console.error("[lead-orcamento] e-mail falhou: " + (e?.message ?? e));
         });
 
