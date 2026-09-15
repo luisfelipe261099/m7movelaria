@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -127,6 +127,13 @@ function Simulador() {
   const [pagamento, setPagamento] = useState<"pix" | "credito">("pix");
   const [identificacao, setIdentificacao] = useState({ numero: "", validade: "" });
   const [lead, setLead] = useState<Lead | null>(null);
+  /**
+   * Se o contato veio do `localStorage` (visita anterior) ou foi preenchido
+   * agora. Muda qual aviso a equipe recebe — e não pode ser estado, porque
+   * virar re-render aqui dispararia o efeito de "retorno" no meio da própria
+   * identificação, mandando dois e-mails pela mesma pessoa.
+   */
+  const veioDeVisitaAnterior = useRef(false);
 
   /**
    * Código e validade da simulação, para a marca d'água e para o rodapé.
@@ -153,7 +160,9 @@ function Simulador() {
    */
   useEffect(() => {
     // Quem já se identificou numa visita anterior não preenche de novo.
-    setLead(carregaLead());
+    const salvo = carregaLead();
+    veioDeVisitaAnterior.current = salvo !== null;
+    setLead(salvo);
 
     const params = new URLSearchParams(window.location.search);
     if (params.get("demo") === "cozinha" && itens.length === 0) {
@@ -175,6 +184,24 @@ function Simulador() {
     [itens, acabamento, entrega],
   );
 
+  /**
+   * Quem volta ao site já identificado nunca mais vê o portão de contato — o
+   * `localStorage` preenche por ela. Sem este aviso, a segunda visita, que é
+   * justamente a de quem está decidindo, seria invisível para a M7.
+   *
+   * O disparo espera o resumo (etapa 4) com carrinho montado: antes disso não
+   * há orçamento nenhum, só alguém navegando. O `enviaLead` deduplica, então
+   * andar para frente e para trás entre as etapas não repete o e-mail.
+   */
+  useEffect(() => {
+    if (etapa !== 4 || !lead || !veioDeVisitaAnterior.current || itens.length === 0) return;
+    enviaLead(lead, {
+      codigo: identificacao.numero,
+      total: orcamento.total,
+      etapa: "retorno",
+    });
+  }, [etapa, lead, itens.length, identificacao.numero, orcamento.total]);
+
   const addModulo = (modulo: Modulo) => setItens((l) => [...l, novoItem(modulo)]);
   const removeItem = (uid: string) => setItens((l) => l.filter((i) => i.uid !== uid));
   const patchItem = (uid: string, patch: Partial<ItemConfig>) =>
@@ -182,10 +209,36 @@ function Simulador() {
 
   const podeAvancar = etapa === 1 ? itens.length > 0 : true;
 
+  /**
+   * O e-mail sai **aqui**, no instante em que o contato é preenchido — não no
+   * fim do simulador. É o lead que mais se perdia: a pessoa deixa o telefone,
+   * vê o valor, acha alto e fecha a aba. Para a M7, esse contato vale tanto
+   * quanto o que chega até o fim, e agora chega antes de ela sumir.
+   */
   const identificar = (novo: Lead) => {
     setLead(novo);
     salvaLead(novo);
-    enviaLead(novo, identificacao.numero, orcamento.total);
+    enviaLead(novo, {
+      codigo: identificacao.numero,
+      total: orcamento.total,
+      etapa: "contato",
+    });
+  };
+
+  /**
+   * O botão "Enviar pedido" abre o WhatsApp — e até aqui era o único registro
+   * do pedido fechado. Quem clicava e não mandava a mensagem (ou mandava para
+   * um WhatsApp que ninguém abriu naquele dia) sumia. O e-mail fecha esse furo
+   * e leva a lista do que foi montado junto.
+   */
+  const registraPedido = () => {
+    if (!lead) return;
+    enviaLead(lead, {
+      codigo: identificacao.numero,
+      total: orcamento.total,
+      etapa: "pedido",
+      itens: linhasDosItens(orcamento),
+    });
   };
 
   const carimbo = { ...identificacao, cliente: lead ? primeiroNome(lead.nome) : undefined };
@@ -265,6 +318,7 @@ function Simulador() {
                   lead={lead}
                   identificacao={carimbo}
                   onIdentificar={identificar}
+                  onPedido={registraPedido}
                 />
               )}
 
@@ -1142,6 +1196,7 @@ function PassoPagamento({
   lead,
   identificacao,
   onIdentificar,
+  onPedido,
 }: {
   orcamento: ReturnType<typeof calculaOrcamento>;
   entrega: Entrega;
@@ -1150,6 +1205,7 @@ function PassoPagamento({
   lead: Lead | null;
   identificacao: Identificacao;
   onIdentificar: (lead: Lead) => void;
+  onPedido: () => void;
 }) {
   // Sem identificação não há para quem emitir o pedido: o portão vem antes.
   if (!lead) {
@@ -1227,6 +1283,7 @@ function PassoPagamento({
         href={whatsappLink(
           mensagemDoPedido({ orcamento, lead, identificacao, pagamento, entrega }),
         )}
+        onClick={onPedido}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-6 w-full inline-flex items-center justify-center gap-2 px-7 py-4 bg-bronze text-primary-foreground rounded font-medium hover:bg-bronze-dark transition-colors"
@@ -1250,6 +1307,18 @@ function PassoPagamento({
  * simulação, e chega em alguém que pode responder. Quando o gateway entrar,
  * este botão passa a abrir o checkout e a mensagem vira a confirmação.
  */
+/**
+ * Uma linha por módulo montado, com medida e preço. Mesma lista no WhatsApp do
+ * pedido e no e-mail que avisa a equipe — escrever duas vezes era garantir que
+ * uma das duas ficasse para trás na primeira mudança de formato.
+ */
+function linhasDosItens(orcamento: ReturnType<typeof calculaOrcamento>): string[] {
+  return orcamento.itens.map(
+    (c) =>
+      `${c.modulo.nome} — ${c.item.largura} × ${c.item.altura} × ${c.item.profundidade} mm — ${brl(c.preco)}`,
+  );
+}
+
 function mensagemDoPedido({
   orcamento,
   lead,
@@ -1263,10 +1332,7 @@ function mensagemDoPedido({
   pagamento: "pix" | "credito";
   entrega: Entrega;
 }) {
-  const itens = orcamento.itens.map(
-    (c) =>
-      `• ${c.modulo.nome} — ${c.item.largura} × ${c.item.altura} × ${c.item.profundidade} mm — ${brl(c.preco)}`,
-  );
+  const itens = linhasDosItens(orcamento).map((l) => `• ${l}`);
   return [
     `Olá M7 Movelaria! Fechei um orçamento pelo site.`,
     ``,

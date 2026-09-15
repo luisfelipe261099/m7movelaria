@@ -16,6 +16,12 @@ import { enviaEmailLead } from "@/lib/email-lead.server";
  *  3. **Log da função** (Vercel → Deployments → Functions → Logs) — segunda via,
  *     sempre gravada.
  *
+ * O mesmo endpoint atende os três momentos em que vale avisar a equipe, no
+ * campo `etapa`: `contato` (acabou de deixar nome e telefone, pode sumir no
+ * segundo seguinte), `retorno` (voltou já identificado, sem passar pelo
+ * portão) e `pedido` (fechou, e aí vem a lista de itens junto). A deduplicação
+ * é do lado do navegador, em `src/lib/lead.ts`.
+ *
  * Continua sem banco e sem CRM: isso entra na fase que depende da tabela de
  * preço fechada e da conta de pagamento da M7.
  *
@@ -24,8 +30,28 @@ import { enviaEmailLead } from "@/lib/email-lead.server";
  * uma venda.
  */
 
-/** Limite de tamanho do corpo — nada aqui precisa de mais que isso. */
-const LIMITE_BYTES = 2048;
+/**
+ * Limite de tamanho do corpo. Subiu de 2 KB quando o pedido fechado passou a
+ * mandar a lista de itens junto: 30 linhas de 160 caracteres cabem folgadas
+ * aqui, e continua pequeno o bastante para não virar porta de abuso.
+ */
+const LIMITE_BYTES = 8192;
+
+/** Etapas aceitas. Qualquer outra coisa vira "contato", o caso mais comum. */
+const ETAPAS = ["contato", "retorno", "pedido"] as const;
+
+/**
+ * A lista de itens vem do navegador, então é entrada de terceiro: corta em 30
+ * linhas de 160 caracteres antes de qualquer coisa. O escape para HTML é feito
+ * na montagem do e-mail, junto com o do nome e do contato.
+ */
+function listaDeItens(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((i): i is string => typeof i === "string" && i.trim().length > 0)
+    .slice(0, 30)
+    .map((i) => i.trim().slice(0, 160));
+}
 
 import type { Lead } from "@/lib/email-lead.server";
 
@@ -39,11 +65,15 @@ function valida(dados: unknown): Lead | null {
   const contato = texto(d.contato, 120);
   if (!nome || !contato) return null;
 
+  const etapa = ETAPAS.find((e) => e === d.etapa) ?? "contato";
+
   return {
     nome,
     contato,
     codigo: texto(d.codigo, 40) ?? "sem-codigo",
     total: typeof d.total === "number" && Number.isFinite(d.total) ? d.total : 0,
+    etapa,
+    itens: listaDeItens(d.itens),
   };
 }
 

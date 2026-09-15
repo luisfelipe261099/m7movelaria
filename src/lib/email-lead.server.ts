@@ -23,7 +23,43 @@
  */
 import nodemailer from "nodemailer";
 
-export type Lead = { nome: string; contato: string; codigo: string; total: number };
+export type EtapaLead = "contato" | "retorno" | "pedido";
+
+export type Lead = {
+  nome: string;
+  contato: string;
+  codigo: string;
+  total: number;
+  etapa?: EtapaLead;
+  itens?: string[];
+};
+
+/**
+ * O e-mail muda de cara conforme o momento da captura. Não é enfeite: quem
+ * abre a caixa de entrada precisa saber, pelo assunto, se aquilo é alguém que
+ * ainda está decidindo (responder hoje) ou um pedido montado (conferir e
+ * confirmar). Os três chegam do mesmo endereço e se misturam na lista.
+ */
+const ASSUNTO: Record<EtapaLead, string> = {
+  contato: "Contato novo",
+  retorno: "Voltou ao simulador",
+  pedido: "Pedido fechado",
+};
+
+const CABECALHO: Record<EtapaLead, { titulo: string; nota: string }> = {
+  contato: {
+    titulo: "Contato novo pelo site",
+    nota: "A pessoa deixou o contato para ver o valor e ainda não fechou o pedido. É o momento de responder — ela está decidindo agora.",
+  },
+  retorno: {
+    titulo: "Voltou ao simulador",
+    nota: "Já tinha se identificado numa visita anterior e voltou a montar orçamento agora.",
+  },
+  pedido: {
+    titulo: "Pedido fechado pelo site",
+    nota: "A pessoa concluiu o simulador e foi levada ao WhatsApp com o pedido montado. Se a mensagem não chegou por lá, o contato abaixo é o caminho.",
+  },
+};
 
 const BRONZE = "#93603d";
 const INK = "#2b2723";
@@ -82,6 +118,23 @@ function linha(rotulo: string, valor: string): string {
     </tr>`;
 }
 
+/** A lista do que a pessoa montou, quando veio (só no pedido fechado). */
+function blocoItens(itens: string[] | undefined): { html: string; texto: string[] } {
+  if (!itens || itens.length === 0) return { html: "", texto: [] };
+  const linhas = itens
+    .map(
+      (i) =>
+        `<li style="margin:0 0 6px;color:${INK};font-size:13px;line-height:1.5;">${esc(i)}</li>`,
+    )
+    .join("");
+  return {
+    html: `
+      <p style="margin:24px 0 8px;color:${CINZA};font-size:13px;">O que foi montado</p>
+      <ul style="margin:0;padding-left:18px;">${linhas}</ul>`,
+    texto: ["", "O que foi montado:", ...itens.map((i) => `- ${i}`)],
+  };
+}
+
 export function montaEmail(lead: Lead) {
   const agora = new Date().toLocaleString("pt-BR", {
     timeZone: "America/Sao_Paulo",
@@ -96,6 +149,10 @@ export function montaEmail(lead: Lead) {
   const nome = esc(lead.nome);
   const contato = esc(lead.contato);
   const codigo = esc(lead.codigo);
+
+  const etapa: EtapaLead = lead.etapa ?? "contato";
+  const { titulo, nota } = CABECALHO[etapa];
+  const itens = blocoItens(lead.itens);
 
   const zap = telefoneWhats(lead.contato);
   const botao = zap
@@ -121,10 +178,10 @@ export function montaEmail(lead: Lead) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid ${BORDA};border-radius:6px;">
         <tr><td style="background:${BRONZE};padding:18px 28px;border-radius:5px 5px 0 0;">
           <div style="color:#ffffff;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;">M7 Movelaria</div>
-          <div style="color:#ffffff;font-size:18px;font-weight:bold;margin-top:4px;font-family:Arial,Helvetica,sans-serif;">Novo orçamento pelo site</div>
+          <div style="color:#ffffff;font-size:18px;font-weight:bold;margin-top:4px;font-family:Arial,Helvetica,sans-serif;">${titulo}</div>
         </td></tr>
         <tr><td style="padding:26px 28px 28px;font-family:Arial,Helvetica,sans-serif;">
-          <p style="margin:0 0 4px;color:${CINZA};font-size:13px;">Quem pediu</p>
+          <p style="margin:0 0 4px;color:${CINZA};font-size:13px;">Quem entrou em contato</p>
           <p style="margin:0 0 20px;color:${INK};font-size:24px;font-weight:bold;line-height:1.25;">${nome}</p>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             ${linha("Contato", contato)}
@@ -132,8 +189,10 @@ export function montaEmail(lead: Lead) {
             ${linha("Total simulado", valor)}
             ${linha("Recebido em", agora)}
           </table>
+          ${itens.html}
           <table role="presentation" cellpadding="0" cellspacing="0">${botao}</table>
-          <p style="margin:26px 0 0;color:${CINZA};font-size:12px;line-height:1.6;">
+          <p style="margin:24px 0 0;color:${INK};font-size:13px;line-height:1.6;">${nota}</p>
+          <p style="margin:12px 0 0;color:${CINZA};font-size:12px;line-height:1.6;">
             O valor acima é o que a pessoa viu na simulação e depende da conferência
             das medidas — não vale como proposta fechada.
           </p>
@@ -149,18 +208,21 @@ export function montaEmail(lead: Lead) {
   // Texto puro para quem lê e-mail sem HTML — e é o que aparece na prévia da
   // notificação do celular, então vale ser legível.
   const text = [
-    `Novo orçamento pelo site da M7 Movelaria`,
+    `${titulo} — M7 Movelaria`,
     ``,
     `Nome: ${lead.nome}`,
     `Contato: ${lead.contato}`,
     `Código do orçamento: ${lead.codigo}`,
     `Total simulado: ${valor}`,
     `Recebido em: ${agora}`,
+    ...itens.texto,
+    ``,
+    nota,
     ...(zap ? [``, `Responder no WhatsApp: https://wa.me/${zap}`] : []),
   ].join("\n");
 
   return {
-    subject: limpaCabecalho(`Novo orçamento — ${lead.nome} · ${valor}`),
+    subject: limpaCabecalho(`${ASSUNTO[etapa]} — ${lead.nome} · ${valor}`),
     html,
     text,
   };
