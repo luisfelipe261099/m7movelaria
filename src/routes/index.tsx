@@ -17,6 +17,7 @@ import {
   Phone,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import { FormularioContato } from "@/components/FormularioContato";
 import { Picture } from "@/components/Picture";
 import { obras } from "@/data/obras";
 import { HeroVideo } from "@/components/HeroVideo";
@@ -650,6 +651,33 @@ function Home() {
             Ver todas as perguntas frequentes <ArrowRight className="w-4 h-4" aria-hidden />
           </Link>
         </div>
+
+        {/*
+          Formulário de contato antes do CTA final. Quem rolou a página inteira
+          já viu serviços, materiais, portfólio e as perguntas frequentes — é
+          quem está mais perto de decidir, e até aqui a única saída que a home
+          oferecia era ligar ou abrir o WhatsApp. O mesmo componente da página
+          /contato, para os dois caminhos nunca saírem de sincronia.
+        */}
+        <section id="contato" className="py-20 defer-render">
+          <div className="max-w-3xl mx-auto px-6">
+            <p className="text-sm uppercase tracking-[0.3em] text-bronze mb-3">Contato</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink leading-[1.15] text-balance">
+              Conte o que você quer fazer
+            </h2>
+            <p className="text-muted-foreground mt-4 leading-relaxed">
+              Deixe seu contato que a equipe da M7 retorna com as próximas etapas. Se preferir
+              resolver agora, o WhatsApp e o{" "}
+              <Link to="/orcamento" className="text-bronze underline underline-offset-2">
+                simulador de orçamento
+              </Link>{" "}
+              estão sempre à mão.
+            </p>
+            <div className="mt-8">
+              <FormularioContato />
+            </div>
+          </div>
+        </section>
 
         {/* CTA FINAL */}
         <section className="bg-bronze text-primary-foreground">
