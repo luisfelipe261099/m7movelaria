@@ -31,12 +31,16 @@ import {
 import { pageSeo } from "@/lib/seo";
 import { CORES, MODULOS, type Modulo, type ModuloId } from "@/data/precos";
 import { TABELA_CONFIRMADA } from "@/data/simulador";
+import { GAVETA_ALTURA, GAVETA_LARGURA_MAX, PORTA_LARGURA } from "@/data/precos";
 import {
   brl,
   calculaOrcamento,
   type Acabamento,
   type Entrega,
   type ItemConfig,
+  frenteDoItem,
+  motivoIndisponivel,
+  problemasDeFrente,
 } from "@/lib/orcamento";
 
 const PATH = "/orcamento";
@@ -604,6 +608,8 @@ function PassoMedidas({
                 />
               </div>
 
+              {modulo.frentes && <EscolhaFrente item={item} modulo={modulo} onPatch={onPatch} />}
+
               <ForaDaFaixa item={item} modulo={modulo} />
 
               {modulo.eletros && item.forno && item.micro && (
@@ -695,6 +701,66 @@ function PassoMedidas({
 }
 
 /**
+ * Frente do módulo: 1, 2 ou 3 portas; gavetas com ou sem gavetão.
+ *
+ * Pedido da M7: "clica no balcão e tem opção de uma, duas ou três portas; no
+ * balcão de pia a mesma coisa, duas gavetas, um gavetão — com especificações
+ * de limite para não passar". Os limites estão em `precos.ts`; aqui a opção
+ * que não cabe na largura digitada aparece desabilitada com o motivo, em vez
+ * de sumir — a pessoa entende o que precisa mudar.
+ */
+function EscolhaFrente({
+  item,
+  modulo,
+  onPatch,
+}: {
+  item: ItemConfig;
+  modulo: Modulo;
+  onPatch: (uid: string, patch: Partial<ItemConfig>) => void;
+}) {
+  const atual = frenteDoItem(item, modulo);
+  const temGaveta = modulo.frentes!.some((f) => f.fileiras.some((r) => r.tipo === "gaveta"));
+  return (
+    <fieldset className="mt-5">
+      <legend className="text-sm font-medium text-ink">Frente</legend>
+      <div className="mt-2.5 flex flex-wrap gap-2">
+        {modulo.frentes!.map((f) => {
+          const motivo = item.largura ? motivoIndisponivel(f, item.largura) : null;
+          const ativa = atual?.id === f.id;
+          return (
+            <button
+              key={f.id}
+              type="button"
+              aria-pressed={ativa}
+              aria-disabled={!!motivo}
+              title={motivo ? `Não cabe: ${motivo}` : undefined}
+              onClick={() => {
+                if (!motivo) onPatch(item.uid, { frenteId: f.id });
+              }}
+              className={`px-3.5 py-2 rounded border text-sm transition-colors ${
+                ativa
+                  ? "border-bronze bg-bronze/10 text-bronze font-medium"
+                  : motivo
+                    ? "border-border text-muted-foreground/60 line-through cursor-not-allowed"
+                    : "border-border text-ink hover:border-bronze"
+              }`}
+            >
+              {f.nome}
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-2.5 text-xs text-muted-foreground">
+        Porta de {PORTA_LARGURA[0]} a {PORTA_LARGURA[1]} mm de largura por folha
+        {temGaveta &&
+          `; gaveta até ${GAVETA_LARGURA_MAX} mm de largura e de ${GAVETA_ALTURA[0]} a ${GAVETA_ALTURA[1]} mm de altura`}
+        . O que não cabe na sua medida fica riscado.
+      </p>
+    </fieldset>
+  );
+}
+
+/**
  * Aviso na hora, na etapa em que a medida é digitada.
  *
  * Antes o alerta só aparecia lá no resumo: a pessoa digitava uma torre de
@@ -713,6 +779,7 @@ function ForaDaFaixa({ item, modulo }: { item: ItemConfig; modulo: Modulo }) {
   checa(item.largura, modulo.limites.largura, "Largura");
   checa(item.altura, modulo.limites.altura, "Altura");
   checa(item.profundidade, modulo.limites.profundidade, "Profundidade");
+  problemas.push(...problemasDeFrente(item, modulo));
 
   if (modulo.eletros && item.forno && item.micro) {
     const precisa = item.forno.altura + item.micro.altura + 40 + 100;
@@ -744,7 +811,11 @@ function PassoAcabamento({
   onChange: (a: Acabamento) => void;
   itens: ItemConfig[];
 }) {
-  const comGaveta = itens.filter((i) => MODULOS.find((m) => m.id === i.moduloId)?.gavetas);
+  const comGaveta = itens.filter((i) => {
+    const modulo = MODULOS.find((m) => m.id === i.moduloId)!;
+    const frente = frenteDoItem(i, modulo);
+    return frente ? frente.fileiras.some((f) => f.tipo === "gaveta") : modulo.gavetas > 0;
+  });
   return (
     <section>
       <TituloPasso
@@ -874,16 +945,26 @@ function descreve(calc: ReturnType<typeof calculaOrcamento>["itens"][number], ac
   const { modulo } = calc;
   const partes: string[] = [];
   if (modulo.eletros) partes.push("nichos para forno e micro-ondas nas suas medidas");
-  if (modulo.portas > 0) {
+  if (calc.portas > 0) {
     partes.push(
-      `${modulo.portas} ${modulo.portas === 1 ? "porta" : "portas"}${acab.ripada ? " ripadas" : ""}`,
+      `${calc.portas} ${calc.portas === 1 ? "porta" : "portas"}${acab.ripada ? " ripadas" : ""}`,
     );
   }
-  if (modulo.gavetas > 0) {
-    partes.push(`${modulo.gavetas} gavetas com corrediça oculta`);
+  if (calc.gavetas > 0) {
+    const gavetoes = calc.fileiras.filter(
+      (f) => f.tipo === "gaveta" && f.tamanho === "gavetao",
+    ).length;
+    const comuns = calc.gavetas - gavetoes;
+    const texto = [
+      comuns > 0 ? `${comuns} ${comuns === 1 ? "gaveta" : "gavetas"}` : "",
+      gavetoes > 0 ? `${gavetoes} gavetão` : "",
+    ]
+      .filter(Boolean)
+      .join(" + ");
+    partes.push(`${texto} com corrediça oculta`);
   }
-  if (modulo.prateleiras > 0) {
-    partes.push(`${modulo.prateleiras} ${modulo.prateleiras === 1 ? "prateleira" : "prateleiras"}`);
+  if (calc.prateleiras > 0) {
+    partes.push(`${calc.prateleiras} ${calc.prateleiras === 1 ? "prateleira" : "prateleiras"}`);
   }
   partes.push("interior em MDF 15 mm branco");
   const texto = partes.join(" · ");
@@ -1056,6 +1137,7 @@ function PassoResumo({
             <div>
               <h3 className="font-semibold text-ink">
                 {calc.modulo.nome}
+                {calc.frente && ` · ${calc.frente.nome}`}
                 {calc.item.quantidade > 1 && ` × ${calc.item.quantidade}`}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
@@ -1315,7 +1397,7 @@ function PassoPagamento({
 function linhasDosItens(orcamento: ReturnType<typeof calculaOrcamento>): string[] {
   return orcamento.itens.map(
     (c) =>
-      `${c.modulo.nome} — ${c.item.largura} × ${c.item.altura} × ${c.item.profundidade} mm — ${brl(c.preco)}`,
+      `${c.modulo.nome}${c.frente ? ` (${c.frente.nome})` : ""} — ${c.item.largura} × ${c.item.altura} × ${c.item.profundidade} mm — ${brl(c.preco)}`,
   );
 }
 
@@ -1375,6 +1457,7 @@ function ResumoLateral({
               <li key={c.item.uid} className="flex justify-between gap-3 text-sm">
                 <span className="text-muted-foreground">
                   {c.modulo.nome}
+                  {c.frente && ` · ${c.frente.nome}`}
                   {c.item.quantidade > 1 && ` × ${c.item.quantidade}`}
                 </span>
                 <Valor

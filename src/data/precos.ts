@@ -143,6 +143,63 @@ export const PARCELAS_MAX = 10;
 
 export type ModuloId = "aereo" | "balcao" | "gaveteiro" | "torre-quente" | "armario";
 
+/**
+ * Frente do módulo — o que a pessoa vê e escolhe: portas, gavetas ou os dois.
+ *
+ * Pedido da M7 (áudio de 17/09): no balcão, no aéreo e no balcão de pia a
+ * pessoa clica e escolhe 1, 2 ou 3 portas; duas gavetas, um gavetão, gavetão
+ * com gavetas — "com umas especificações de limite para não passar". As
+ * fileiras vão de cima para baixo; a altura de cada uma é proporcional ao seu
+ * peso em `UNIDADES_FILEIRA`, e a largura das portas é a do módulo dividida
+ * pelo número de folhas.
+ */
+export type Fileira =
+  { tipo: "portas"; n: 1 | 2 | 3 } | { tipo: "gaveta"; tamanho: "normal" | "gavetao" };
+
+export type Frente = { id: string; nome: string; fileiras: Fileira[] };
+
+/** Peso de altura de cada fileira: um gavetão vale duas gavetas; portas, três. */
+export const UNIDADES_FILEIRA = { portas: 3, normal: 1, gavetao: 2 } as const;
+
+/**
+ * Limites de frente, em mm — as "especificações de limite" do áudio.
+ *
+ *  - Porta: de 300 a 600 mm de largura por folha. Acima de 600 a folha fica
+ *    pesada para a dobradiça e empena; abaixo de 300 não abre vão útil.
+ *  - Gaveta: até 900 mm de largura (corrediça) e de 120 a 450 mm de altura
+ *    (abaixo disso não é gaveta; acima, é porta deitada).
+ *
+ * A CONFIRMAR com a M7: são os limites usuais do setor, não números que ela
+ * passou. Estão em um lugar só de propósito.
+ */
+export const PORTA_LARGURA: [number, number] = [300, 600];
+export const GAVETA_ALTURA: [number, number] = [120, 450];
+export const GAVETA_LARGURA_MAX = 900;
+
+const portas = (n: 1 | 2 | 3): Frente => ({
+  id: `${n}-portas`,
+  nome: n === 1 ? "1 porta" : `${n} portas`,
+  fileiras: [{ tipo: "portas", n }],
+});
+const gaveta: Fileira = { tipo: "gaveta", tamanho: "normal" };
+const gavetao: Fileira = { tipo: "gaveta", tamanho: "gavetao" };
+
+/** A primeira opção de cada lista é o padrão do módulo. */
+const FRENTES_PORTAS: Frente[] = [portas(2), portas(1), portas(3)];
+const FRENTES_BALCAO: Frente[] = [
+  ...FRENTES_PORTAS,
+  { id: "gaveta-2-portas", nome: "1 gaveta + 2 portas", fileiras: [gaveta, portas(2).fileiras[0]] },
+  { id: "2-gavetas", nome: "2 gavetas", fileiras: [gaveta, gaveta] },
+  { id: "3-gavetas", nome: "3 gavetas", fileiras: [gaveta, gaveta, gaveta] },
+  { id: "2-gavetas-gavetao", nome: "2 gavetas + gavetão", fileiras: [gaveta, gaveta, gavetao] },
+];
+const FRENTES_GAVETEIRO: Frente[] = [
+  { id: "3-gavetas", nome: "3 gavetas", fileiras: [gaveta, gaveta, gaveta] },
+  { id: "4-gavetas", nome: "4 gavetas", fileiras: [gaveta, gaveta, gaveta, gaveta] },
+  { id: "2-gavetas", nome: "2 gavetas", fileiras: [gaveta, gaveta] },
+  { id: "2-gavetas-gavetao", nome: "2 gavetas + gavetão", fileiras: [gaveta, gaveta, gavetao] },
+];
+
 export type Modulo = {
   id: ModuloId;
   nome: string;
@@ -151,43 +208,49 @@ export type Modulo = {
   padrao: [number, number, number];
   /** Faixa aceita em mm — fora disso vira projeto sob medida com a equipe. */
   limites: { largura: [number, number]; altura: [number, number]; profundidade: [number, number] };
+  /** Portas e gavetas do módulo quando ele NÃO tem `frentes` (torre quente). */
   portas: number;
   gavetas: number;
   prateleiras: number;
   /** Só a torre quente pede as medidas dos eletrodomésticos. */
   eletros?: boolean;
+  /** Opções de frente que a pessoa escolhe; a primeira é o padrão. */
+  frentes?: Frente[];
 };
 
 export const MODULOS: Modulo[] = [
   {
     id: "aereo",
     nome: "Armário aéreo",
-    descricao: "Duas portas e uma prateleira interna, fixado na parede.",
+    descricao: "Fixado na parede, com prateleira interna. Você escolhe 1, 2 ou 3 portas.",
     padrao: [800, 700, 350],
     limites: { largura: [400, 1200], altura: [400, 900], profundidade: [300, 400] },
     portas: 2,
     gavetas: 0,
     prateleiras: 1,
+    frentes: FRENTES_PORTAS,
   },
   {
     id: "balcao",
-    nome: "Balcão 2 portas",
-    descricao: "Base de bancada com prateleira interna e pé regulável.",
+    nome: "Balcão",
+    descricao: "Base de bancada ou de pia, com pé regulável. Portas, gavetas ou os dois.",
     padrao: [800, 850, 580],
     limites: { largura: [400, 1200], altura: [700, 900], profundidade: [450, 650] },
     portas: 2,
     gavetas: 0,
     prateleiras: 1,
+    frentes: FRENTES_BALCAO,
   },
   {
     id: "gaveteiro",
-    nome: "Gaveteiro 3 gavetas",
-    descricao: "Gavetas com corrediça oculta e amortecimento.",
+    nome: "Gaveteiro",
+    descricao: "Gavetas com corrediça oculta e amortecimento: de 2 a 4, com ou sem gavetão.",
     padrao: [600, 850, 580],
     limites: { largura: [400, 900], altura: [700, 900], profundidade: [450, 650] },
     portas: 0,
     gavetas: 3,
     prateleiras: 0,
+    frentes: FRENTES_GAVETEIRO,
   },
   {
     id: "torre-quente",
@@ -209,6 +272,7 @@ export const MODULOS: Modulo[] = [
     portas: 2,
     gavetas: 0,
     prateleiras: 4,
+    frentes: FRENTES_PORTAS,
   },
 ];
 

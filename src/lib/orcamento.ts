@@ -6,9 +6,8 @@
  *   preço = custo × FATOR_SITE
  *
  * Duas regras que vieram direto do cliente e que o código precisa respeitar:
- *  - a corrediça é escolhida pela carga da gaveta, não por um preço médio: a
- *    gaveta larga e funda pede corrediça reforçada, e ela custa três vezes a
- *    telescópica simples;
+ *  - a frente (portas, gavetas, gavetão) é escolha da pessoa dentro de limites
+ *    de largura de porta e de altura/largura de gaveta — ver `precos.ts`;
  *  - a torre quente é dimensionada pelas medidas dos eletrodomésticos que a
  *    pessoa digita, então o nicho (e a altura de porta que sobra) sai do forno
  *    e do micro-ondas dela, não de um padrão fixo.
@@ -26,6 +25,8 @@ import {
   FATOR_SITE,
   FITA_ML,
   FOLGA_ELETRO,
+  GAVETA_ALTURA,
+  GAVETA_LARGURA_MAX,
   INSUMOS_PCT,
   MODULOS,
   PARAFUSO,
@@ -33,11 +34,14 @@ import {
   PARAFUSOS_POR_FRENTE,
   PARAFUSOS_POR_PRATELEIRA,
   PARCELAS_MAX,
+  PORTA_LARGURA,
   PUXADOR,
   RIPADO_FATOR_MATERIAL,
   UNIBLOCK,
   UNIBLOCK_POR_PRATELEIRA,
+  UNIDADES_FILEIRA,
   porM2,
+  type Frente,
   type Modulo,
   type ModuloId,
 } from "@/data/precos";
@@ -52,6 +56,8 @@ export type ItemConfig = {
   altura: number;
   profundidade: number;
   quantidade: number;
+  /** Frente escolhida (id em `modulo.frentes`); ausente = padrão do módulo. */
+  frenteId?: string;
   /** Só na torre quente. */
   forno?: MedidaEletro;
   micro?: MedidaEletro;
@@ -77,6 +83,12 @@ export type ItemCalculado = {
   preco: number;
   /** Avisos de dimensionamento (medida fora da faixa, eletro sem medida). */
   avisos: string[];
+  /** Frente escolhida, já com medidas — para descrição, resumo e pedido. */
+  fileiras: FileiraCalculada[];
+  frente?: Frente;
+  portas: number;
+  gavetas: number;
+  prateleiras: number;
 };
 
 export type Entrega = "local" | "distante";
@@ -106,6 +118,94 @@ export const brl = (v: number) =>
 
 export const brlExato = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+/** A frente escolhida do item, ou o padrão do módulo; `undefined` em módulo sem opções (torre). */
+export const frenteDoItem = (item: ItemConfig, modulo: Modulo): Frente | undefined =>
+  modulo.frentes?.find((f) => f.id === item.frenteId) ?? modulo.frentes?.[0];
+
+export type FileiraCalculada =
+  | { tipo: "portas"; n: number; largura: number; altura: number }
+  | { tipo: "gaveta"; tamanho: "normal" | "gavetao"; altura: number };
+
+/**
+ * As fileiras de frente do item com medidas reais, em mm, de cima para baixo.
+ * A altura de cada fileira é a fatia proporcional de `alturaFrente` pelo peso
+ * em UNIDADES_FILEIRA; portas dividem a largura do módulo entre as folhas.
+ * Módulo sem `frentes` (torre quente) cai no legado: portas lado a lado na
+ * altura inteira e gavetas iguais.
+ */
+export function fileirasDoItem(
+  item: ItemConfig,
+  modulo: Modulo,
+  alturaFrente: number,
+): FileiraCalculada[] {
+  const frente = frenteDoItem(item, modulo);
+  if (!frente) {
+    const saida: FileiraCalculada[] = [];
+    if (modulo.portas > 0)
+      saida.push({
+        tipo: "portas",
+        n: modulo.portas,
+        largura: item.largura / modulo.portas,
+        altura: alturaFrente,
+      });
+    for (let i = 0; i < modulo.gavetas; i++)
+      saida.push({ tipo: "gaveta", tamanho: "normal", altura: alturaFrente / modulo.gavetas });
+    return saida;
+  }
+  const peso = (f: Frente["fileiras"][number]) =>
+    f.tipo === "portas" ? UNIDADES_FILEIRA.portas : UNIDADES_FILEIRA[f.tamanho];
+  const total = frente.fileiras.reduce((acc, f) => acc + peso(f), 0);
+  return frente.fileiras.map((f) => {
+    const altura = (alturaFrente * peso(f)) / total;
+    return f.tipo === "portas"
+      ? { tipo: "portas", n: f.n, largura: item.largura / f.n, altura }
+      : { tipo: "gaveta", tamanho: f.tamanho, altura };
+  });
+}
+
+/**
+ * Por que uma frente não serve para esta largura — ou `null` se serve. É o
+ * texto do chip desabilitado na tela de medidas.
+ */
+export function motivoIndisponivel(frente: Frente, largura: number): string | null {
+  for (const f of frente.fileiras) {
+    if (f.tipo === "portas") {
+      const w = Math.round(largura / f.n);
+      if (w > PORTA_LARGURA[1])
+        return `cada porta ficaria com ${w} mm; o máximo é ${PORTA_LARGURA[1]} mm por folha`;
+      if (w < PORTA_LARGURA[0])
+        return `cada porta ficaria com ${w} mm; o mínimo é ${PORTA_LARGURA[0]} mm por folha`;
+    } else if (largura > GAVETA_LARGURA_MAX) {
+      return `gaveta vai até ${GAVETA_LARGURA_MAX} mm de largura, pela corrediça`;
+    }
+  }
+  return null;
+}
+
+/**
+ * Problemas da frente escolhida com as medidas atuais (largura de porta,
+ * largura e altura de gaveta). Aparecem ao lado dos campos e no resumo.
+ */
+export function problemasDeFrente(item: ItemConfig, modulo: Modulo): string[] {
+  if (!modulo.frentes || !item.largura || !item.altura) return [];
+  const problemas: string[] = [];
+  const frente = frenteDoItem(item, modulo)!;
+  const motivo = motivoIndisponivel(frente, item.largura);
+  if (motivo)
+    problemas.push(`Com ${item.largura} mm de largura, "${frente.nome}" não fecha: ${motivo}.`);
+  for (const f of fileirasDoItem(item, modulo, item.altura)) {
+    if (f.tipo !== "gaveta") continue;
+    const h = Math.round(f.altura);
+    if (h < GAVETA_ALTURA[0] || h > GAVETA_ALTURA[1]) {
+      problemas.push(
+        `Uma das gavetas ficaria com ${h} mm de altura; gaveta vai de ${GAVETA_ALTURA[0]} a ${GAVETA_ALTURA[1]} mm. Troque a frente ou a altura do módulo.`,
+      );
+      break;
+    }
+  }
+  return problemas;
+}
 
 /**
  * Altura ocupada pelos nichos da torre quente. Cada eletrodoméstico ganha uma
@@ -151,36 +251,51 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
     travessasExtras = 3; // divisórias horizontais que fecham os dois nichos
   }
 
+  // ————— frente escolhida —————
+  // Portas e gavetas saem das fileiras do item, não do módulo: é a escolha da
+  // pessoa (1, 2 ou 3 portas; gavetas com ou sem gavetão) que dita dobradiça,
+  // corrediça, fita e puxador.
+  avisos.push(...problemasDeFrente(item, modulo));
+  const fileiras = fileirasDoItem(item, modulo, alturaFrente * 1000);
+  const portas = fileiras.filter((f) => f.tipo === "portas");
+  const gavetas = fileiras.filter((f) => f.tipo === "gaveta");
+  const nPortas = portas.reduce((acc, f) => acc + f.n, 0);
+  const nGavetas = gavetas.length;
+  // Prateleira só faz sentido atrás de porta: um balcão só de gavetas não tem.
+  const prateleiras = nPortas > 0 ? modulo.prateleiras : 0;
+
   // ————— chapa —————
   // O interior é sempre MDF 15 mm branco; a chapa de cor entra só nas frentes,
   // que é como a M7 compra: uma chapa barata para a caixa e uma cara para o
-  // que aparece.
+  // que aparece. A caixa da gaveta é um pouco mais baixa que a frente.
+  const caixasGavetaM2 = gavetas.reduce((acc, g) => {
+    const h = m(g.altura) * 0.8;
+    return acc + 2 * h * P + 2 * h * L;
+  }, 0);
   const interiorM2 =
     2 * A * P + // laterais
-    (2 + modulo.prateleiras + travessasExtras) * L * P + // base, tampo, prateleiras e travessas
-    modulo.gavetas * (2 * 0.15 * P + 2 * 0.15 * L); // caixas de gaveta
-  const frentesM2 = modulo.portas + modulo.gavetas > 0 ? L * alturaFrente : 0;
-  const fundoM2 = L * A + modulo.gavetas * L * P;
+    (2 + prateleiras + travessasExtras) * L * P + // base, tampo, prateleiras e travessas
+    caixasGavetaM2;
+  const frentesM2 = nPortas + nGavetas > 0 ? L * alturaFrente : 0;
+  const fundoM2 = L * A + nGavetas * L * P;
 
   // ————— fita de borda —————
   // Preço único por metro aplicado, nas bordas aparentes da caixa e no
   // perímetro de cada frente.
-  const larguraFrente = modulo.portas > 0 ? L / modulo.portas : L;
-  const alturaGaveta = modulo.gavetas > 0 ? alturaFrente / modulo.gavetas : 0;
+  const perimetroPortas = portas.reduce(
+    (acc, f) => acc + f.n * 2 * (m(f.largura) + m(f.altura)),
+    0,
+  );
+  const perimetroGavetas = gavetas.reduce((acc, g) => acc + 2 * (L + m(g.altura)), 0);
   const fitaMl =
-    (2 + modulo.prateleiras + travessasExtras) * L +
-    2 * A +
-    modulo.portas * 2 * (larguraFrente + alturaFrente) +
-    modulo.gavetas * 2 * (L + alturaGaveta);
+    (2 + prateleiras + travessasExtras) * L + 2 * A + perimetroPortas + perimetroGavetas;
 
   // ————— ferragem —————
-  const dobradicas = modulo.portas * (alturaFrente > 1.2 ? 3 : 2);
-  const frentes = modulo.portas + modulo.gavetas;
-  const uniblocks = modulo.prateleiras * UNIBLOCK_POR_PRATELEIRA;
+  const dobradicas = portas.reduce((acc, f) => acc + f.n * (m(f.altura) > 1.2 ? 3 : 2), 0);
+  const frentes = nPortas + nGavetas;
+  const uniblocks = prateleiras * UNIBLOCK_POR_PRATELEIRA;
   const parafusos =
-    PARAFUSOS_CAIXA +
-    frentes * PARAFUSOS_POR_FRENTE +
-    modulo.prateleiras * PARAFUSOS_POR_PRATELEIRA;
+    PARAFUSOS_CAIXA + frentes * PARAFUSOS_POR_FRENTE + prateleiras * PARAFUSOS_POR_PRATELEIRA;
 
   const linhas: LinhaCusto[] = [
     {
@@ -220,11 +335,11 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
       valor: dobradicas * DOBRADICA,
     });
   }
-  if (modulo.gavetas > 0) {
+  if (nGavetas > 0) {
     linhas.push({
       descricao: "Corrediças ocultas",
-      detalhe: `${modulo.gavetas} ${modulo.gavetas === 1 ? "par" : "pares"}`,
-      valor: modulo.gavetas * CORREDICA_PAR,
+      detalhe: `${nGavetas} ${nGavetas === 1 ? "par" : "pares"}`,
+      valor: nGavetas * CORREDICA_PAR,
     });
   }
   if (uniblocks > 0) {
@@ -258,7 +373,19 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const custoUnitario = material + insumos;
   const preco = arredonda(custoUnitario * FATOR_SITE) * item.quantidade;
 
-  return { item, modulo, linhas, custoUnitario, preco, avisos };
+  return {
+    item,
+    modulo,
+    linhas,
+    custoUnitario,
+    preco,
+    avisos,
+    fileiras,
+    frente: frenteDoItem(item, modulo),
+    portas: nPortas,
+    gavetas: nGavetas,
+    prateleiras,
+  };
 }
 
 export function calculaOrcamento(

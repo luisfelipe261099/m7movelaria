@@ -1,5 +1,5 @@
 import { CORES, MODULOS, FOLGA_ELETRO, type Modulo } from "@/data/precos";
-import type { Acabamento, ItemConfig } from "@/lib/orcamento";
+import { fileirasDoItem, type Acabamento, type ItemConfig } from "@/lib/orcamento";
 
 /**
  * Desenho 2D do conjunto que a pessoa está montando.
@@ -210,21 +210,28 @@ function DesenhoModulo({
       peca: { x: x + 8, y: cursor + 8, w: L - 16, h: nichos.hPortaBaixo - 16 },
       orientacao: "porta",
     });
-  } else if (modulo.gavetas > 0) {
-    const h = corpoH / modulo.gavetas;
-    for (let i = 0; i < modulo.gavetas; i++) {
-      frentes.push({
-        peca: { x: x + 8, y: corpoY + h * i + 8, w: L - 16, h: h - 16 },
-        orientacao: "gaveta",
-      });
-    }
-  } else if (modulo.portas > 0) {
-    const w = L / modulo.portas;
-    for (let i = 0; i < modulo.portas; i++) {
-      frentes.push({
-        peca: { x: x + w * i + 8, y: corpoY + 8, w: w - 16, h: corpoH - 16 },
-        orientacao: "porta",
-      });
+  } else {
+    // A frente escolhida, fileira a fileira de cima para baixo: uma fileira
+    // de portas divide a largura entre as folhas; uma gaveta ocupa a largura
+    // inteira. As alturas vêm da mesma função que o orçamento usa, então o
+    // desenho e o preço nunca discordam.
+    let cursor = corpoY;
+    for (const f of fileirasDoItem(item, modulo, corpoH)) {
+      if (f.tipo === "portas") {
+        const w = L / f.n;
+        for (let i = 0; i < f.n; i++) {
+          frentes.push({
+            peca: { x: x + w * i + 8, y: cursor + 8, w: w - 16, h: f.altura - 16 },
+            orientacao: "porta",
+          });
+        }
+      } else {
+        frentes.push({
+          peca: { x: x + 8, y: cursor + 8, w: L - 16, h: f.altura - 16 },
+          orientacao: "gaveta",
+        });
+      }
+      cursor += f.altura;
     }
   }
 
