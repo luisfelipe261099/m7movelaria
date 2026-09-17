@@ -141,7 +141,20 @@ export const PARCELAS_MAX = 10;
 // Catálogo de módulos
 // ————————————————————————————————————————————————————————————
 
-export type ModuloId = "aereo" | "balcao" | "gaveteiro" | "torre-quente" | "armario";
+export type ModuloId =
+  | "aereo"
+  | "balcao"
+  | "gaveteiro"
+  | "torre-quente"
+  | "armario"
+  | "guarda-roupa"
+  | "criado-mudo"
+  | "cabeceira"
+  | "bancada"
+  | "estante";
+
+/** Ambientes do simulador. Cada módulo diz em quais aparece. */
+export type AmbienteId = "cozinha" | "dormitorio" | "home-office" | "lavanderia";
 
 /**
  * Frente do módulo — o que a pessoa vê e escolhe: portas, gavetas ou os dois.
@@ -154,7 +167,7 @@ export type ModuloId = "aereo" | "balcao" | "gaveteiro" | "torre-quente" | "arma
  * pelo número de folhas.
  */
 export type Fileira =
-  { tipo: "portas"; n: 1 | 2 | 3 } | { tipo: "gaveta"; tamanho: "normal" | "gavetao" };
+  { tipo: "portas"; n: 1 | 2 | 3 | 4 } | { tipo: "gaveta"; tamanho: "normal" | "gavetao" };
 
 export type Frente = { id: string; nome: string; fileiras: Fileira[] };
 
@@ -176,7 +189,7 @@ export const PORTA_LARGURA: [number, number] = [300, 600];
 export const GAVETA_ALTURA: [number, number] = [120, 450];
 export const GAVETA_LARGURA_MAX = 900;
 
-const portas = (n: 1 | 2 | 3): Frente => ({
+const portas = (n: 1 | 2 | 3 | 4): Frente => ({
   id: `${n}-portas`,
   nome: n === 1 ? "1 porta" : `${n} portas`,
   fileiras: [{ tipo: "portas", n }],
@@ -193,6 +206,13 @@ const FRENTES_BALCAO: Frente[] = [
   { id: "3-gavetas", nome: "3 gavetas", fileiras: [gaveta, gaveta, gaveta] },
   { id: "2-gavetas-gavetao", nome: "2 gavetas + gavetão", fileiras: [gaveta, gaveta, gavetao] },
 ];
+/** Guarda-roupa é largo: 2, 3 ou 4 folhas para a porta ficar dentro dos 600 mm. */
+const FRENTES_GUARDA_ROUPA: Frente[] = [portas(3), portas(2), portas(4)];
+const FRENTES_CRIADO: Frente[] = [
+  { id: "2-gavetas", nome: "2 gavetas", fileiras: [gaveta, gaveta] },
+  { id: "gaveta-porta", nome: "1 gaveta + 1 porta", fileiras: [gaveta, portas(1).fileiras[0]] },
+  portas(1),
+];
 const FRENTES_GAVETEIRO: Frente[] = [
   { id: "3-gavetas", nome: "3 gavetas", fileiras: [gaveta, gaveta, gaveta] },
   { id: "4-gavetas", nome: "4 gavetas", fileiras: [gaveta, gaveta, gaveta, gaveta] },
@@ -204,6 +224,16 @@ export type Modulo = {
   id: ModuloId;
   nome: string;
   descricao: string;
+  /** Em quais ambientes o módulo é oferecido. */
+  ambientes: AmbienteId[];
+  /**
+   * Como a peça é construída, para a conta e para o desenho:
+   *  - "caixa" (padrão): laterais, base, tampo, fundo e frentes;
+   *  - "painel": uma chapa de cor na parede (cabeceira) — sem caixa, sem
+   *    ferragem; a profundidade é a espessura e não é editada;
+   *  - "bancada": tampo em chapa de cor apoiado em duas laterais.
+   */
+  forma?: "caixa" | "painel" | "bancada";
   /** Medidas iniciais em mm (largura, altura, profundidade). */
   padrao: [number, number, number];
   /** Faixa aceita em mm — fora disso vira projeto sob medida com a equipe. */
@@ -222,6 +252,7 @@ export const MODULOS: Modulo[] = [
   {
     id: "aereo",
     nome: "Armário aéreo",
+    ambientes: ["cozinha", "lavanderia"],
     descricao: "Fixado na parede, com prateleira interna. Você escolhe 1, 2 ou 3 portas.",
     padrao: [800, 700, 350],
     limites: { largura: [400, 1200], altura: [400, 900], profundidade: [300, 400] },
@@ -233,6 +264,7 @@ export const MODULOS: Modulo[] = [
   {
     id: "balcao",
     nome: "Balcão",
+    ambientes: ["cozinha", "lavanderia"],
     descricao: "Base de bancada ou de pia, com pé regulável. Portas, gavetas ou os dois.",
     padrao: [800, 850, 580],
     limites: { largura: [400, 1200], altura: [700, 900], profundidade: [450, 650] },
@@ -244,6 +276,7 @@ export const MODULOS: Modulo[] = [
   {
     id: "gaveteiro",
     nome: "Gaveteiro",
+    ambientes: ["cozinha", "home-office"],
     descricao: "Gavetas com corrediça oculta e amortecimento: de 2 a 4, com ou sem gavetão.",
     padrao: [600, 850, 580],
     limites: { largura: [400, 900], altura: [700, 900], profundidade: [450, 650] },
@@ -255,6 +288,7 @@ export const MODULOS: Modulo[] = [
   {
     id: "torre-quente",
     nome: "Torre quente",
+    ambientes: ["cozinha"],
     descricao: "Nichos para forno e micro-ondas, calculados pelas medidas dos seus aparelhos.",
     padrao: [600, 2100, 600],
     limites: { largura: [500, 900], altura: [1800, 2400], profundidade: [500, 700] },
@@ -266,6 +300,7 @@ export const MODULOS: Modulo[] = [
   {
     id: "armario",
     nome: "Armário multiuso",
+    ambientes: ["cozinha", "lavanderia", "dormitorio"],
     descricao: "Coluna fechada de piso ao teto, com prateleiras.",
     padrao: [900, 2100, 550],
     limites: { largura: [500, 1400], altura: [1800, 2400], profundidade: [400, 650] },
@@ -273,6 +308,67 @@ export const MODULOS: Modulo[] = [
     gavetas: 0,
     prateleiras: 4,
     frentes: FRENTES_PORTAS,
+  },
+  // ————— dormitório —————
+  {
+    id: "guarda-roupa",
+    nome: "Guarda-roupa",
+    descricao: "Do piso ao teto, com prateleiras e cabideiro. 2, 3 ou 4 portas.",
+    ambientes: ["dormitorio"],
+    padrao: [1600, 2200, 550],
+    limites: { largura: [800, 2400], altura: [1800, 2600], profundidade: [450, 650] },
+    portas: 3,
+    gavetas: 0,
+    prateleiras: 4,
+    frentes: FRENTES_GUARDA_ROUPA,
+  },
+  {
+    id: "criado-mudo",
+    nome: "Criado-mudo",
+    descricao: "Ao lado da cama: gavetas, gaveta com porta ou só porta.",
+    ambientes: ["dormitorio"],
+    padrao: [500, 550, 400],
+    limites: { largura: [400, 700], altura: [400, 700], profundidade: [350, 500] },
+    portas: 0,
+    gavetas: 2,
+    prateleiras: 0,
+    frentes: FRENTES_CRIADO,
+  },
+  {
+    id: "cabeceira",
+    nome: "Painel de cabeceira",
+    descricao: "Painel em chapa de cor fixado na parede atrás da cama.",
+    ambientes: ["dormitorio"],
+    forma: "painel",
+    padrao: [1600, 1100, 15],
+    limites: { largura: [900, 2600], altura: [600, 1400], profundidade: [15, 15] },
+    portas: 0,
+    gavetas: 0,
+    prateleiras: 0,
+  },
+  // ————— home office —————
+  {
+    id: "bancada",
+    nome: "Bancada de trabalho",
+    descricao: "Tampo em chapa de cor sobre duas laterais. O gaveteiro vai embaixo.",
+    ambientes: ["home-office"],
+    forma: "bancada",
+    padrao: [1400, 750, 600],
+    limites: { largura: [800, 2400], altura: [700, 800], profundidade: [450, 700] },
+    portas: 0,
+    gavetas: 0,
+    prateleiras: 0,
+  },
+  {
+    id: "estante",
+    nome: "Estante aberta",
+    descricao: "Nichos abertos com prateleiras, sem porta.",
+    ambientes: ["home-office"],
+    padrao: [800, 1800, 300],
+    limites: { largura: [400, 1200], altura: [600, 2400], profundidade: [250, 400] },
+    portas: 0,
+    gavetas: 0,
+    prateleiras: 4,
   },
 ];
 

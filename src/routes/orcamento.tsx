@@ -31,7 +31,7 @@ import {
 import { pageSeo } from "@/lib/seo";
 import { CORES, MODULOS, type Modulo, type ModuloId } from "@/data/precos";
 import { TABELA_CONFIRMADA } from "@/data/simulador";
-import { GAVETA_ALTURA, GAVETA_LARGURA_MAX, PORTA_LARGURA } from "@/data/precos";
+import { GAVETA_ALTURA, GAVETA_LARGURA_MAX, PORTA_LARGURA, type AmbienteId } from "@/data/precos";
 import {
   brl,
   calculaOrcamento,
@@ -74,28 +74,24 @@ const AMBIENTES = [
   {
     id: "cozinha",
     nome: "Cozinha",
-    descricao: "Aéreos, balcões, gaveteiro e torre quente.",
-    ativo: true,
+    descricao: "Aéreos, balcões, gaveteiro, torre quente e armário.",
   },
   {
     id: "dormitorio",
     nome: "Dormitório",
-    descricao: "Guarda-roupa, cabeceira e criado-mudo.",
-    ativo: false,
+    descricao: "Guarda-roupa, criado-mudo, painel de cabeceira e armário.",
   },
   {
     id: "home-office",
     nome: "Home office",
-    descricao: "Bancada, gaveteiro e estante.",
-    ativo: false,
+    descricao: "Bancada de trabalho, gaveteiro e estante aberta.",
   },
   {
     id: "lavanderia",
     nome: "Lavanderia",
-    descricao: "Armário de área de serviço e torre.",
-    ativo: false,
+    descricao: "Aéreo, balcão de tanque e armário alto.",
   },
-];
+] satisfies Array<{ id: AmbienteId; nome: string; descricao: string }>;
 
 let seq = 0;
 const novoItem = (modulo: Modulo): ItemConfig => ({
@@ -115,7 +111,7 @@ const novoItem = (modulo: Modulo): ItemConfig => ({
 
 function Simulador() {
   const [etapa, setEtapa] = useState(0);
-  const [ambiente, setAmbiente] = useState("cozinha");
+  const [ambiente, setAmbiente] = useState<AmbienteId>("cozinha");
   const [itens, setItens] = useState<ItemConfig[]>([]);
   const [acabamento, setAcabamento] = useState<Acabamento>({
     corId: "branco",
@@ -286,6 +282,7 @@ function Simulador() {
               {etapa === 0 && <PassoAmbiente valor={ambiente} onChange={setAmbiente} />}
               {etapa === 1 && (
                 <PassoModulos
+                  ambiente={ambiente}
                   itens={itens}
                   onAdd={addModulo}
                   onRemove={removeItem}
@@ -407,12 +404,18 @@ function TituloPasso({ titulo, apoio }: { titulo: string; apoio: string }) {
   );
 }
 
-function PassoAmbiente({ valor, onChange }: { valor: string; onChange: (v: string) => void }) {
+function PassoAmbiente({
+  valor,
+  onChange,
+}: {
+  valor: AmbienteId;
+  onChange: (v: AmbienteId) => void;
+}) {
   return (
     <section>
       <TituloPasso
         titulo="Qual ambiente você quer montar?"
-        apoio="Começamos pela cozinha, que é onde a maior parte dos pedidos entra. Os outros ambientes entram em seguida."
+        apoio="Cada ambiente tem os seus módulos. Você pode voltar aqui e somar peças de outro ambiente no mesmo orçamento."
       />
       <div className="grid sm:grid-cols-2 gap-4">
         {AMBIENTES.map((a) => {
@@ -421,39 +424,62 @@ function PassoAmbiente({ valor, onChange }: { valor: string; onChange: (v: strin
             <button
               key={a.id}
               type="button"
-              disabled={!a.ativo}
               onClick={() => onChange(a.id)}
               className={`text-left p-5 rounded border transition-colors ${
                 ativo
                   ? "border-bronze bg-bronze/5"
                   : "border-border bg-white hover:border-bronze/50"
-              } disabled:opacity-50 disabled:hover:border-border`}
+              }`}
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-ink">{a.nome}</h3>
                 {ativo && <Check className="w-4 h-4 text-bronze" aria-hidden />}
-                {!a.ativo && (
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                    em breve
-                  </span>
-                )}
               </div>
               <p className="text-sm text-muted-foreground mt-1.5">{a.descricao}</p>
             </button>
           );
         })}
       </div>
+
+      {/* Pedido da M7: "no começo de tudo, uma opção de enviar projeto, que
+          vai direto para o WhatsApp". Quem já tem planta ou projeto de
+          arquiteto não precisa montar módulo nenhum — é orçamento sob
+          medida, e sob medida é conversa. */}
+      <aside className="mt-6 rounded border border-bronze/40 bg-cream p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-bronze">Já tem projeto?</p>
+          <h3 className="mt-1.5 font-semibold text-ink">
+            Envie a planta ou o projeto pelo WhatsApp
+          </h3>
+          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+            Se você já tem o projeto do arquiteto, a planta ou um desenho, não precisa montar módulo
+            aqui: a equipe orça sob medida a partir do que você mandar.
+          </p>
+        </div>
+        <a
+          href={whatsappLink(
+            "Olá M7 Movelaria, já tenho o projeto (ou a planta) e gostaria de um orçamento sob medida. Vou enviar os arquivos aqui.",
+          )}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 sm:mt-0 inline-flex shrink-0 items-center gap-2 px-5 py-3 bg-bronze text-primary-foreground rounded hover:bg-bronze-dark transition-colors text-sm font-medium"
+        >
+          <MessageCircle className="w-4 h-4" aria-hidden /> Enviar projeto no WhatsApp
+        </a>
+      </aside>
     </section>
   );
 }
 
 function PassoModulos({
+  ambiente,
   itens,
   onAdd,
   onRemove,
   acabamento,
   identificacao,
 }: {
+  ambiente: AmbienteId;
   itens: ItemConfig[];
   onAdd: (m: Modulo) => void;
   onRemove: (uid: string) => void;
@@ -461,14 +487,27 @@ function PassoModulos({
   identificacao: Identificacao;
 }) {
   const conta = (id: ModuloId) => itens.filter((i) => i.moduloId === id).length;
+  const modulos = MODULOS.filter((m) => m.ambientes.includes(ambiente));
+  const nomeAmbiente = AMBIENTES.find((a) => a.id === ambiente)?.nome ?? "";
+  const deOutroAmbiente = itens.filter(
+    (i) => !MODULOS.find((m) => m.id === i.moduloId)?.ambientes.includes(ambiente),
+  ).length;
   return (
     <section>
       <TituloPasso
-        titulo="Escolha os módulos"
-        apoio="Cada módulo é uma peça do conjunto. Você monta a cozinha somando as peças, como no projeto da marcenaria."
+        titulo={`Escolha os módulos: ${nomeAmbiente.toLowerCase()}`}
+        apoio="Cada módulo é uma peça do conjunto. Você monta o ambiente somando as peças, como no projeto da marcenaria."
       />
+      {deOutroAmbiente > 0 && (
+        <p className="mb-4 text-sm text-muted-foreground">
+          {deOutroAmbiente === 1
+            ? "Há 1 módulo de outro ambiente no seu orçamento"
+            : `Há ${deOutroAmbiente} módulos de outros ambientes no seu orçamento`}
+          ; eles continuam na lista e no valor.
+        </p>
+      )}
       <div className="grid sm:grid-cols-2 gap-4">
-        {MODULOS.map((m) => {
+        {modulos.map((m) => {
           const n = conta(m.id);
           return (
             <div
@@ -600,12 +639,14 @@ function PassoMedidas({
                   faixa={modulo.limites.altura}
                   onChange={(v) => onPatch(item.uid, { altura: v })}
                 />
-                <CampoMm
-                  label="Profundidade"
-                  valor={item.profundidade}
-                  faixa={modulo.limites.profundidade}
-                  onChange={(v) => onPatch(item.uid, { profundidade: v })}
-                />
+                {modulo.forma !== "painel" && (
+                  <CampoMm
+                    label="Profundidade"
+                    valor={item.profundidade}
+                    faixa={modulo.limites.profundidade}
+                    onChange={(v) => onPatch(item.uid, { profundidade: v })}
+                  />
+                )}
               </div>
 
               {modulo.frentes && <EscolhaFrente item={item} modulo={modulo} onPatch={onPatch} />}

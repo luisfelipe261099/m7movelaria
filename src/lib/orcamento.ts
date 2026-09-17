@@ -261,8 +261,11 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const gavetas = fileiras.filter((f) => f.tipo === "gaveta");
   const nPortas = portas.reduce((acc, f) => acc + f.n, 0);
   const nGavetas = gavetas.length;
-  // Prateleira só faz sentido atrás de porta: um balcão só de gavetas não tem.
-  const prateleiras = nPortas > 0 ? modulo.prateleiras : 0;
+  // Prateleira não faz sentido num módulo só de gavetas (balcão de gavetas);
+  // numa estante aberta, sem frente nenhuma, ela é o próprio móvel.
+  const soGavetas = nGavetas > 0 && nPortas === 0;
+  const prateleiras = soGavetas ? 0 : modulo.prateleiras;
+  const forma = modulo.forma ?? "caixa";
 
   // ————— chapa —————
   // O interior é sempre MDF 15 mm branco; a chapa de cor entra só nas frentes,
@@ -272,12 +275,25 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
     const h = m(g.altura) * 0.8;
     return acc + 2 * h * P + 2 * h * L;
   }, 0);
+  // Painel: só a chapa de cor na parede. Bancada: tampo em chapa de cor
+  // sobre duas laterais em MDF branco, sem fundo. Caixa: o de sempre.
   const interiorM2 =
-    2 * A * P + // laterais
-    (2 + prateleiras + travessasExtras) * L * P + // base, tampo, prateleiras e travessas
-    caixasGavetaM2;
-  const frentesM2 = nPortas + nGavetas > 0 ? L * alturaFrente : 0;
-  const fundoM2 = L * A + nGavetas * L * P;
+    forma === "painel"
+      ? 0
+      : forma === "bancada"
+        ? 2 * A * P
+        : 2 * A * P + // laterais
+          (2 + prateleiras + travessasExtras) * L * P + // base, tampo, prateleiras e travessas
+          caixasGavetaM2;
+  const frentesM2 =
+    forma === "painel"
+      ? L * A
+      : forma === "bancada"
+        ? L * P
+        : nPortas + nGavetas > 0
+          ? L * alturaFrente
+          : 0;
+  const fundoM2 = forma === "caixa" ? L * A + nGavetas * L * P : 0;
 
   // ————— fita de borda —————
   // Preço único por metro aplicado, nas bordas aparentes da caixa e no
@@ -288,7 +304,11 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   );
   const perimetroGavetas = gavetas.reduce((acc, g) => acc + 2 * (L + m(g.altura)), 0);
   const fitaMl =
-    (2 + prateleiras + travessasExtras) * L + 2 * A + perimetroPortas + perimetroGavetas;
+    forma === "painel"
+      ? 2 * (L + A)
+      : forma === "bancada"
+        ? 2 * (L + P) + 2 * (2 * A + 2 * P)
+        : (2 + prateleiras + travessasExtras) * L + 2 * A + perimetroPortas + perimetroGavetas;
 
   // ————— ferragem —————
   const dobradicas = portas.reduce((acc, f) => acc + f.n * (m(f.altura) > 1.2 ? 3 : 2), 0);
@@ -297,20 +317,29 @@ function calculaItem(item: ItemConfig, acab: Acabamento): ItemCalculado {
   const parafusos =
     PARAFUSOS_CAIXA + frentes * PARAFUSOS_POR_FRENTE + prateleiras * PARAFUSOS_POR_PRATELEIRA;
 
-  const linhas: LinhaCusto[] = [
-    {
-      descricao: "Caixa em MDF 15 mm branco",
-      detalhe: `${interiorM2.toFixed(2)} m² · laterais, prateleiras e gavetas`,
+  const linhas: LinhaCusto[] = [];
+  if (interiorM2 > 0) {
+    linhas.push({
+      descricao: forma === "bancada" ? "Laterais em MDF 15 mm branco" : "Caixa em MDF 15 mm branco",
+      detalhe: `${interiorM2.toFixed(2)} m²${forma === "bancada" ? "" : " · laterais, prateleiras e gavetas"}`,
       valor: interiorM2 * porM2(CHAPAS.interior),
-    },
-    {
+    });
+  }
+  if (fundoM2 > 0) {
+    linhas.push({
       descricao: "Fundo em MDF 6 mm",
       detalhe: `${fundoM2.toFixed(2)} m²`,
       valor: fundoM2 * porM2(CHAPAS.fundo),
-    },
-  ];
+    });
+  }
 
-  if (frentesM2 > 0) {
+  if (frentesM2 > 0 && forma !== "caixa") {
+    linhas.push({
+      descricao: `${forma === "painel" ? "Painel" : "Tampo"} em chapa ${cor.nome}`,
+      detalhe: `${frentesM2.toFixed(2)} m²`,
+      valor: frentesM2 * porM2(CHAPAS.frente),
+    });
+  } else if (frentesM2 > 0) {
     // O ripado dobra o consumo de chapa da frente: as ripas saem da mesma
     // chapa, então a área cotada vai a duas vezes a área da porta.
     const consumoFrente = frentesM2 * (acab.ripada ? RIPADO_FATOR_MATERIAL : 1);

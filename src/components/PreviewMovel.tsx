@@ -199,6 +199,81 @@ function DesenhoModulo({
 
   const frentes: Array<{ peca: Peca; orientacao: "porta" | "gaveta" }> = [];
 
+  // Painel de cabeceira: uma chapa na parede, sem caixa nem rodapé. Bancada:
+  // tampo apoiado em duas laterais. Os dois saem antes da lógica de frentes.
+  if (modulo.forma === "painel") {
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={L}
+          height={A}
+          fill={cor}
+          stroke={contorno}
+          strokeWidth={4}
+          rx={6}
+        />
+        <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
+        <text
+          x={x + L / 2}
+          y={alturaCena + 200}
+          fill={CINZA_COTA}
+          fontSize={38}
+          textAnchor="middle"
+        >
+          {modulo.nome}
+        </text>
+      </g>
+    );
+  }
+  if (modulo.forma === "bancada") {
+    const espessura = 40;
+    const perna = 40;
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={L}
+          height={espessura}
+          fill={cor}
+          stroke={contorno}
+          strokeWidth={4}
+          rx={4}
+        />
+        <rect
+          x={x}
+          y={y + espessura}
+          width={perna}
+          height={positivo(A - espessura)}
+          fill="#f3f1ee"
+          stroke={contorno}
+          strokeWidth={3}
+        />
+        <rect
+          x={x + L - perna}
+          y={y + espessura}
+          width={perna}
+          height={positivo(A - espessura)}
+          fill="#f3f1ee"
+          stroke={contorno}
+          strokeWidth={3}
+        />
+        <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
+        <text
+          x={x + L / 2}
+          y={alturaCena + 200}
+          fill={CINZA_COTA}
+          fontSize={38}
+          textAnchor="middle"
+        >
+          {modulo.nome}
+        </text>
+      </g>
+    );
+  }
+
   if (nichos) {
     let cursor = corpoY; // topo do corpo, descendo
     frentes.push({
