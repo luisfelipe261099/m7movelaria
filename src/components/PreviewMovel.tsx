@@ -162,6 +162,7 @@ function DesenhoModulo({
   cor,
   contorno,
   acabamento,
+  cotas = true,
 }: {
   item: ItemConfig;
   modulo: Modulo;
@@ -170,6 +171,8 @@ function DesenhoModulo({
   cor: string;
   contorno: string;
   acabamento: Acabamento;
+  /** Cota de largura e nome embaixo do módulo — não sobre a foto da parede. */
+  cotas?: boolean;
 }) {
   const L = positivo(item.largura);
   const A = positivo(item.altura);
@@ -214,16 +217,20 @@ function DesenhoModulo({
           strokeWidth={4}
           rx={6}
         />
-        <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
-        <text
-          x={x + L / 2}
-          y={alturaCena + 200}
-          fill={CINZA_COTA}
-          fontSize={38}
-          textAnchor="middle"
-        >
-          {modulo.nome}
-        </text>
+        {cotas && (
+          <>
+            <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
+            <text
+              x={x + L / 2}
+              y={alturaCena + 200}
+              fill={CINZA_COTA}
+              fontSize={38}
+              textAnchor="middle"
+            >
+              {modulo.nome}
+            </text>
+          </>
+        )}
       </g>
     );
   }
@@ -260,16 +267,20 @@ function DesenhoModulo({
           stroke={contorno}
           strokeWidth={3}
         />
-        <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
-        <text
-          x={x + L / 2}
-          y={alturaCena + 200}
-          fill={CINZA_COTA}
-          fontSize={38}
-          textAnchor="middle"
-        >
-          {modulo.nome}
-        </text>
+        {cotas && (
+          <>
+            <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
+            <text
+              x={x + L / 2}
+              y={alturaCena + 200}
+              fill={CINZA_COTA}
+              fontSize={38}
+              textAnchor="middle"
+            >
+              {modulo.nome}
+            </text>
+          </>
+        )}
       </g>
     );
   }
@@ -383,11 +394,127 @@ function DesenhoModulo({
       )}
 
       {/* Cota de largura e nome, embaixo de cada módulo. */}
-      <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
-      <text x={x + L / 2} y={alturaCena + 200} fill={CINZA_COTA} fontSize={38} textAnchor="middle">
-        {modulo.nome}
-      </text>
+      {cotas && (
+        <>
+          <Cota x1={x} y1={alturaCena + 80} x2={x + L} y2={alturaCena + 80} texto={`${L} mm`} />
+          <text
+            x={x + L / 2}
+            y={alturaCena + 200}
+            fill={CINZA_COTA}
+            fontSize={38}
+            textAnchor="middle"
+          >
+            {modulo.nome}
+          </text>
+        </>
+      )}
     </g>
+  );
+}
+
+/** Largura e altura do conjunto em mm, e a posição x de cada módulo. */
+export function medidasDaCena(itens: ItemConfig[]) {
+  const alturaCena = Math.max(
+    0,
+    ...itens.map((i) =>
+      MODULOS.find((m) => m.id === i.moduloId)?.id === "aereo"
+        ? ALTURA_AEREO + positivo(i.altura)
+        : positivo(i.altura),
+    ),
+  );
+  const larguraCena =
+    itens.reduce((s, i) => s + positivo(i.largura), 0) + VAO * Math.max(0, itens.length - 1);
+  let cursor = 0;
+  const desenhos = itens.map((item) => {
+    const modulo = MODULOS.find((m) => m.id === item.moduloId)!;
+    const x = cursor;
+    cursor += positivo(item.largura) + VAO;
+    return { item, modulo, x };
+  });
+  return { alturaCena, larguraCena, desenhos };
+}
+
+export function coresDoAcabamento(acabamento: Acabamento) {
+  const cor = CORES.find((c) => c.id === acabamento.corId) ?? CORES[0];
+  const contorno = cor.id === "branco" || cor.id === "cinza" ? "#8f8880" : "#4a3a2c";
+  return { cor, contorno };
+}
+
+/**
+ * Só o conjunto, sem margem, cota nem piso: `viewBox` = largura × altura da
+ * cena em mm, com o piso em y = alturaCena. É o que vai sobre a foto da
+ * parede (NaSuaParede), escalado para os milímetros da foto. Leva a mesma
+ * marca d'água do desenho normal — o print da foto com o móvel é o print que
+ * mais vale levar a outra marcenaria.
+ */
+export function CenaMoveis({
+  ref,
+  itens,
+  acabamento,
+  numero,
+  cliente,
+  opacidade = 1,
+  ...svgProps
+}: {
+  ref?: React.Ref<SVGSVGElement>;
+  itens: ItemConfig[];
+  acabamento: Acabamento;
+  numero?: string;
+  cliente?: string;
+  opacidade?: number;
+} & Omit<React.SVGProps<SVGSVGElement>, "viewBox" | "ref">) {
+  const { cor, contorno } = coresDoAcabamento(acabamento);
+  const { alturaCena, larguraCena, desenhos } = medidasDaCena(itens);
+  if (alturaCena <= 0 || larguraCena <= 0) return null;
+  const idMarca = `marca-parede-${numero || "simulacao"}`;
+  return (
+    <svg ref={ref} viewBox={`0 0 ${larguraCena} ${alturaCena}`} {...svgProps}>
+      <g opacity={opacidade}>
+        {desenhos.map(({ item, modulo, x }) => (
+          <DesenhoModulo
+            key={item.uid}
+            item={item}
+            modulo={modulo}
+            x={x}
+            alturaCena={alturaCena}
+            cor={cor.hex}
+            contorno={contorno}
+            acabamento={acabamento}
+            cotas={false}
+          />
+        ))}
+      </g>
+      <defs>
+        <pattern
+          id={idMarca}
+          width={900}
+          height={500}
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(-20)"
+        >
+          <text
+            x={0}
+            y={70}
+            fill={contorno}
+            opacity={0.14}
+            fontSize={64}
+            style={{ fontWeight: 700 }}
+          >
+            M7 MOVELARIA
+          </text>
+          <text x={0} y={130} fill={contorno} opacity={0.12} fontSize={42}>
+            m7movelaria.com.br{numero ? ` · ${numero}` : ""}
+            {cliente ? ` · ${cliente}` : ""}
+          </text>
+        </pattern>
+      </defs>
+      <rect
+        width={larguraCena}
+        height={alturaCena}
+        fill={`url(#${idMarca})`}
+        pointerEvents="none"
+      />
+    </svg>
   );
 }
 

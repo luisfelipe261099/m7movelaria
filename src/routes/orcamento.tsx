@@ -17,6 +17,7 @@ import {
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs } from "@/components/PageParts";
 import { PreviewMovel } from "@/components/PreviewMovel";
+import { NaSuaParede } from "@/components/NaSuaParede";
 import { AreaProtegida } from "@/components/AreaProtegida";
 import { whatsappLink } from "@/lib/whatsapp";
 import {
@@ -616,6 +617,14 @@ function PassoMedidas({
       />
       <div className="mb-6">
         <PreviewMovel itens={itens} acabamento={acabamento} {...identificacao} />
+        {itens.length > 0 && (
+          <NaSuaParede
+            itens={itens}
+            acabamento={acabamento}
+            numero={identificacao.numero}
+            cliente={identificacao.cliente}
+          />
+        )}
       </div>
       <div className="space-y-5">
         {itens.map((item) => {
