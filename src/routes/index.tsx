@@ -125,35 +125,39 @@ const differentials = [
   },
 ];
 
+// As cinco primeiras imagens são os LOGOTIPOS dos fabricantes, não fotos de
+// peça — por isso o alt diz "Logotipo X". O alt anterior descrevia uma
+// dobradiça ou um perfil que não estão na imagem, e quem usa leitor de tela
+// ouviria a descrição de outra coisa. A de MDF é foto de chapa de verdade.
 const hardware = [
   {
     img: "hw-blum",
     name: "Blum",
-    alt: "Dobradiça Blum com sistema clip usada nos armários planejados da M7",
+    alt: "Logotipo Blum",
     desc: "Dobradiças e corrediças austríacas com abertura silenciosa e vida útil superior.",
   },
   {
     img: "hw-hafele",
     name: "Häfele",
-    alt: "Ferragem Häfele — corrediça oculta usada nos gaveteiros sob medida",
+    alt: "Logotipo Häfele",
     desc: "Ferragens alemãs de alta engenharia — corrediças ocultas, articuladores e sistemas de porta.",
   },
   {
     img: "hw-salice",
     name: "Salice",
-    alt: "Dobradiça italiana Salice para portas de sobrepor",
+    alt: "Logotipo Salice",
     desc: "Dobradiças italianas premium com clip reto para portas de sobrepor perfeitas.",
   },
   {
     img: "hw-siforma",
     name: "Siforma",
-    alt: "Perfil Siforma para porta deslizante de armário planejado",
+    alt: "Logotipo Siforma",
     desc: "Perfis e sistemas de portas deslizantes com movimento suave e acabamento refinado.",
   },
   {
     img: "hw-rometal",
     name: "Rometal",
-    alt: "Sistema de porta deslizante Rometal aplicado em marcenaria sob medida",
+    alt: "Logotipo Rometal",
     desc: "Kits de portas deslizantes e cabideiros iluminados — engenharia nacional de alto padrão.",
   },
   {
@@ -245,7 +249,7 @@ function Home() {
                 </span>
               </div>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded shadow-lg bg-ink group">
+            <div className="relative aspect-[4/3] overflow-hidden rounded shadow-lg bg-ink-surface group">
               <HeroVideo
                 sizes={HERO_SIZES}
                 src="/media/hero-showroom.mp4"
@@ -413,7 +417,7 @@ function Home() {
                   sizes="(min-width: 768px) 50vw, 100vw"
                 />
               </div>
-              <div className="bg-ink text-white p-10 flex flex-col justify-center">
+              <div className="bg-ink-surface text-white p-10 flex flex-col justify-center">
                 <p className="text-xs uppercase tracking-[0.4em] text-bronze mb-3">Showroom 3D</p>
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-balance">
                   Explore nossos projetos em 360°
@@ -448,13 +452,15 @@ function Home() {
                 isso especificamos fabricantes que publicam vida útil em ciclos de abertura.
               </p>
             </div>
+            {/* As marcas em destaque, antes das fotos: quem procura marcenaria
+                de alto padrão reconhece o nome antes de reconhecer a peça. */}
             <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {hardware.map((h) => (
                 <div
                   key={h.name}
                   className="bg-background border border-border rounded overflow-hidden hover:border-bronze/60 hover:shadow-md transition-all"
                 >
-                  <div className="aspect-[16/10] overflow-hidden bg-white">
+                  <div className="aspect-[16/10] overflow-hidden bg-card">
                     <Picture
                       name={h.img}
                       alt={h.alt}
@@ -538,7 +544,7 @@ function Home() {
                   to="/projetos"
                   hash={`obra-${o.slug}`}
                   aria-label={`${o.name} — ver a foto com legenda no portfólio`}
-                  className="block aspect-square overflow-hidden rounded group bg-ink"
+                  className="block aspect-square overflow-hidden rounded group bg-ink-surface"
                 >
                   <Picture
                     name={o.image}
@@ -679,12 +685,15 @@ function Home() {
           </div>
         </section>
 
-        {/* CTA FINAL */}
+        {/* CTA FINAL — a única faixa branca do site escuro, logo antes do
+            rodapé preto. É o elemento mais claro da página, e é de propósito:
+            puxa o olho para a última chamada. Por isso os filhos levam cor
+            escura explícita, e não as classes de faixa escura. */}
         <section className="bg-bronze text-primary-foreground">
           <div className="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-[auto_1fr_auto] items-center gap-6">
             <div
               aria-hidden
-              className="w-14 h-14 rounded-full bg-white/15 grid place-items-center shrink-0"
+              className="w-14 h-14 rounded-full bg-ink-surface/10 grid place-items-center shrink-0"
             >
               <Calendar className="w-6 h-6" />
             </div>
@@ -692,20 +701,20 @@ function Home() {
               <h2 className="text-xl md:text-2xl font-bold">
                 Vamos criar juntos o ambiente dos seus sonhos?
               </h2>
-              <p className="text-white text-sm mt-1">
+              <p className="text-ink-surface/75 text-sm mt-1">
                 Fale com nossa equipe e receba um orçamento do seu projeto.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <a
                 href={`tel:${PHONE_E164}`}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-white text-bronze rounded font-medium hover:bg-white/90 transition-colors text-sm"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-ink-surface text-primary rounded font-medium hover:opacity-90 transition-opacity text-sm"
               >
                 <Phone className="w-4 h-4" aria-hidden /> {PHONE_LOCAL}
               </a>
               <Link
                 to="/orcamento"
-                className="inline-flex items-center gap-2 px-5 py-3 border border-white/60 rounded font-medium hover:bg-white/10 transition-colors text-sm"
+                className="inline-flex items-center gap-2 px-5 py-3 border border-ink-surface/40 rounded font-medium hover:bg-ink-surface/10 transition-colors text-sm"
               >
                 <Calculator className="w-4 h-4" aria-hidden /> Simular orçamento online
               </Link>

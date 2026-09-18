@@ -318,7 +318,7 @@ function ProjectPage() {
                       aria-label={`${o.name} — ver a foto com legenda`}
                       className="group block"
                     >
-                      <div className="aspect-square overflow-hidden rounded bg-ink">
+                      <div className="aspect-square overflow-hidden rounded bg-ink-surface">
                         <Picture
                           name={o.image}
                           alt={o.alt}

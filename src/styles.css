@@ -67,39 +67,76 @@
   --color-bronze-dark: var(--bronze-dark);
   --color-cream: var(--cream);
   --color-ink: var(--ink);
+  --color-ink-surface: var(--ink-surface);
+  --color-marker: var(--marker);
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
 }
 
+/*
+  Tema escuro ("opção A"), aprovado pelo cliente em 18/09/2026.
+  Preto e branco: o site é a moldura escura e a cor vem das fotos de marcenaria.
+
+  Duas separações que o tema claro não precisava e o escuro exige:
+
+  1. TEXTO x SUPERFÍCIE ESCURA. No claro, `--ink` servia às duas coisas:
+     `text-ink` (título quase preto) e `bg-ink` (faixa escura do rodapé e do
+     CTA). No escuro elas andam em sentidos opostos — o título clareia e a
+     faixa precisa continuar escura — então a superfície ganhou o seu próprio
+     token, `--ink-surface`, e as chamadas passaram a `bg-ink-surface`. O nome
+     antigo saiu de circulação de propósito: com `--color-ink` registrado no
+     tema, `bg-ink` continuava sendo gerado a partir da cor do TEXTO, e o
+     rodapé saía claro com letra branca.
+
+  2. ACENTO x BOTÃO. `text-bronze` (rótulos, links) e `bg-bronze` (botão
+     primário) também liam a mesma variável. No escuro o botão é branco sólido
+     e o acento é um cinza claro: branco puro em 168 usos de `text-bronze`
+     apagaria a hierarquia entre título e link. Daí `--bronze-bg`.
+
+  Contrastes medidos sobre #0f0e0d: título 17,3:1 · texto de apoio 7,6:1 ·
+  acento 15,3:1 · botão (preto sobre branco) 19,7:1. Mínimo WCAG AA: 4,5:1.
+*/
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.985 0.005 60);
-  --foreground: oklch(0.2 0.01 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.01 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.01 60);
-  --primary: oklch(0.58 0.09 55);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.01 60);
-  --secondary-foreground: oklch(0.2 0.01 60);
-  --muted: oklch(0.95 0.008 60);
-  --muted-foreground: oklch(0.45 0.01 60);
-  --accent: oklch(0.94 0.02 60);
-  --accent-foreground: oklch(0.2 0.01 60);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.01 60);
-  --input: oklch(0.9 0.01 60);
-  /* Bronze escurecido de oklch(0.58 0.09 55) (#a36b44) para #93603d: é o tom mais
-     claro que atinge WCAG AA tanto como texto sobre o creme (4.69:1) quanto como
-     fundo de botão sob texto branco (5.14:1). */
-  --ring: #93603d;
-  --bronze: #93603d;
-  --bronze-dark: oklch(0.48 0.08 50);
-  --bronze-soft: #b3814f;
-  --cream: oklch(0.96 0.015 65);
-  --ink: oklch(0.18 0.005 60);
+  --background: #0f0e0d;
+  --foreground: #f4f2ef;
+  --card: #1c1b19;
+  --card-foreground: #f4f2ef;
+  --popover: #1c1b19;
+  --popover-foreground: #f4f2ef;
+  --primary: #ffffff;
+  --primary-foreground: #0b0b0a;
+  --secondary: #1c1b19;
+  --secondary-foreground: #f4f2ef;
+  --muted: #1c1b19;
+  --muted-foreground: #a6a29b;
+  --accent: #232120;
+  --accent-foreground: #f4f2ef;
+  /* O vermelho do tema claro (oklch 0.6) mede 4,4:1 sobre o fundo escuro, logo
+     abaixo do mínimo. Clareado até passar com folga (6,1:1). */
+  --destructive: oklch(0.72 0.17 25);
+  --destructive-foreground: #0b0b0a;
+  --border: #2c2a28;
+  --input: #2c2a28;
+  --ring: #ffffff;
+  /* Acento: rótulos, links e ícones. Claro o bastante para se destacar do
+     texto de apoio, escuro o bastante para não competir com o título. */
+  --bronze: #e8e5e0;
+  /* Botão primário: branco sólido com letra preta. */
+  --bronze-bg: #ffffff;
+  --bronze-dark: #d8d5d0;
+  /* Acento sobre as faixas pretas, onde o contraste sobra. */
+  --bronze-soft: #ffffff;
+  /* Faixa "clara" do tema claro: no escuro é a superfície levemente elevada
+     que separa uma seção da outra. */
+  --cream: #171615;
+  --ink: #f4f2ef;
+  --ink-surface: #000000;
+  /* Marcadores sobre FOTOS (hotspots do tour 360°, alças de "Veja na sua
+     parede"). Ficam fora do preto e branco de propósito: são ferramenta sobre
+     fotografia alheia, e o âmbar é o único tom que se enxerga tanto sobre
+     parede branca quanto sobre madeira escura. */
+  --marker: #f5b64a;
 }
 
 @layer base {
@@ -134,10 +171,10 @@
   color: var(--bronze);
 }
 @utility bg-bronze {
-  background-color: var(--bronze);
+  background-color: var(--bronze-bg);
 }
 @utility border-bronze {
-  border-color: var(--bronze);
+  border-color: var(--bronze-bg);
 }
 @utility bg-bronze-dark {
   background-color: var(--bronze-dark);
@@ -147,9 +184,6 @@
 }
 @utility bg-cream {
   background-color: var(--cream);
-}
-@utility bg-ink {
-  background-color: var(--ink);
 }
 @utility text-bronze-dark {
   color: var(--bronze-dark);
@@ -173,10 +207,9 @@
   contain-intrinsic-size: auto 900px;
 }
 
-/* O bronze #93603d foi calibrado para fundos claros (WCAG AA sobre creme/branco),
-   mas sobre fundos escuros mede só 3.57:1. Nos containers escuros, o mesmo papel
-   visual usa o tom claro #b3814f (5.53:1 sobre ink). */
-.bg-ink .text-bronze,
+/* Sobre as faixas pretas o acento pode ir a branco puro: não há mais o texto
+   de apoio por perto para competir, e o ganho de contraste é de graça. */
+.bg-ink-surface .text-bronze,
 .bg-black .text-bronze {
   color: var(--bronze-soft);
 }
@@ -190,5 +223,46 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Impressão e "salvar como PDF" do navegador.
+
+   O site é escuro, e o navegador não imprime cor de fundo por padrão: sem esta
+   regra o papel sairia branco com texto branco, ou seja, em branco. A rota
+   /orcamento existe justamente para ser impressa e enviada, então o documento
+   impresso volta a ser tinta escura sobre papel. */
+@media print {
+  :root {
+    --background: #ffffff;
+    --foreground: #16140f;
+    --card: #ffffff;
+    --card-foreground: #16140f;
+    --cream: #f6f4f0;
+    --ink: #16140f;
+    --ink-surface: #ffffff;
+    --muted-foreground: #4a4640;
+    --border: #cfcac2;
+    --input: #cfcac2;
+    --bronze: #5f4a2e;
+    --bronze-bg: #ffffff;
+    --bronze-soft: #5f4a2e;
+    --primary-foreground: #16140f;
+  }
+  /* As faixas escuras viram texto normal no papel: economiza tinta e mantém o
+     conteúdo legível. */
+  .bg-ink-surface,
+  .bg-black {
+    background: #ffffff !important;
+    color: #16140f !important;
+  }
+  .bg-ink-surface *,
+  .bg-black * {
+    color: #16140f !important;
+    border-color: #cfcac2 !important;
+  }
+  /* O botão primário (branco sobre escuro) precisa de contorno no papel. */
+  .bg-bronze {
+    border: 1px solid #16140f !important;
   }
 }

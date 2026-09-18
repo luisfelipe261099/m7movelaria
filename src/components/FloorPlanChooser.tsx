@@ -77,7 +77,7 @@ export function FloorPlanChooser({
                 className="appearance-none max-w-[55vw] sm:max-w-[80vw] bg-black/60 backdrop-blur border border-white/15 text-white text-[9px] sm:text-[11px] uppercase tracking-widest pl-3 sm:pl-4 pr-8 sm:pr-9 py-1.5 sm:py-2.5 cursor-pointer hover:border-bronze/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bronze-soft)] focus-visible:border-bronze truncate"
               >
                 {projects.map((p) => (
-                  <option key={p.slug} value={p.slug} className="bg-ink text-white">
+                  <option key={p.slug} value={p.slug} className="bg-ink-surface text-white">
                     {p.name} — {p.client}
                   </option>
                 ))}
@@ -106,8 +106,11 @@ export function FloorPlanChooser({
             className={`absolute inset-0 m-auto w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-bronze/40 animate-ping ${hoveredId && hoveredId !== room.id ? "opacity-0" : ""}`}
           />
           <span
-            className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white/95 shadow-[0_0_25px_rgba(176,138,74,0.9)] backdrop-blur text-white text-xs sm:text-sm font-medium transition-transform ${
-              hoveredId === room.id ? "scale-110 bg-bronze" : "bg-bronze/90 group-hover:scale-110"
+            /* Marcador sobre a planta: âmbar (--marker) com número escuro, e
+               não o branco da interface — é o único tom que se lê tanto sobre
+               o piso claro quanto sobre a marcenaria escura do render. */
+            className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-black/40 shadow-[0_0_25px_rgba(176,138,74,0.9)] backdrop-blur text-[#2b1d0a] text-xs sm:text-sm font-semibold transition-transform ${
+              hoveredId === room.id ? "scale-110 bg-marker" : "bg-marker/90 group-hover:scale-110"
             }`}
           >
             {i + 1}

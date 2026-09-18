@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Breadcrumbs, ContentSection, CtaBand } from "@/components/PageParts";
+import { FaixaDeMarcas } from "@/components/FaixaDeMarcas";
 import { Picture } from "@/components/Picture";
 import { pageSeo, STREET_ADDRESS, CITY, REGION, PHONE_E164, PHONE_LOCAL, EMAIL } from "@/lib/seo";
 import { jsonLd, webPage } from "@/lib/schema";
@@ -154,6 +155,11 @@ function About() {
             "Serralheria sob medida integrada quando o projeto pede estrutura metálica",
             "Iluminação em LED 3000K ou 5000K especificada por ambiente e por função",
           ]}
+        />
+
+        <FaixaDeMarcas
+          titulo="As marcas de ferragem que entram nos projetos"
+          apoio="A lista acima cita essas marcas; aqui estão elas. São os fabricantes cujas peças especificamos — dobradiça, corrediça e sistema de correr."
         />
 
         <section className="py-14">

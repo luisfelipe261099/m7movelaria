@@ -128,7 +128,7 @@ function ProjectsList() {
               const retrato = img.height > img.width;
               return (
                 <figure key={o.slug} id={`obra-${o.slug}`} className="flex h-full flex-col">
-                  <div className="aspect-[4/3] overflow-hidden rounded bg-ink">
+                  <div className="aspect-[4/3] overflow-hidden rounded bg-ink-surface">
                     <Picture
                       name={o.image}
                       alt={o.altCurto}

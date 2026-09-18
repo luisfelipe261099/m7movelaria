@@ -263,7 +263,7 @@ function Simulador() {
               marcenaria, com a linha de acabamento pensada para venda direta.
             </p>
             {!TABELA_CONFIRMADA && (
-              <p className="mt-6 inline-flex items-start gap-2 rounded border border-bronze/40 bg-white px-4 py-3 text-sm text-muted-foreground">
+              <p className="mt-6 inline-flex items-start gap-2 rounded border border-bronze/40 bg-card px-4 py-3 text-sm text-muted-foreground">
                 <Info className="w-4 h-4 mt-0.5 text-bronze shrink-0" aria-hidden />
                 <span>
                   <strong className="text-ink">Valores em conferência.</strong> O cálculo já usa a
@@ -375,7 +375,7 @@ function Stepper({ etapa, onIr }: { etapa: number; onIr: (n: number) => void }) 
                     ? "bg-bronze text-primary-foreground border-bronze"
                     : feito
                       ? "bg-bronze/10 text-bronze border-bronze/30"
-                      : "bg-white text-muted-foreground border-border"
+                      : "bg-card text-muted-foreground border-border"
                 }`}
               >
                 {feito ? <Check className="w-3.5 h-3.5" aria-hidden /> : i + 1}
@@ -427,9 +427,7 @@ function PassoAmbiente({
               type="button"
               onClick={() => onChange(a.id)}
               className={`text-left p-5 rounded border transition-colors ${
-                ativo
-                  ? "border-bronze bg-bronze/5"
-                  : "border-border bg-white hover:border-bronze/50"
+                ativo ? "border-bronze bg-bronze/5" : "border-border bg-card hover:border-bronze/50"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -513,7 +511,7 @@ function PassoModulos({
           return (
             <div
               key={m.id}
-              className={`p-5 rounded border bg-white ${n > 0 ? "border-bronze" : "border-border"}`}
+              className={`p-5 rounded border bg-card ${n > 0 ? "border-bronze" : "border-border"}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -578,7 +576,7 @@ function CampoMm({
   return (
     <label className="block">
       <span className="text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-      <span className="mt-1.5 flex items-center rounded border border-input bg-white focus-within:border-bronze transition-colors">
+      <span className="mt-1.5 flex items-center rounded border border-input bg-card focus-within:border-bronze transition-colors">
         <input
           type="number"
           value={valor}
@@ -630,7 +628,7 @@ function PassoMedidas({
         {itens.map((item) => {
           const modulo = MODULOS.find((m) => m.id === item.moduloId)!;
           return (
-            <div key={item.uid} className="p-5 rounded border border-border bg-white">
+            <div key={item.uid} className="p-5 rounded border border-border bg-card">
               <div className="flex items-center gap-2 mb-4">
                 <Ruler className="w-4 h-4 text-bronze" aria-hidden />
                 <h3 className="font-semibold text-ink">{modulo.nome}</h3>
@@ -883,9 +881,7 @@ function PassoAcabamento({
               type="button"
               onClick={() => onChange({ ...valor, corId: c.id })}
               className={`p-3 rounded border text-left transition-colors ${
-                ativo
-                  ? "border-bronze bg-bronze/5"
-                  : "border-border bg-white hover:border-bronze/50"
+                ativo ? "border-bronze bg-bronze/5" : "border-border bg-card hover:border-bronze/50"
               }`}
             >
               <span
@@ -900,7 +896,7 @@ function PassoAcabamento({
       </div>
 
       <div className="mt-8 grid sm:grid-cols-2 gap-4">
-        <div className="p-5 rounded border border-border bg-white">
+        <div className="p-5 rounded border border-border bg-card">
           <p className="text-sm font-medium text-ink">Como o móvel é montado</p>
           <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
             <li>Caixa, prateleiras e gavetas em MDF 15 mm branco</li>
@@ -913,7 +909,7 @@ function PassoAcabamento({
           </p>
         </div>
 
-        <div className="p-5 rounded border border-border bg-white space-y-4">
+        <div className="p-5 rounded border border-border bg-card space-y-4">
           <Opcao
             titulo="Porta ripada"
             apoio="As ripas saem da mesma chapa, então a frente consome o dobro de material."
@@ -969,7 +965,7 @@ function Opcao({
     >
       <span
         className={`mt-0.5 grid place-items-center w-5 h-5 rounded border shrink-0 transition-colors ${
-          ativo ? "bg-bronze border-bronze text-primary-foreground" : "border-border bg-white"
+          ativo ? "bg-bronze border-bronze text-primary-foreground" : "border-border bg-card"
         }`}
       >
         {ativo && <Check className="w-3.5 h-3.5" aria-hidden />}
@@ -1094,7 +1090,7 @@ function PortaoDeContato({
             onChange={(e) => setNome(e.target.value)}
             autoComplete="name"
             placeholder="Como podemos te chamar"
-            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+            className="mt-1.5 w-full rounded border border-input bg-card px-3 py-2.5 text-ink outline-none focus:border-bronze"
           />
           {tentou && !nomeOk && (
             <span className="mt-1 block text-sm text-destructive">Informe seu nome.</span>
@@ -1111,7 +1107,7 @@ function PortaoDeContato({
             autoComplete="tel"
             inputMode="text"
             placeholder="(41) 90000-0000"
-            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+            className="mt-1.5 w-full rounded border border-input bg-card px-3 py-2.5 text-ink outline-none focus:border-bronze"
           />
           {tentou && !contatoOk && (
             <span className="mt-1 block text-sm text-destructive">
@@ -1182,7 +1178,7 @@ function PassoResumo({
         {orcamento.itens.map((calc) => (
           <div
             key={calc.item.uid}
-            className="flex items-start justify-between gap-4 rounded border border-border bg-white p-5"
+            className="flex items-start justify-between gap-4 rounded border border-border bg-card p-5"
           >
             <div>
               <h3 className="font-semibold text-ink">
@@ -1239,7 +1235,7 @@ function PassoResumo({
               Entrega e montagem pela nossa equipe, já inclusas no valor.
             </span>
           </div>
-          <div className="p-5 rounded border border-border bg-white">
+          <div className="p-5 rounded border border-border bg-card">
             <span className="flex items-center gap-2 font-medium text-ink">
               <MapPin className="w-4 h-4 text-bronze" aria-hidden /> Mora em outra cidade?
             </span>
@@ -1367,7 +1363,7 @@ function PassoPagamento({
           type="button"
           onClick={() => onPagamento("pix")}
           className={`p-6 rounded border text-left transition-colors ${
-            pagamento === "pix" ? "border-bronze bg-bronze/5" : "border-border bg-white"
+            pagamento === "pix" ? "border-bronze bg-bronze/5" : "border-border bg-card"
           }`}
         >
           <span className="flex items-center gap-2 font-medium text-ink">
@@ -1380,7 +1376,7 @@ function PassoPagamento({
           type="button"
           onClick={() => onPagamento("credito")}
           className={`p-6 rounded border text-left transition-colors ${
-            pagamento === "credito" ? "border-bronze bg-bronze/5" : "border-border bg-white"
+            pagamento === "credito" ? "border-bronze bg-bronze/5" : "border-border bg-card"
           }`}
         >
           <span className="flex items-center gap-2 font-medium text-ink">
@@ -1395,7 +1391,7 @@ function PassoPagamento({
         </button>
       </div>
 
-      <div className="mt-6 p-5 rounded border border-border bg-white">
+      <div className="mt-6 p-5 rounded border border-border bg-card">
         <h3 className="font-semibold text-ink">Antes de finalizar</h3>
         <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
           <li>
@@ -1493,7 +1489,7 @@ function ResumoLateral({
   return (
     <AreaProtegida
       as="aside"
-      className="lg:sticky lg:top-24 p-6 rounded border border-border bg-white"
+      className="lg:sticky lg:top-24 p-6 rounded border border-border bg-card"
     >
       <h2 className="text-sm uppercase tracking-[0.2em] text-bronze">Seu orçamento</h2>
       {orcamento.itens.length === 0 ? (

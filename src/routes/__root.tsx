@@ -99,7 +99,7 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: OG_IMAGE },
       { name: "author", content: SITE_NAME },
-      { name: "theme-color", content: "#93603d" },
+      { name: "theme-color", content: "#0f0e0d" },
       // Sinais geográficos legados: o Google não usa mais, mas Bing e alguns
       // agregadores locais ainda leem. Custam dois bytes.
       { name: "geo.region", content: "BR-PR" },

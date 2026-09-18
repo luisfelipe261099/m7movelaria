@@ -344,10 +344,10 @@ export function PanoramaViewer({
                   aria-label={h.label}
                 >
                   <span
-                    className={`absolute inset-0 m-auto rounded-full bg-bronze/40 animate-ping ${fullscreen ? "w-20 h-20" : "w-12 h-12"}`}
+                    className={`absolute inset-0 m-auto rounded-full bg-marker/40 animate-ping ${fullscreen ? "w-20 h-20" : "w-12 h-12"}`}
                   />
                   <span
-                    className={`relative flex items-center justify-center rounded-full bg-bronze/90 border-2 border-white/95 shadow-[0_0_25px_rgba(176,138,74,0.9)] backdrop-blur transition-transform group-hover:scale-110 ${fullscreen ? "w-20 h-20" : "w-12 h-12"}`}
+                    className={`relative flex items-center justify-center rounded-full bg-marker/90 border-2 border-white/95 shadow-[0_0_25px_rgba(176,138,74,0.9)] backdrop-blur transition-transform group-hover:scale-110 ${fullscreen ? "w-20 h-20" : "w-12 h-12"}`}
                   >
                     <Plus className={fullscreen ? "w-9 h-9 text-white" : "w-5 h-5 text-white"} />
                   </span>
@@ -436,7 +436,7 @@ export function PanoramaViewer({
                   : "px-3 py-1.5 text-[10px] tracking-widest"
               } ${
                 r.id === activeRoomId
-                  ? "bg-bronze text-white"
+                  ? "bg-bronze text-primary-foreground"
                   : "text-white/60 hover:text-white hover:bg-white/10"
               }`}
             >

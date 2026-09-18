@@ -546,7 +546,7 @@ export function PreviewMovel({
 
   if (itens.length === 0) {
     return (
-      <div className="rounded border border-dashed border-border bg-white p-10 text-center">
+      <div className="rounded border border-dashed border-border bg-card p-10 text-center">
         <p className="text-sm text-muted-foreground">
           O desenho do seu móvel aparece aqui assim que você adicionar o primeiro módulo.
         </p>
@@ -568,7 +568,7 @@ export function PreviewMovel({
 
   if (alturaCena <= 0 || larguraCena <= 0) {
     return (
-      <div className="rounded border border-dashed border-border bg-white p-10 text-center">
+      <div className="rounded border border-dashed border-border bg-card p-10 text-center">
         <p className="text-sm text-muted-foreground">
           Informe as medidas do módulo para ver o desenho.
         </p>
@@ -590,8 +590,12 @@ export function PreviewMovel({
   const vbW = larguraCena + MARGEM.esquerda + MARGEM.direita;
   const vbH = alturaCena + MARGEM.topo + MARGEM.baixo;
 
+  // O desenho fica em papel claro mesmo com o site escuro: é desenho técnico, e
+  // as peças (branco TX, cinza) desapareceriam sobre preto. Como a superfície é
+  // clara, o texto daqui para dentro não herda as cores do tema — daí os tons
+  // explícitos no figcaption.
   return (
-    <figure className="rounded border border-border bg-white p-4">
+    <figure className="rounded border border-border bg-[#f7f5f2] p-4">
       <svg
         viewBox={`${-MARGEM.esquerda} ${-MARGEM.topo} ${vbW} ${vbH}`}
         className="w-full h-auto"
@@ -677,7 +681,7 @@ export function PreviewMovel({
           pointerEvents="none"
         />
       </svg>
-      <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+      <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#6b6259]">
         <span>
           Desenho em escala do que você montou · {cor.nome}
           {acabamento.ripada && " · porta ripada"} · aéreo a {ALTURA_AEREO} mm do piso
@@ -692,7 +696,7 @@ export function PreviewMovel({
         Impressão e "salvar como PDF" do navegador: a faixa só existe no papel,
         então não polui a tela de quem está comprando.
       */}
-      <p className="hidden print:block mt-2 text-xs text-muted-foreground">
+      <p className="hidden print:block mt-2 text-xs text-[#6b6259]">
         Simulação gerada em m7movelaria.com.br
         {numero ? ` · orçamento ${numero}` : ""}
         {validade ? ` · válido até ${validade}` : ""}. Cópia impressa não vale como proposta

@@ -196,7 +196,7 @@ function Showroom3DPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ink text-white">
+    <div className="min-h-screen bg-ink-surface text-white">
       <SiteHeader />
       <main id="conteudo">
         <section className="pt-28 pb-6 max-w-7xl mx-auto px-6 text-center">
@@ -358,7 +358,7 @@ function Showroom3DPage() {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-bronze text-white text-xs uppercase tracking-[0.25em] px-5 py-4 hover:bg-bronze/90 transition-colors"
+                  className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-bronze text-primary-foreground text-xs uppercase tracking-[0.25em] px-5 py-4 hover:bg-bronze/90 transition-colors"
                 >
                   <MessageCircle className="w-4 h-4" /> Falar no WhatsApp sobre este detalhe
                 </a>

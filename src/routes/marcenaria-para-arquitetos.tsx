@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { PageHero, ContentSection, FaqSection, CtaBand } from "@/components/PageParts";
+import { FaixaDeMarcas } from "@/components/FaixaDeMarcas";
 import { serviceCatalog } from "@/data/catalog";
 import { images } from "@/assets/generated/images";
 import { pageSeo, canonical, SITE_URL } from "@/lib/seo";
@@ -190,6 +191,11 @@ function ArchitectsPage() {
             "Serralheria sob medida integrada quando o projeto pede estrutura metálica",
             "Iluminação em LED 3000K para convívio e 5000K para tarefa, definida ambiente a ambiente",
           ]}
+        />
+
+        <FaixaDeMarcas
+          titulo="As marcas que você pode citar em prancha"
+          apoio="É o que a M7 especifica por padrão. Linha diferente da lista não é problema — é conversa de fornecimento, feita antes do orçamento."
         />
 
         {/* Malha interna: a página de arquitetos é a que mais tem motivo para

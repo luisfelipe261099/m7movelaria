@@ -42,7 +42,7 @@ export function FormularioContato() {
 
   if (estado === "ok") {
     return (
-      <div className="rounded border border-bronze bg-white p-8 text-center">
+      <div className="rounded border border-bronze bg-card p-8 text-center">
         <span className="inline-grid place-items-center w-12 h-12 rounded-full bg-bronze/10 text-bronze">
           <Check className="w-6 h-6" aria-hidden />
         </span>
@@ -66,7 +66,7 @@ export function FormularioContato() {
   }
 
   return (
-    <form onSubmit={enviar} className="rounded border border-border bg-white p-6 md:p-8">
+    <form onSubmit={enviar} className="rounded border border-border bg-card p-6 md:p-8">
       <h3 className="text-xl font-semibold text-ink">Prefere que a gente te procure?</h3>
       <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
         Deixe seu contato e o que você precisa. Respondemos no horário de atendimento — sem lista de
@@ -82,7 +82,7 @@ export function FormularioContato() {
             onChange={(e) => setNome(e.target.value)}
             autoComplete="name"
             placeholder="Como podemos te chamar"
-            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+            className="mt-1.5 w-full rounded border border-input bg-card px-3 py-2.5 text-ink outline-none focus:border-bronze"
           />
           {tentou && !nomeOk && (
             <span className="mt-1 block text-sm text-destructive">Informe seu nome.</span>
@@ -98,7 +98,7 @@ export function FormularioContato() {
             onChange={(e) => setContato(e.target.value)}
             autoComplete="tel"
             placeholder="(41) 90000-0000"
-            className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze"
+            className="mt-1.5 w-full rounded border border-input bg-card px-3 py-2.5 text-ink outline-none focus:border-bronze"
           />
           {tentou && !contatoOk && (
             <span className="mt-1 block text-sm text-destructive">
@@ -118,7 +118,7 @@ export function FormularioContato() {
           rows={4}
           maxLength={1200}
           placeholder="Ex.: cozinha e dormitório em apartamento novo na Costeira, entrega das chaves em março."
-          className="mt-1.5 w-full rounded border border-input bg-white px-3 py-2.5 text-ink outline-none focus:border-bronze resize-y"
+          className="mt-1.5 w-full rounded border border-input bg-card px-3 py-2.5 text-ink outline-none focus:border-bronze resize-y"
         />
       </label>
 

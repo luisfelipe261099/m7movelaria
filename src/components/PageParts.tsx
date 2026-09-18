@@ -25,7 +25,7 @@ export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: stri
             <Link to={t.path} className="hover:text-bronze transition-colors">
               {t.name}
             </Link>
-            <span aria-hidden className="text-border">
+            <span aria-hidden className="text-muted-foreground">
               /
             </span>
           </li>
@@ -105,7 +105,7 @@ export function PageHero({
             </div>
           </div>
           {/* A imagem do topo é a candidata a LCP desta rota — por isso priority. */}
-          <div className="relative aspect-[4/3] overflow-hidden rounded shadow-lg bg-ink">
+          <div className="relative aspect-[4/3] overflow-hidden rounded shadow-lg bg-ink-surface">
             <Picture
               name={image}
               alt={imageAlt}
@@ -246,7 +246,7 @@ export function CtaBand({
   orcamento?: DestinoOrcamento;
 }) {
   return (
-    <section className="bg-ink text-white">
+    <section className="bg-ink-surface text-white">
       <div className="max-w-7xl mx-auto px-6 py-14 grid gap-8 md:grid-cols-2 items-center">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-balance">

@@ -164,7 +164,7 @@ export function NaSuaParede({
   const u = foto ? foto.w / 400 : 1;
 
   return (
-    <section className="mt-5 rounded border border-border bg-white p-5">
+    <section className="mt-5 rounded border border-border bg-card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold text-ink">Veja na sua parede</h3>
@@ -227,7 +227,7 @@ export function NaSuaParede({
               <span className="text-sm font-medium text-ink">
                 Largura real entre os dois marcadores
               </span>
-              <span className="mt-1.5 flex items-center rounded border border-border bg-white focus-within:border-bronze max-w-xs">
+              <span className="mt-1.5 flex items-center rounded border border-border bg-card focus-within:border-bronze max-w-xs">
                 <input
                   type="number"
                   inputMode="numeric"
@@ -255,7 +255,7 @@ export function NaSuaParede({
             </label>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded border border-border bg-ink">
+          <div className="mt-4 overflow-hidden rounded border border-border bg-ink-surface">
             <svg
               ref={svgRef}
               viewBox={`0 0 ${foto.w} ${foto.h}`}
