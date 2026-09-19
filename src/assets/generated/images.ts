@@ -1,6 +1,15 @@
 /* AUTO-GERADO por scripts/optimize-images.mjs — não editar à mão. */
 /* eslint-disable */
 
+import finishForroTrelica480Avif from "./finish-forro-trelica-480.avif";
+import finishForroTrelica480Webp from "./finish-forro-trelica-480.webp";
+import finishForroTrelica480Jpg from "./finish-forro-trelica-480.jpg";
+import finishForroTrelica960Avif from "./finish-forro-trelica-960.avif";
+import finishForroTrelica960Webp from "./finish-forro-trelica-960.webp";
+import finishForroTrelica960Jpg from "./finish-forro-trelica-960.jpg";
+import finishForroTrelica1024Avif from "./finish-forro-trelica-1024.avif";
+import finishForroTrelica1024Webp from "./finish-forro-trelica-1024.webp";
+import finishForroTrelica1024Jpg from "./finish-forro-trelica-1024.jpg";
 import finishLaca480Avif from "./finish-laca-480.avif";
 import finishLaca480Webp from "./finish-laca-480.webp";
 import finishLaca480Jpg from "./finish-laca-480.jpg";
@@ -133,6 +142,12 @@ import obraPainelTv960Jpg from "./obra-painel-tv-960.jpg";
 import obraPainelTv1200Avif from "./obra-painel-tv-1200.avif";
 import obraPainelTv1200Webp from "./obra-painel-tv-1200.webp";
 import obraPainelTv1200Jpg from "./obra-painel-tv-1200.jpg";
+import obraQuartoBebe480Avif from "./obra-quarto-bebe-480.avif";
+import obraQuartoBebe480Webp from "./obra-quarto-bebe-480.webp";
+import obraQuartoBebe480Jpg from "./obra-quarto-bebe-480.jpg";
+import obraQuartoBebe896Avif from "./obra-quarto-bebe-896.avif";
+import obraQuartoBebe896Webp from "./obra-quarto-bebe-896.webp";
+import obraQuartoBebe896Jpg from "./obra-quarto-bebe-896.jpg";
 import obraSalaJantar480Avif from "./obra-sala-jantar-480.avif";
 import obraSalaJantar480Webp from "./obra-sala-jantar-480.webp";
 import obraSalaJantar480Jpg from "./obra-sala-jantar-480.jpg";
@@ -192,6 +207,14 @@ export type ImageVariants = {
 };
 
 export const images = {
+  "finish-forro-trelica": {
+    avif: `${finishForroTrelica480Avif} 480w, ${finishForroTrelica960Avif} 960w, ${finishForroTrelica1024Avif} 1024w`,
+    webp: `${finishForroTrelica480Webp} 480w, ${finishForroTrelica960Webp} 960w, ${finishForroTrelica1024Webp} 1024w`,
+    jpg: `${finishForroTrelica480Jpg} 480w, ${finishForroTrelica960Jpg} 960w, ${finishForroTrelica1024Jpg} 1024w`,
+    src: finishForroTrelica1024Jpg,
+    width: 1024,
+    height: 1024,
+  },
   "finish-laca": {
     avif: `${finishLaca480Avif} 480w, ${finishLaca900Avif} 900w`,
     webp: `${finishLaca480Webp} 480w, ${finishLaca900Webp} 900w`,
@@ -335,6 +358,14 @@ export const images = {
     src: obraPainelTv1200Jpg,
     width: 1200,
     height: 896,
+  },
+  "obra-quarto-bebe": {
+    avif: `${obraQuartoBebe480Avif} 480w, ${obraQuartoBebe896Avif} 896w`,
+    webp: `${obraQuartoBebe480Webp} 480w, ${obraQuartoBebe896Webp} 896w`,
+    jpg: `${obraQuartoBebe480Jpg} 480w, ${obraQuartoBebe896Jpg} 896w`,
+    src: obraQuartoBebe896Jpg,
+    width: 896,
+    height: 1200,
   },
   "obra-sala-jantar": {
     avif: `${obraSalaJantar480Avif} 480w, ${obraSalaJantar960Avif} 960w, ${obraSalaJantar1200Avif} 1200w`,

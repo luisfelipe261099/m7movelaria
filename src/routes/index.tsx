@@ -199,6 +199,12 @@ const finishes = [
     desc: "Luz branca neutra — funcional para closets, bancadas e áreas de trabalho.",
     alt: "Iluminação em LED 5000K, luz branca neutra, sobre bancada de trabalho",
   },
+  {
+    img: "finish-forro-trelica",
+    name: "Forro em treliça",
+    desc: "Treliça de madeira no forro, com LED embutido no perímetro do rebaixo.",
+    alt: "Corredor com forro em treliça de madeira e iluminação em LED embutida no perímetro do rebaixo",
+  },
 ] as const;
 
 function Home() {
@@ -537,7 +543,7 @@ function Home() {
             </p>
             {/* Antes eram cinco renders. Foto de obra entregue é o sinal de
                 confiança que render não dá — e cada uma leva à sua legenda. */}
-            <div className="mt-12 grid gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <div className="mt-12 grid gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               {obras.map((o) => (
                 <Link
                   key={o.slug}
@@ -553,7 +559,7 @@ function Home() {
                     // Largura real da célula, não fração do viewport: com 18vw o
                     // desktop 2x pulava a variante de 480 e baixava a de 960
                     // para pintar 230 px (+98 KB na página).
-                    sizes="(min-width: 1280px) 230px, (min-width: 1024px) calc((100vw - 128px) / 5), (min-width: 768px) calc((100vw - 88px) / 3), calc((100vw - 68px) / 2)"
+                    sizes="(min-width: 1280px) 189px, (min-width: 1024px) calc((100vw - 148px) / 6), (min-width: 768px) calc((100vw - 88px) / 3), calc((100vw - 68px) / 2)"
                   />
                 </Link>
               ))}

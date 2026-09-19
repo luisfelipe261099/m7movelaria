@@ -309,7 +309,7 @@ function ProjectPage() {
                 uma tela inteira, com célula órfã); de md para cima vira grade.
                 O nome fica DENTRO do link: é o rótulo visível do card e o
                 leitor de tela anuncia o nome uma vez só. */}
-              <ul className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-5 md:overflow-visible">
+              <ul className="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-6 md:overflow-visible">
                 {obras.map((o) => (
                   <li key={o.slug} className="w-40 shrink-0 snap-start md:w-auto">
                     <Link
@@ -323,7 +323,7 @@ function ProjectPage() {
                           name={o.image}
                           alt={o.alt}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(min-width: 1280px) 234px, (min-width: 1024px) calc((100vw - 112px) / 5), (min-width: 768px) calc((100vw - 80px) / 3), 160px"
+                          sizes="(min-width: 1280px) 193px, (min-width: 1024px) calc((100vw - 132px) / 6), (min-width: 768px) calc((100vw - 80px) / 3), 160px"
                         />
                       </div>
                       <p className="mt-2 text-sm text-ink group-hover:text-bronze transition-colors">

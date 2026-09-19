@@ -100,6 +100,16 @@ export const obras: [Obra, ...Obra[]] = [
     caption:
       "Peça solta, não embutida: tampo espesso e pés inclinados afunilados, com o encaixe do pé aparente no suporte sob o tampo. Pés e suporte em madeira maciça — é o tipo de encaixe que só a madeira maciça permite.",
   },
+  {
+    slug: "quarto-bebe",
+    image: "obra-quarto-bebe",
+    name: "Berço com painel de réguas",
+    alt: "Berço branco com laterais em réguas de topo arredondado e montantes em madeira, apoiado em painel de parede com réguas verticais em rosa, creme e branco recortadas em alturas diferentes",
+    altCurto: "Berço branco com montantes em madeira e painel de réguas coloridas ao fundo",
+    caption:
+      "Berço branco com as réguas das laterais arredondadas no topo e montantes em madeira aparente nos quatro cantos. O painel de parede repete o desenho em régua vertical, em rosa, creme e branco, com o topo de cada peça cortado numa altura diferente.",
+    servicoSlug: "dormitorios-planejados",
+  },
 ];
 
 export const getObra = (slug: string) => obras.find((o) => o.slug === slug);
