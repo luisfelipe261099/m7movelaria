@@ -54,9 +54,9 @@ export const serviceCatalog: ServiceSummary[] = [
     name: "Dormitórios planejados",
     keyword: "dormitório planejado",
     short: "Guarda-roupa, cabeceira e criados-mudos integrados ao quarto.",
-    image: "finish-lamina-45",
+    image: "project-dormitorio",
     imageAlt:
-      "Detalhe de marcenaria em lâmina natural com encaixe em 45 graus e continuidade de veio na quina",
+      "Closet planejado em madeira com portas de vidro, araras e prateleiras iluminadas em LED e ilha central com tampo estofado",
     title: "Guarda-roupa e Dormitório Planejado | M7 Movelaria",
     description:
       "Guarda-roupa, cabeceira e criado-mudo planejados sob medida em São José dos Pinhais e Curitiba. Portas de correr, gavetas internas e LED. Peça o orçamento.",

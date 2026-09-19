@@ -151,6 +151,15 @@ import projectCloset960Jpg from "./project-closet-960.jpg";
 import projectCloset1600Avif from "./project-closet-1600.avif";
 import projectCloset1600Webp from "./project-closet-1600.webp";
 import projectCloset1600Jpg from "./project-closet-1600.jpg";
+import projectDormitorio480Avif from "./project-dormitorio-480.avif";
+import projectDormitorio480Webp from "./project-dormitorio-480.webp";
+import projectDormitorio480Jpg from "./project-dormitorio-480.jpg";
+import projectDormitorio960Avif from "./project-dormitorio-960.avif";
+import projectDormitorio960Webp from "./project-dormitorio-960.webp";
+import projectDormitorio960Jpg from "./project-dormitorio-960.jpg";
+import projectDormitorio1024Avif from "./project-dormitorio-1024.avif";
+import projectDormitorio1024Webp from "./project-dormitorio-1024.webp";
+import projectDormitorio1024Jpg from "./project-dormitorio-1024.jpg";
 import projectKitchen480Avif from "./project-kitchen-480.avif";
 import projectKitchen480Webp from "./project-kitchen-480.webp";
 import projectKitchen480Jpg from "./project-kitchen-480.jpg";
@@ -342,6 +351,14 @@ export const images = {
     src: projectCloset1600Jpg,
     width: 1600,
     height: 1000,
+  },
+  "project-dormitorio": {
+    avif: `${projectDormitorio480Avif} 480w, ${projectDormitorio960Avif} 960w, ${projectDormitorio1024Avif} 1024w`,
+    webp: `${projectDormitorio480Webp} 480w, ${projectDormitorio960Webp} 960w, ${projectDormitorio1024Webp} 1024w`,
+    jpg: `${projectDormitorio480Jpg} 480w, ${projectDormitorio960Jpg} 960w, ${projectDormitorio1024Jpg} 1024w`,
+    src: projectDormitorio1024Jpg,
+    width: 1024,
+    height: 1024,
   },
   "project-kitchen": {
     avif: `${projectKitchen480Avif} 480w, ${projectKitchen960Avif} 960w, ${projectKitchen1600Avif} 1600w`,
