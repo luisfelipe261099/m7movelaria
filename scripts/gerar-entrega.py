@@ -192,7 +192,7 @@ def conteudo():
                 "Arquivo robots.txt liberando o rastreamento de todo o site.",
                 "Endereço canônico único em todas as páginas, evitando que o Google veja o mesmo conteúdo em dois endereços diferentes.",
                 "Dados estruturados (o código que o Google lê para entender o negócio): empresa local, site, serviços, trilha de navegação e perguntas frequentes.",
-                "Nome, endereço e telefone do site conferidos contra o Perfil da Empresa no Google, incluindo a grafia da rua nos Correios e as coordenadas do próprio perfil.",
+                "Nome, endereço e telefone conferidos, com a grafia da rua e o CEP checados na base dos Correios. As coordenadas do mapa ficam de fora até o endereço novo estar atualizado no Perfil da Empresa no Google.",
                 "Títulos e descrições escritos página a página, com a cidade no título das páginas locais.",
                 "<b>Resultado já visível:</b> o site aparece nos resultados do Google para buscas como “movelaria em São José dos Pinhais”.",
             ],

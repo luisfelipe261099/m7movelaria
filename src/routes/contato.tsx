@@ -28,7 +28,7 @@ export const Route = createFileRoute("/contato")({
     ...pageSeo({
       title: "Contato e Endereço em São José dos Pinhais | M7 Movelaria",
       description:
-        "Contato da M7 Movelaria: WhatsApp, e-mail e endereço do ateliê na R. Henrique Bortolan, 182, Costeira, São José dos Pinhais. Atendemos Curitiba e região.",
+        "Contato da M7 Movelaria: WhatsApp, e-mail e endereço do ateliê na R. Orestes Foggiatto, 710, Costeira, São José dos Pinhais. Atendemos Curitiba e região.",
       path: PATH,
     }),
     scripts: [

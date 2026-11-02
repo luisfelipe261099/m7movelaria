@@ -31,21 +31,31 @@ export const PHONE_E164 = "+5541987116308";
 /** Formato de exibição, igual ao do Perfil da Empresa no Google. */
 export const PHONE_LOCAL = "(41) 98711-6308";
 export const EMAIL = "m7movelaria@outlook.com.br";
-export const STREET_ADDRESS = "R. Henrique Bortolan, 182 - Costeira";
+export const STREET_ADDRESS = "R. Orestes Foggiatto, 710 - Costeira";
 export const CITY = "São José dos Pinhais";
 export const REGION = "PR";
 export const COUNTRY = "BR";
 /**
- * CEP conferido nos Correios (ViaCEP) e no Perfil da Empresa no Google; a
- * grafia oficial da rua é "Bortolan", com N. As coordenadas são as do pino do
- * próprio perfil no Google Maps (place /g/11vjy5fnnp), para o `geo` do schema
- * casar com o que o Google já tem.
+ * CEP conferido nos Correios (ViaCEP). A grafia oficial da rua na base dos
+ * Correios é "Orestes Foggiatto" — com S em Orestes, dois G e dois T. O
+ * cliente passou o endereço de viva-voz como "Oreste Fogiato"; vale ele
+ * confirmar qual grafia está no Perfil da Empresa no Google, porque o NAP
+ * precisa bater caractere por caractere com o perfil, e é o perfil que manda
+ * no pacote local.
  */
-export const POSTAL_CODE = "83015-470";
-export const GEO: { latitude: number; longitude: number } | null = {
-  latitude: -25.5714056,
-  longitude: -49.1538786,
-};
+export const POSTAL_CODE = "83015-480";
+/**
+ * `null` de propósito, e não as coordenadas antigas: as que estavam aqui eram
+ * o pino do perfil no endereço anterior (R. Henrique Bortolan, 182) e, com a
+ * mudança de rua, passariam a apontar para o lugar errado. Publicar coordenada
+ * errada no schema é pior do que não publicar nenhuma — o `geo` some do
+ * LocalBusiness enquanto for `null` (ver o guard em `src/lib/schema.ts`), e o
+ * Google continua usando o pino do próprio perfil.
+ *
+ * Para voltar a ter `geo`: o cliente atualiza o endereço no Perfil da Empresa
+ * no Google, e aí as coordenadas do pino novo entram aqui.
+ */
+export const GEO: { latitude: number; longitude: number } | null = null;
 
 /** Cidades atendidas — usado em schema (areaServed) e nas landing pages locais. */
 export const SERVED_CITIES = [

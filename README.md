@@ -108,10 +108,15 @@ Regenerar com `python3 scripts/gerar-relatorio.py` (requer `pip install reportla
 
 Bloqueadas em dados que só o cliente tem:
 
-- **Perfil da Empresa no Google** — existe (16 avaliações, nota 5,0) e o NAP do
-  site já casa com ele: rua `Henrique Bortolan` (com N, conferido nos Correios),
-  CEP `83015-470` e `geo` com o pino do próprio perfil, em `src/lib/seo.ts`.
-  O que ainda depende do cliente: a categoria principal está como "Fabricante",
+- **Perfil da Empresa no Google** — existe (16 avaliações, nota 5,0). O ateliê
+  mudou de endereço: o site passou para `R. Orestes Foggiatto, 710 - Costeira`,
+  CEP `83015-480` (grafia e CEP conferidos nos Correios/ViaCEP), em
+  `src/lib/seo.ts`. **O `geo` ficou `null`** — as coordenadas que havia ali
+  eram o pino do endereço antigo, e coordenada errada no schema é pior do que
+  nenhuma. Depende do cliente: atualizar o endereço no Perfil da Empresa (o NAP
+  precisa casar caractere por caractere, inclusive a grafia "Orestes
+  Foggiatto") e, feito isso, trazer as coordenadas do pino novo para o `GEO`.
+  Também segue pendente: a categoria principal está como "Fabricante",
   que não casa com "móveis planejados" e deixa o perfil fora do pacote local
   (trocar para Loja de móveis planejados / Moveleiro), e o horário diverge
   (perfil 7h–16h sem sábado; site 8h–18h e sábado 8h–12h).

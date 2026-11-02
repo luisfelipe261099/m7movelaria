@@ -280,7 +280,7 @@ story.append(Paragraph(
 story.append(Spacer(1, 26 * mm))
 meta_rows = [
     ["CLIENTE", "M7 Movelaria — Móveis planejados sob medida"],
-    ["ENDEREÇO", "R. Henrique Bortolan, 182 - Costeira — São José dos Pinhais / PR"],
+    ["ENDEREÇO", "R. Orestes Foggiatto, 710 - Costeira — São José dos Pinhais / PR"],
     ["SITE", "https://www.m7movelaria.com.br"],
     ["PERÍODO", "13 de agosto a 20 de agosto de 2026"],
     ["ESCOPO", "Migração de plataforma, SEO técnico e de conteúdo, performance, acessibilidade e conformidade"],
@@ -1032,8 +1032,8 @@ table(
       "Coloca as páginas prioritárias na fila do Google"],
      ["4", "Criar e verificar o Perfil da Empresa no Google", "Cliente",
       "É o que coloca a M7 no mapa e no bloco local, onde está a maior parte dos cliques deste mercado"],
-     ["5", "Informar CEP e coordenadas do ateliê", "Cliente",
-      "Completa os dados estruturados de empresa local"],
+     ["5", "Atualizar o endereço no Perfil da Empresa e passar as coordenadas do pino", "Cliente",
+      "O CEP já foi conferido nos Correios; falta a coordenada para completar os dados estruturados"],
      ["6", "Fornecer avaliações reais e fotos de obra", "Cliente",
       "Libera o bloco de avaliação na busca e permite afirmar execução nos textos"]],
     widths=[8 * mm, 62 * mm, 32 * mm, None])
@@ -1091,7 +1091,7 @@ table(
     [["Risco", "Estado"],
      ["Depoimentos fictícios na página inicial", "Documentado; aguarda decisão do cliente"],
      ["Cliente e escritório de arquitetura creditados sobre renders", "Documentado; aguarda confirmação de autorização"],
-     ["CEP e coordenadas ausentes nos dados estruturados", "Campos preparados e vazios; aguarda o dado"],
+     ["Coordenadas ausentes nos dados estruturados", "CEP preenchido (conferido nos Correios); a coordenada fica vazia até o endereço novo entrar no Perfil da Empresa"],
      ["Redes sociais ausentes nos dados estruturados", "Deixado vazio deliberadamente — declarar perfil inexistente prejudica a validação"],
      ["Site sem ferramenta de análise de audiência", "Nenhuma instalada. Se for instalada, a política de privacidade precisa ser atualizada junto"]],
     widths=[80 * mm, None])
