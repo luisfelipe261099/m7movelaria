@@ -5,6 +5,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 
@@ -44,7 +45,12 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+// Tipo vindo do próprio roteador, e não escrito à mão: a partir do
+// @tanstack/react-start 1.169 o `error` passou de `Error` para `unknown` — o
+// que é mais correto, porque um throw pode lançar qualquer coisa. O componente
+// só registra o erro no console, então não depende do formato; usar o tipo do
+// pacote evita que a próxima mudança de assinatura volte a quebrar o build.
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
 
