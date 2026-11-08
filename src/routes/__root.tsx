@@ -7,11 +7,29 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { SITE_NAME, OG_IMAGE, GOOGLE_SITE_VERIFICATION } from "../lib/seo";
 import { jsonLd, globalGraph } from "../lib/schema";
+
+/**
+ * Client-side only Analytics component.
+ * Loads Vercel Analytics only in the browser to avoid SSR issues.
+ */
+function ClientAnalytics() {
+  const [AnalyticsComponent, setAnalyticsComponent] = useState<React.ComponentType | null>(null);
+
+  useEffect(() => {
+    // Dynamically import Analytics only on the client side
+    import("@vercel/analytics/react").then((mod) => {
+      setAnalyticsComponent(() => mod.Analytics);
+    });
+  }, []);
+
+  if (!AnalyticsComponent) return null;
+  return <AnalyticsComponent />;
+}
 
 function NotFoundComponent() {
   return (
@@ -165,6 +183,7 @@ function RootShell({ children }: { children: ReactNode }) {
         </a>
         {children}
         <Scripts />
+        <ClientAnalytics />
       </body>
     </html>
   );
