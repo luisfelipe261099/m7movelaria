@@ -121,7 +121,7 @@ function primeiraVez(chave: string): boolean {
  */
 export function enviaLead(
   lead: Lead,
-  dados: { codigo: string; total: number; etapa: EtapaLead; itens?: string[] },
+  dados: { codigo: string; total: number; etapa: EtapaLead; itens?: string[]; validade?: string },
 ): void {
   if (!primeiraVez(`${dados.etapa}:${dados.codigo}`)) return;
   try {

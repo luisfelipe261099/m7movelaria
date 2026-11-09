@@ -201,6 +201,7 @@ function Simulador() {
       total: orcamento.total,
       etapa: "retorno",
       itens: linhasDosItens(orcamento),
+      validade: identificacao.validade,
     });
     // `orcamento` inteiro na lista, e não só o total: o efeito passou a ler a
     // lista de itens. Ele é `useMemo` sobre [itens, acabamento, entrega], então
@@ -235,6 +236,7 @@ function Simulador() {
       total: orcamento.total,
       etapa: "contato",
       itens: linhasDosItens(orcamento),
+      validade: identificacao.validade,
     });
   };
 
@@ -251,6 +253,7 @@ function Simulador() {
       total: orcamento.total,
       etapa: "pedido",
       itens: linhasDosItens(orcamento),
+      validade: identificacao.validade,
     });
   };
 

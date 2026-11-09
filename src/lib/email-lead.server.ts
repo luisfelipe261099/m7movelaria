@@ -23,6 +23,9 @@
  */
 import nodemailer from "nodemailer";
 
+import { pdfDoOrcamento } from "@/lib/pdf-orcamento.server";
+import { CITY, PHONE_LOCAL, REGION, SITE_URL, STREET_ADDRESS } from "@/lib/seo";
+
 export type EtapaLead = "contato" | "retorno" | "pedido" | "mensagem";
 
 export type Lead = {
@@ -33,6 +36,8 @@ export type Lead = {
   etapa?: EtapaLead;
   itens?: string[];
   mensagem?: string;
+  /** Validade que a tela mostrou, para o PDF dizer o mesmo que a pessoa viu. */
+  validade?: string;
 };
 
 /**
@@ -258,6 +263,44 @@ export function montaEmail(lead: Lead) {
   };
 }
 
+/**
+ * O orçamento em PDF, para o lead chegar pronto para encaminhar.
+ *
+ * Só existe quando há itens — no formulário de contato não há orçamento
+ * nenhum. O PDF é gerado aqui, no servidor, e não no navegador: o aviso de
+ * "pedido fechado" sai no mesmo instante em que a pessoa é levada ao WhatsApp,
+ * com a página sendo abandonada, e `keepalive` limita o corpo do envio a 64 KB
+ * — um PDF em base64 não passaria. Gerando no servidor, o navegador continua
+ * mandando só texto.
+ *
+ * Se a geração falhar por qualquer motivo, o e-mail sai sem anexo: perder o
+ * PDF é menos ruim do que perder o aviso do lead.
+ */
+function anexoDoOrcamento(lead: Lead) {
+  if (!lead.itens || lead.itens.length === 0) return [];
+  try {
+    const conteudo = pdfDoOrcamento({
+      nome: lead.nome,
+      contato: lead.contato,
+      codigo: lead.codigo,
+      total: lead.total,
+      itens: lead.itens,
+      validade: lead.validade,
+      endereco: STREET_ADDRESS,
+      cidade: `${CITY} - ${REGION}`,
+      telefone: PHONE_LOCAL,
+      site: SITE_URL.replace(/^https?:\/\//, ""),
+    });
+    const sufixo = lead.codigo && lead.codigo !== "sem-codigo" ? `-${lead.codigo}` : "";
+    return [
+      { filename: `orcamento${sufixo}.pdf`, content: conteudo, contentType: "application/pdf" },
+    ];
+  } catch (erro) {
+    console.error("[lead-orcamento] PDF não gerado, e-mail segue sem anexo:", erro);
+    return [];
+  }
+}
+
 export async function enviaEmailLead(lead: Lead): Promise<void> {
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
@@ -286,6 +329,7 @@ export async function enviaEmailLead(lead: Lead): Promise<void> {
     subject,
     text,
     html,
+    attachments: anexoDoOrcamento(lead),
     // Responder o e-mail fala com o lead direto, quando ele deixou endereço.
     replyTo: lead.contato.includes("@") ? lead.contato : undefined,
   });

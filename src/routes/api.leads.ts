@@ -77,6 +77,8 @@ function valida(dados: unknown): Lead | null {
     etapa,
     itens: listaDeItens(d.itens),
     mensagem: texto(d.mensagem, 1200) ?? "",
+    // Só a data que a tela exibiu, para o PDF não recalcular validade por conta.
+    validade: texto(d.validade, 20) ?? undefined,
   };
 }
 
