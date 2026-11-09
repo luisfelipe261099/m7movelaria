@@ -200,8 +200,13 @@ function Simulador() {
       codigo: identificacao.numero,
       total: orcamento.total,
       etapa: "retorno",
+      itens: linhasDosItens(orcamento),
     });
-  }, [etapa, lead, itens.length, identificacao.numero, orcamento.total]);
+    // `orcamento` inteiro na lista, e não só o total: o efeito passou a ler a
+    // lista de itens. Ele é `useMemo` sobre [itens, acabamento, entrega], então
+    // só muda quando o orçamento muda de verdade — e o `enviaLead` deduplica por
+    // etapa+código, então nem assim sai e-mail repetido.
+  }, [etapa, lead, itens.length, identificacao.numero, orcamento]);
 
   const addModulo = (modulo: Modulo) => setItens((l) => [...l, novoItem(modulo)]);
   const removeItem = (uid: string) => setItens((l) => l.filter((i) => i.uid !== uid));
@@ -215,6 +220,12 @@ function Simulador() {
    * fim do simulador. É o lead que mais se perdia: a pessoa deixa o telefone,
    * vê o valor, acha alto e fecha a aba. Para a M7, esse contato vale tanto
    * quanto o que chega até o fim, e agora chega antes de ela sumir.
+   *
+   * A lista do que foi montado vai junto. O portão só aparece depois da etapa
+   * de montagem, então neste instante o orçamento já está fechado na tela — era
+   * só não estar sendo enviado. Sem ela, o e-mail mais frequente chegava com
+   * nome, telefone e um total solto, e quem atendia não tinha como saber do que
+   * aquele valor era feito para puxar a conversa.
    */
   const identificar = (novo: Lead) => {
     setLead(novo);
@@ -223,6 +234,7 @@ function Simulador() {
       codigo: identificacao.numero,
       total: orcamento.total,
       etapa: "contato",
+      itens: linhasDosItens(orcamento),
     });
   };
 
